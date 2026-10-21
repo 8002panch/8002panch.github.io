@@ -6,12 +6,12 @@
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>Neil Panchal</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Neil Panchal models biology in code, then tests it at the bench: an AI-designed antimicrobial peptide, surgical bone-viability imaging, and the mechanics of NET formation.">
+<meta name="description" content="Neil Panchal models biology in code, then tests it at the bench. Bioengineering at the University of Maryland.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: a plain Notion-like page built around three case studies. Each case brings in one primary color and one live figure drawn from its own data; the black footer collects all three. */
+/* Layout: a plain Notion-like page. The cursor is a cell; each project is a small hands-on experiment in one primary color; the black footer gathers all three. */
 :root {
   --bg: #ffffff;
   --ink: #191919;
@@ -27,9 +27,7 @@
   --blue-t: #dfe6ff;
   --red-t: #ffe4dd;
   --yellow-t: #fff1bf;
-  --blue-fg: #1c40d6;
-  --red-fg: #b5230f;
-  --yellow-fg: #765a00;
+  --yellow-fg: #8a6900;
   --nav-bg: rgba(255, 255, 255, 0.86);
   --foot-bg: #191919;
   --foot-fg: #ffffff;
@@ -37,19 +35,21 @@
   --foot-faint: #8a8a86;
   --foot-line: rgba(255, 255, 255, 0.14);
   --foot-ghost: rgba(255, 255, 255, 0.35);
+  --lens-bg: #070a16;
+  --lens-ink: #ffffff;
 
   --sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
   --serif: "Instrument Serif", "Iowan Old Style", Georgia, serif;
   --wide: 1040px;
+  --spring: cubic-bezier(.2, .8, .2, 1);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #191919; --ink: #ededeb; --body: #d3d3d0; --muted: #9b9a97; --faint: #6b6a67;
     --line: #2e2e2c; --wash: #212120; --chip: #2c2c2a;
     --blue: #4a72ff; --red: #ff4a30; --yellow: #ffc400;
-    --blue-t: #1f2a52; --red-t: #45201a; --yellow-t: #3d3214;
-    --blue-fg: #9cb2ff; --red-fg: #ff9a87; --yellow-fg: #ffd866;
+    --blue-t: #1f2a52; --red-t: #45201a; --yellow-t: #3d3214; --yellow-fg: #ffd866;
     --nav-bg: rgba(25, 25, 25, 0.86); --foot-bg: #0e0e0e;
     color-scheme: dark;
   }
@@ -58,8 +58,7 @@
   --bg: #191919; --ink: #ededeb; --body: #d3d3d0; --muted: #9b9a97; --faint: #6b6a67;
   --line: #2e2e2c; --wash: #212120; --chip: #2c2c2a;
   --blue: #4a72ff; --red: #ff4a30; --yellow: #ffc400;
-  --blue-t: #1f2a52; --red-t: #45201a; --yellow-t: #3d3214;
-  --blue-fg: #9cb2ff; --red-fg: #ff9a87; --yellow-fg: #ffd866;
+  --blue-t: #1f2a52; --red-t: #45201a; --yellow-t: #3d3214; --yellow-fg: #ffd866;
   --nav-bg: rgba(25, 25, 25, 0.86); --foot-bg: #0e0e0e;
   color-scheme: dark;
 }
@@ -72,6 +71,7 @@ body {
   font: 15px/1.6 var(--sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  overflow-x: hidden;
 }
 body::before {
   content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
@@ -88,6 +88,33 @@ p { margin: 0; }
   padding-right: max(20px, env(safe-area-inset-right, 0px));
 }
 .wrap { max-width: var(--wide); margin-inline: auto; }
+.label { font: 12px/18px var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+
+/* ---------- Custom cursor (fine pointers only) ---------- */
+#cursor { --cur: var(--ink); --cur-fg: var(--bg); position: fixed; left: 0; top: 0; z-index: 100; pointer-events: none; display: none; }
+.cursor-on #cursor { display: block; }
+.cursor-on, .cursor-on * { cursor: none !important; }
+.c-dot, .c-ring { position: fixed; left: 0; top: 0; will-change: transform; }
+.c-dot i { position: absolute; width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%; background: var(--cur); transition: opacity .2s, background-color .25s; }
+.c-body {
+  --s: 34px;
+  position: absolute; width: var(--s); height: var(--s); margin: calc(var(--s) / -2) 0 0 calc(var(--s) / -2);
+  border-radius: 50%; border: 1.5px solid var(--cur); display: grid; place-items: center;
+  transition: width .35s var(--spring), height .35s var(--spring), margin .35s var(--spring), background-color .25s, border-color .25s, opacity .2s;
+}
+.c-label { font: 500 11px/1 var(--mono); letter-spacing: 0.04em; text-transform: uppercase; color: var(--cur-fg); opacity: 0; transition: opacity .2s; white-space: nowrap; }
+#cursor.link .c-body { --s: 54px; background: color-mix(in srgb, var(--cur) 12%, transparent); }
+#cursor.labeled .c-body { --s: 74px; background: var(--cur); }
+#cursor.labeled .c-label { opacity: 1; }
+#cursor.labeled .c-dot i, #cursor.link .c-dot i { opacity: 0; }
+#cursor.down .c-body { --s: 22px; }
+#cursor.labeled.down .c-body { --s: 62px; }
+#cursor.hide .c-body, #cursor.hide .c-dot i, #cursor.out .c-body, #cursor.out .c-dot i { opacity: 0; }
+.split { position: fixed; left: 0; top: 0; pointer-events: none; z-index: 99; }
+.split i { position: absolute; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; background: var(--c, var(--ink)); animation: divide .6s var(--spring) forwards; }
+.split i:last-child { animation-name: divide2; }
+@keyframes divide { to { transform: translate(-16px, -6px) scale(.4); opacity: 0; } }
+@keyframes divide2 { to { transform: translate(16px, 6px) scale(.4); opacity: 0; } }
 
 /* ---------- Nav ---------- */
 .nav {
@@ -98,83 +125,85 @@ p { margin: 0; }
 }
 .nav .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 48px; }
 .crumb { display: flex; align-items: center; gap: 8px; font-size: 14px; line-height: 20px; text-decoration: none; min-width: 0; }
-.crumb .mark { width: 20px; height: 20px; border-radius: 5px; background: var(--ink); flex: none; }
+.crumb .mark { width: 20px; height: 20px; border-radius: 5px; background: var(--ink); flex: none; transition: border-radius .4s var(--spring), transform .4s var(--spring); }
+.crumb:hover .mark { border-radius: 50%; transform: rotate(90deg); }
 .crumb .name { color: var(--ink); font-weight: 500; }
 .crumb .sep { color: var(--faint); }
 .crumb .page { color: var(--muted); }
 .links { display: flex; gap: 22px; font-size: 14px; }
-.links a { color: var(--muted); text-decoration: none; transition: color .2s; }
-.links a:hover { color: var(--ink); }
+.roll { position: relative; display: inline-block; overflow: hidden; height: 20px; line-height: 20px; color: var(--muted); text-decoration: none; }
+.roll span { display: block; transition: transform .45s var(--spring); }
+.roll span::after { content: attr(data-t); display: block; color: var(--ink); }
+.roll:hover span { transform: translateY(-20px); }
 
 /* ---------- Hero ---------- */
-.hero { padding-block: clamp(56px, 9vw, 112px) 0; }
-.who { display: flex; align-items: center; gap: 12px; font-size: 14px; line-height: 20px; color: var(--muted); }
+.hero { position: relative; padding-block: clamp(56px, 9vw, 120px) 0; }
+.hero .wrap { position: relative; }
+.cells { position: absolute; inset: -40px 0 auto auto; width: 46%; height: 460px; pointer-events: none; }
+.cell { position: absolute; color: var(--chip); will-change: transform; }
+.who { display: flex; align-items: center; gap: 12px; font-size: 14px; line-height: 20px; color: var(--muted); position: relative; }
 .who .blob { width: 30px; height: 30px; color: var(--blue); flex: none; }
 .who b { color: var(--ink); font-weight: 600; }
 h1 {
-  margin-top: 28px; max-width: 15ch;
+  position: relative; margin-top: 28px; max-width: 15ch;
   font-size: clamp(2.6rem, 1.1rem + 5vw, 5rem);
   font-weight: 700; line-height: 1.02; letter-spacing: -0.045em;
 }
 h1 em { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: -0.015em; font-size: 1.08em; }
-.lede { margin-top: 28px; max-width: 600px; font-size: clamp(17px, 1rem + 0.35vw, 19px); line-height: 1.55; color: var(--muted); text-wrap: pretty; }
-.lede strong { color: var(--body); font-weight: 500; }
+.dna { display: inline-block; transition: color .3s; }
+.dna:hover { color: var(--blue); }
+.wave .wd { display: inline-block; white-space: nowrap; }
+.wave .ch { display: inline-block; }
+.wave:hover .ch { animation: wave .7s var(--spring) both; animation-delay: calc(var(--i) * 22ms); }
+@keyframes wave { 0% { transform: translateY(0); } 35% { transform: translateY(-0.14em); color: var(--red); } 100% { transform: translateY(0); } }
+.lede { position: relative; margin-top: 28px; max-width: 560px; font-size: clamp(17px, 1rem + 0.35vw, 19px); line-height: 1.55; color: var(--muted); text-wrap: pretty; }
 
-.proof { margin-top: 56px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-.proof a {
-  display: flex; flex-direction: column; gap: 10px; padding: 20px 20px 18px;
-  border: 1px solid var(--line); border-radius: 12px; text-decoration: none;
-  transition: border-color .25s, transform .35s cubic-bezier(.2, .8, .2, 1), background-color .25s;
+/* ---------- Work index ---------- */
+.index { padding-top: clamp(64px, 9vw, 104px); }
+.rows { position: relative; z-index: 2; margin-top: 16px; border-bottom: 1px solid var(--line); }
+.row {
+  display: grid; grid-template-columns: 12px minmax(0, 1fr) minmax(0, 1.5fr) auto; gap: 8px 24px; align-items: center;
+  padding: 24px 4px; border-top: 1px solid var(--line); text-decoration: none;
+  transition: opacity .35s, padding-left .45s var(--spring);
 }
-.proof a:hover { border-color: var(--c); transform: translateY(-3px); }
-.proof .num { font-size: clamp(34px, 1.6rem + 1.6vw, 46px); line-height: 1; font-weight: 600; letter-spacing: -0.045em; color: var(--ink); font-variant-numeric: tabular-nums; }
-.proof .num::after { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--c); margin-left: 8px; vertical-align: 0.5em; }
-.proof .lbl { font-size: 14px; line-height: 20px; color: var(--muted); text-wrap: pretty; }
-.proof .go { margin-top: auto; padding-top: 6px; font: 12px/18px var(--mono); color: var(--faint); transition: color .25s; }
-.proof a:hover .go { color: var(--ink); }
+.rows:hover .row:not(:hover) { opacity: .32; }
+.row:hover { padding-left: 18px; }
+.row .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--c); transition: transform .45s var(--spring); }
+.row:hover .dot { transform: scale(1.7); }
+.row .t { font-size: clamp(20px, 1rem + 1vw, 28px); line-height: 1.15; font-weight: 600; letter-spacing: -0.025em; color: var(--ink); }
+.row .d { font-size: 15px; line-height: 22px; color: var(--muted); text-wrap: pretty; }
+.row .k { font: 12px/18px var(--mono); color: var(--muted); white-space: nowrap; }
+#peek { position: fixed; left: 0; top: 0; z-index: 1; pointer-events: none; will-change: transform; }
+#peek .blob { width: 220px; height: 220px; margin: -110px 0 0 -110px; color: var(--t, var(--blue-t)); opacity: 0; transform: scale(.3) rotate(-30deg); transition: opacity .35s, transform .6s var(--spring), color .3s; }
+#peek.on .blob { opacity: 1; transform: scale(1) rotate(0deg); }
 
 /* ---------- Cases ---------- */
 main { padding-bottom: 112px; }
-.case { padding-top: clamp(72px, 10vw, 120px); scroll-margin-top: 48px; }
-.case .wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 72px); align-items: center; }
+.case { padding-top: clamp(72px, 10vw, 128px); scroll-margin-top: 48px; }
+.case .wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(32px, 5vw, 72px); align-items: center; }
 .case.flip .text { order: 2; }
-.case .wrap::before {
-  content: ""; grid-column: 1 / -1; height: 1px; background: var(--line); margin-bottom: clamp(8px, 2vw, 24px);
-}
+.case .wrap::before { content: ""; grid-column: 1 / -1; height: 1px; background: var(--line); margin-bottom: clamp(8px, 2vw, 24px); }
 .eyebrow { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; font: 12px/18px var(--mono); color: var(--muted); }
 .eyebrow i { width: 10px; height: 10px; border-radius: 2px; background: var(--c); flex: none; }
 .eyebrow b { color: var(--ink); font-weight: 500; }
 .case h2 { margin-top: 16px; font-size: clamp(28px, 1.2rem + 1.8vw, 40px); line-height: 1.1; font-weight: 600; letter-spacing: -0.03em; }
-.case .text > p { margin-top: 16px; font-size: 16px; line-height: 1.65; max-width: 34em; text-wrap: pretty; }
+.case .text > p { margin-top: 16px; font-size: 16px; line-height: 1.65; max-width: 33em; text-wrap: pretty; }
 .case .text > p:first-of-type { margin-top: 20px; }
-.facts { margin: 28px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: 16px 20px; padding-top: 20px; border-top: 1px solid var(--line); }
-.facts dt { font: 11px/16px var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
-.facts dd { margin: 4px 0 0; font-size: 14px; line-height: 20px; color: var(--ink); }
-.facts dd small { display: block; color: var(--muted); font-size: 12.5px; }
+.case .meta { margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--line); display: flex; gap: 10px; align-items: baseline; font-size: 14px; line-height: 20px; color: var(--ink); max-width: 33em; }
+.case .meta::before { content: "→"; color: var(--c); font-weight: 600; }
 
-.viz { margin: 0; padding: 18px; border-radius: 14px; background: var(--wash); display: grid; gap: 14px; min-width: 0; }
-.viz-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font: 12px/18px var(--mono); color: var(--muted); }
-.viz-top output { color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; }
-.viz figcaption { font-size: 13px; line-height: 19px; color: var(--muted); text-wrap: pretty; }
-.stage { position: relative; border-radius: 8px; overflow: hidden; background: var(--bg); }
-.stage canvas, .stage svg { display: block; width: 100%; height: auto; }
-#kill { image-rendering: pixelated; }
-.ring {
-  position: absolute; width: 26px; height: 26px; margin: -13px 0 0 -13px; border-radius: 50%;
-  border: 2px solid var(--red); pointer-events: none;
-  animation: pulse 2.4s ease-in-out infinite;
-}
-@keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.35); opacity: .55; } }
-.replay {
-  font: 12px/18px var(--mono); color: var(--muted); background: none; border: 0; padding: 0; cursor: pointer;
-  text-decoration: underline; text-decoration-color: var(--faint); text-underline-offset: 3px;
-}
-.replay:hover { color: var(--ink); }
-.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; line-height: 18px; color: var(--muted); list-style: none; margin: 0; padding: 0; }
-.legend li { display: flex; align-items: center; gap: 6px; }
-.legend i { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+.toy { margin: 0; padding: 14px; border-radius: 14px; background: var(--wash); display: grid; gap: 12px; min-width: 0; }
+.toy-top { display: flex; justify-content: space-between; align-items: center; gap: 6px 12px; flex-wrap: wrap; }
+.hint { font-size: 13px; line-height: 18px; color: var(--muted); }
+.status { display: inline-flex; align-items: center; gap: 8px; font: 12px/18px var(--mono); color: var(--ink); }
+.status i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+.stage { position: relative; border-radius: 10px; overflow: hidden; aspect-ratio: 5 / 4; max-width: 100%; background: var(--wash); }
+.stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.toy figcaption { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 12.5px; line-height: 18px; color: var(--muted); }
+.mini { font: 12px/18px var(--mono); color: var(--muted); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-decoration-color: var(--faint); text-underline-offset: 3px; }
+.mini:hover { color: var(--ink); }
 
-/* ---------- Also / recognition ---------- */
+/* ---------- More ---------- */
 .more { padding-top: clamp(80px, 11vw, 128px); }
 .more .wrap { display: grid; gap: 56px; }
 .more h2 { font-size: 22px; line-height: 30px; font-weight: 600; letter-spacing: -0.015em; }
@@ -194,7 +223,7 @@ main { padding-bottom: 112px; }
   border-top: 1px solid var(--line);
   padding-block: 112px 40px;
 }
-.splash { position: absolute; z-index: -1; pointer-events: none; }
+.splash { position: absolute; z-index: -1; pointer-events: none; transition: transform 1.2s var(--spring); }
 .s-red { width: 460px; height: 460px; left: calc(50% + 173px); top: -120px; color: var(--red); }
 .s-yellow { width: 280px; height: 280px; left: calc(50% + 432px); top: 40px; color: var(--yellow); }
 .s-blue { width: 340px; height: 340px; left: calc(50% + 547px); top: 260px; color: var(--blue); }
@@ -203,14 +232,14 @@ main { padding-bottom: 112px; }
 .foot .lead { margin-top: 28px; max-width: 460px; font-size: 19px; line-height: 29px; color: var(--foot-muted); }
 .btns { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 10px; }
 .btn {
-  display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; border-radius: 999px;
+  display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 999px;
   font: 500 14px/20px var(--sans); text-decoration: none; cursor: pointer;
   border: 1px solid var(--foot-ghost); background: transparent; color: var(--foot-fg);
-  transition: border-color .2s, transform .2s;
+  transition: border-color .2s, transform .5s var(--spring);
 }
+.btn > span { display: inline-flex; align-items: center; gap: 8px; transition: transform .5s var(--spring); }
 .btn:hover { border-color: var(--foot-fg); }
 .btn.primary { background: var(--foot-fg); border-color: var(--foot-fg); color: var(--foot-bg); }
-.btn.primary:hover { transform: translateY(-1px); }
 .btn svg { width: 15px; height: 15px; flex: none; }
 .btn:focus-visible { outline-color: var(--yellow); }
 .foot-bottom {
@@ -221,13 +250,12 @@ main { padding-bottom: 112px; }
 
 /* ---------- Narrow screens ---------- */
 @media (max-width: 860px) {
+  .cells { display: none; }
   .case .wrap { grid-template-columns: minmax(0, 1fr); }
   .case.flip .text { order: 0; }
-  .proof { grid-template-columns: minmax(0, 1fr); }
-  .proof a { flex-direction: row; flex-wrap: wrap; align-items: baseline; column-gap: 14px; }
-  .proof .num { min-width: 5.2ch; }
-  .proof .lbl { flex: 1 1 180px; }
-  .proof .go { display: none; }
+  .row { grid-template-columns: 12px minmax(0, 1fr); padding-block: 20px; }
+  .row .d { grid-column: 2; }
+  .row .k { display: none; }
   .also { grid-template-columns: minmax(0, 1fr); }
   .foot { padding-top: 300px; }
   .s-red { width: 300px; height: 300px; left: auto; right: -80px; top: -90px; }
@@ -236,12 +264,12 @@ main { padding-bottom: 112px; }
   .s-white { width: 70px; height: 70px; left: 31%; top: 210px; }
 }
 @media (max-width: 560px) {
-  .links a:not(.keep) { display: none; }
-  .viz { padding: 12px; }
+  .links .roll:not(.keep) { display: none; }
+  .toy { padding: 10px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .proof a, .btn { transition: none; }
-  .ring { animation: none; }
+  .row, .roll span, .btn, .btn > span, .splash, .crumb .mark { transition: none; }
+  .wave:hover .ch { animation: none; }
 }
 </style>
 </head>
@@ -251,60 +279,54 @@ main { padding-bottom: 112px; }
   <div class="wrap">
     <a class="crumb" href="#top"><span class="mark" aria-hidden="true"></span><span class="name">Neil Panchal</span><span class="sep">/</span><span class="page">Portfolio</span></a>
     <div class="links">
-      <a href="#nektar">Work</a>
-      <a href="Neil_Panchal_Resume.pdf" target="_blank" rel="noopener">Résumé</a>
-      <a class="keep" href="#contact">Contact</a>
+      <a class="roll" href="#work"><span data-t="Work">Work</span></a>
+      <a class="roll" href="Neil_Panchal_Resume.pdf" target="_blank" rel="noopener" data-cursor="PDF"><span data-t="Résumé">Résumé</span></a>
+      <a class="roll keep" href="#contact"><span data-t="Contact">Contact</span></a>
     </div>
   </div>
 </nav>
 
 <header class="hero band" id="top">
   <div class="wrap">
-    <p class="who"><svg class="blob" data-seed="23" data-amp="0.06" viewBox="0 0 100 100" aria-hidden="true"><path/></svg><span><b>Neil Panchal</b> · Bioengineering, University of Maryland</span></p>
-    <h1>I model biology in code, <em>then test it at the bench.</em></h1>
-    <p class="lede">I'm a first-year bioengineering student who has already done research in <strong>five labs</strong> across UMD, Johns Hopkins, and George Mason. Three projects show how I work best.</p>
-    <div class="proof">
-      <a href="#nektar" style="--c: var(--red)">
-        <span class="num">99.999%</span>
-        <span class="lbl">of drug-resistant bacteria killed by a peptide I designed with a protein language model</span>
-        <span class="go">NeKtar-1 ↓</span>
-      </a>
-      <a href="#bone" style="--c: var(--blue)">
-        <span class="num">0.89</span>
-        <span class="lbl">Dice score for finding non-viable bone in surgical fluorescence images</span>
-        <span class="go">Bone imaging ↓</span>
-      </a>
-      <a href="#nets" style="--c: var(--yellow)">
-        <span class="num">0.3%</span>
-        <span class="lbl">of ~9,700 NET papers model the mechanics quantitatively. I'm working on that gap.</span>
-        <span class="go">NET mechanics ↓</span>
-      </a>
+    <div class="cells" aria-hidden="true">
+      <svg class="blob cell" data-seed="3" data-amp="0.08" viewBox="0 0 100 100" style="width:150px;height:150px;left:52%;top:30px"><path/></svg>
+      <svg class="blob cell" data-seed="19" data-amp="0.09" viewBox="0 0 100 100" style="width:90px;height:90px;left:18%;top:120px"><path/></svg>
+      <svg class="blob cell" data-seed="37" data-amp="0.1" viewBox="0 0 100 100" style="width:64px;height:64px;left:78%;top:220px"><path/></svg>
+      <svg class="blob cell" data-seed="53" data-amp="0.08" viewBox="0 0 100 100" style="width:118px;height:118px;left:40%;top:250px"><path/></svg>
+      <svg class="blob cell" data-seed="71" data-amp="0.12" viewBox="0 0 100 100" style="width:38px;height:38px;left:70%;top:20px;color:var(--blue)"><path/></svg>
+      <svg class="blob cell" data-seed="89" data-amp="0.12" viewBox="0 0 100 100" style="width:30px;height:30px;left:12%;top:300px;color:var(--ink)"><path/></svg>
     </div>
+    <p class="who"><svg class="blob" data-seed="23" data-amp="0.06" viewBox="0 0 100 100" aria-hidden="true"><path/></svg><span><b>Neil Panchal</b> · Bioengineering, University of Maryland</span></p>
+    <h1 aria-label="I model biology in code, then test it at the bench."><span aria-hidden="true">I model biology <span class="dna" id="dna">in code,</span> <em class="wave" id="wave">then test it at the bench.</em></span></h1>
+    <p class="lede">I'm a first-year bioengineering student. I've done research in labs at UMD, Johns Hopkins, and George Mason, moving between protein language models, surgical imaging, and cell mechanics.</p>
   </div>
 </header>
 
 <main>
+  <section class="index band" id="work" aria-labelledby="work-h">
+    <div class="wrap">
+      <h2 class="label" id="work-h">Selected work</h2>
+      <div class="rows">
+        <a class="row" href="#nektar" style="--c: var(--red); --t: var(--red-t)" data-cursor="Try it"><span class="dot"></span><span class="t">NeKtar-1</span><span class="d">An antimicrobial peptide, designed by a model and tested in the lab</span><span class="k">Protein design</span></a>
+        <a class="row" href="#bone" style="--c: var(--blue); --t: var(--blue-t)" data-cursor="Try it"><span class="dot"></span><span class="t">Bone viability</span><span class="d">Teaching a model to see which bone is still alive during surgery</span><span class="k">Surgical imaging</span></a>
+        <a class="row" href="#nets" style="--c: var(--yellow); --t: var(--yellow-t)" data-cursor="Try it"><span class="dot"></span><span class="t">NET mechanics</span><span class="d">How physical force makes immune cells throw out nets of DNA</span><span class="k">Cell mechanics</span></a>
+      </div>
+    </div>
+  </section>
 
   <section class="case band" id="nektar" aria-labelledby="nektar-h" style="--c: var(--red)">
     <div class="wrap">
       <div class="text">
-        <p class="eyebrow"><i></i><b>Protein design + wet lab</b><span>UMD Institute for Bioscience &amp; Biotechnology Research · 2025–26</span></p>
+        <p class="eyebrow"><i></i><b>Protein design + wet lab</b><span>UMD Institute for Bioscience &amp; Biotechnology Research</span></p>
         <h2 id="nektar-h">A peptide designed in code, then tested on superbugs</h2>
-        <p>Antimicrobial peptides are one answer to bacteria that shrug off antibiotics, and protein language models can propose new ones. Those models learn partly from negative examples, and no one had tested which negatives work best.</p>
-        <p>I ran that ablation for ESM-2: disordered-protein negatives from DisProt beat every alternative. Then I took one of the model's designs, NeKtar-1, into a BSL-2 lab and ran the bactericidal and hemolysis assays myself.</p>
-        <dl class="facts">
-          <div><dt>Model</dt><dd>F1 0.981<small>vs. 0.931–0.975 for other negative sets</small></dd></div>
-          <div><dt>Result</dt><dd>99.9–99.999% kill<small>drug-resistant E. coli and P. aeruginosa</small></dd></div>
-          <div><dt>Published</dt><dd>National High School Journal of Science</dd></div>
-        </dl>
+        <p>Drug-resistant bacteria are outrunning antibiotics. I used a protein language model to propose antimicrobial peptides, and showed that the examples you teach it to reject change how well it works.</p>
+        <p>Then I took one of its designs, NeKtar-1, into a BSL-2 lab and tested it myself. It wiped out drug-resistant E. coli and P. aeruginosa.</p>
+        <p class="meta">Published in the National High School Journal of Science</p>
       </div>
-      <figure class="viz" aria-label="Animation of 100,000 bacteria dying until one survives">
-        <div class="viz-top"><span>Bacteria alive</span><output id="kill-count">100,000</output></div>
-        <div class="stage">
-          <canvas id="kill" width="400" height="250"></canvas>
-          <span class="ring" id="kill-ring" style="left: 62.1%; top: 38.2%"></span>
-        </div>
-        <figcaption>Each pixel is one bacterium, 100,000 in all. A 99.999% kill leaves one alive. <button class="replay" id="kill-replay" type="button">Replay</button></figcaption>
+      <figure class="toy" aria-label="Interactive petri dish: move the pointer to release the peptide and clear bacteria">
+        <div class="toy-top"><span class="hint">Move through the dish to release NeKtar-1</span><span class="status"><i></i><span id="dish-status">Colony thriving</span></span></div>
+        <div class="stage"><canvas id="dish" data-cursor="hide"></canvas></div>
+        <figcaption><span>A sketch of the idea, not lab data.</span></figcaption>
       </figure>
     </div>
   </section>
@@ -312,32 +334,16 @@ main { padding-bottom: 112px; }
   <section class="case band flip" id="bone" aria-labelledby="bone-h" style="--c: var(--blue)">
     <div class="wrap">
       <div class="text">
-        <p class="eyebrow"><i></i><b>Surgical imaging</b><span>Gan Lab, UMD · with Dartmouth · 2026–now</span></p>
+        <p class="eyebrow"><i></i><b>Surgical imaging</b><span>Gan Lab, UMD · with Dartmouth</span></p>
         <h2 id="bone-h">Telling living bone from dead bone, mid-surgery</h2>
-        <p>Whether bone still has blood flow is often judged by eye in the operating room. With collaborators at Dartmouth, I'm turning white-light and ICG fluorescence images into a measurement instead.</p>
-        <p>My model fuses two fluorescence views to segment viable from non-viable bone, and reports a calibrated confidence that flags the cases it shouldn't be trusted on. Growing the dataset from 50 to 270 cases lifted held-out scores from 0.878 to 0.906.</p>
-        <dl class="facts">
-          <div><dt>Patient-level AUC</dt><dd>0.85<small>p = 0.0001</small></dd></div>
-          <div><dt>Calibration error</dt><dd>0.10 → 0.06</dd></div>
-          <div><dt>Next</dt><dd>ISBI 2027 paper<small>poster, Oct 2026 symposium</small></dd></div>
-        </dl>
+        <p>Surgeons often judge by eye whether bone still has blood flow. With collaborators at Dartmouth, I'm building models that read white-light and fluorescence images instead.</p>
+        <p>The model outlines living bone and flags the cases where it shouldn't be trusted, so a surgeon knows when to look twice.</p>
+        <p class="meta">Paper in progress for ISBI 2027</p>
       </div>
-      <figure class="viz" aria-label="Diagram of the model's outline overlapping the expert's outline at a Dice score of 0.89">
-        <div class="viz-top"><span>Overlap (Dice)</span><output id="dice-out">0.89</output></div>
-        <div class="stage">
-          <svg id="dice" viewBox="0 0 400 250" role="img" aria-label="Two nearly coinciding circles">
-            <defs><clipPath id="expert-clip"><circle id="clip-c" cx="191.78" cy="125" r="95"/></clipPath></defs>
-            <circle id="expert-c" cx="191.78" cy="125" r="95" fill="var(--ink)"/>
-            <circle id="model-c" cx="208.22" cy="125" r="95" fill="var(--blue)"/>
-            <circle id="agree-c" cx="208.22" cy="125" r="95" fill="var(--blue-t)" clip-path="url(#expert-clip)"/>
-          </svg>
-        </div>
-        <ul class="legend">
-          <li><i style="background: var(--blue-t)"></i>Both agree: viable bone</li>
-          <li><i style="background: var(--ink)"></i>Expert only</li>
-          <li><i style="background: var(--blue)"></i>Model only</li>
-        </ul>
-        <figcaption>Dice measures how much the model's outline overlaps the expert's. At 0.89 they nearly coincide; the thin slivers are where they disagree.</figcaption>
+      <figure class="toy" aria-label="Interactive fluorescence lens: move the pointer over the bone to reveal blood flow">
+        <div class="toy-top"><span class="hint">Move the lens to see what the camera sees</span><span class="status"><i></i><span id="lens-status">Scanning</span></span></div>
+        <div class="stage"><canvas id="lens" data-cursor="hide"></canvas></div>
+        <figcaption><span>A sketch of the idea, not patient data.</span></figcaption>
       </figure>
     </div>
   </section>
@@ -345,25 +351,16 @@ main { padding-bottom: 112px; }
   <section class="case band" id="nets" aria-labelledby="nets-h" style="--c: var(--yellow)">
     <div class="wrap">
       <div class="text">
-        <p class="eyebrow"><i></i><b>Cell mechanics</b><span>Aranda-Espinoza Lab, UMD · 2026–now</span></p>
+        <p class="eyebrow"><i></i><b>Cell mechanics</b><span>Aranda-Espinoza Lab, UMD</span></p>
         <h2 id="nets-h">How force makes immune cells cast their nets</h2>
-        <p>Neutrophils can fight infection by ejecting webs of DNA called NETs. Adhesion, confinement, and shear can all set this off, yet the field has barely modeled how.</p>
-        <p>I reviewed ~9,700 NET papers to map the gap, then ranked 11 open questions and 8 experiments the lab can run with equipment it already has. I proposed one framework linking all three triggers through calcium/calpain-driven failure of the nuclear envelope.</p>
-        <dl class="facts">
-          <div><dt>Mechanics papers</dt><dd>2.5%<small>of ~9,700 reviewed</small></dd></div>
-          <div><dt>Quantitative models</dt><dd>0.3%</dd></div>
-          <div><dt>Next</dt><dd>Stiffness dose-response<small>a curve no published study has fit</small></dd></div>
-        </dl>
+        <p>Neutrophils can fight infection by bursting and throwing out webs of DNA called NETs. Squeezing, sticking, and flow can all set this off, but almost nobody has modeled how.</p>
+        <p>I mapped the research to find the gaps and proposed one framework that ties the triggers together.</p>
+        <p class="meta">Next: testing it at the bench</p>
       </div>
-      <figure class="viz" aria-label="Dot plot of about 9,700 NET papers with the few mechanics and quantitative papers highlighted">
-        <div class="viz-top"><span>~9,700 NET papers</span><output id="nets-out">≈29 quantitative</output></div>
-        <div class="stage"><canvas id="papers" width="500" height="485"></canvas></div>
-        <ul class="legend">
-          <li><i style="background: var(--faint)"></i>Every other NET paper</li>
-          <li><i style="background: var(--ink)"></i>Addresses mechanics (≈243)</li>
-          <li><i style="background: var(--yellow)"></i>Quantitative model (≈29)</li>
-        </ul>
-        <figcaption>Each dot is one paper. Counts are rounded from 2.5% and 0.3% of ~9,700, and dot positions are illustrative.</figcaption>
+      <figure class="toy" aria-label="Interactive neutrophil: press and hold to squeeze it until it releases a NET">
+        <div class="toy-top"><span class="hint">Press and hold to squeeze the cell</span><span class="status"><i></i><span id="net-status">Resting</span></span></div>
+        <div class="stage"><canvas id="net" tabindex="0" data-cursor="Hold" aria-label="Neutrophil. Press and hold, or hold the space bar, to apply force."></canvas></div>
+        <figcaption><span>A sketch of the idea, not a simulation.</span><button class="mini" id="net-reset" type="button">New cell</button></figcaption>
       </figure>
     </div>
   </section>
@@ -375,81 +372,90 @@ main { padding-bottom: 112px; }
         <div class="also">
           <article>
             <h3>OrganoidEDF</h3>
-            <p>An open-source tool that turns organoid z-stacks into one all-in-focus image and depth map, built after I benchmarked 10 focus metrics across 990 images.</p>
+            <p>An open-source tool that turns blurry organoid z-stacks into one sharp image and a depth map.</p>
             <span class="where">Johns Hopkins Biomedical Engineering</span>
           </article>
           <article>
             <h3>Protein graph embeddings</h3>
-            <p>ESM-2 embeddings that feed a graph neural network predicting protein function links across a 160K-node biomedical knowledge graph.</p>
+            <p>Protein language model embeddings for a graph neural network that predicts what proteins do.</p>
             <span class="where">Vaisman Lab, George Mason University</span>
           </article>
           <article>
             <h3>Bias-aware advising chatbot</h3>
-            <p>Co-developed as 1 of 15 selected from 125+ applicants. The paper is on arXiv.</p>
+            <p>An AI advising chatbot built with bias in mind. The paper is on arXiv.</p>
             <span class="where">ESTEEM / SER-Quest, UMD</span>
           </article>
           <article>
             <h3>Wildfire simulator</h3>
-            <p>An interactive model on Hugging Face comparing flame spread under set drought and wind.</p>
+            <p>An interactive model of how drought and wind change the way wildfire spreads.</p>
             <span class="where">MobilizeGreen</span>
           </article>
         </div>
       </div>
       <div>
         <h2>Recognition</h2>
-        <p class="honors"><strong>Regeneron Biomedical Science Award</strong><span>·</span>AstraZeneca Exceptional Project Award<span>·</span>MRIGlobal 1st Place Project Award<span>·</span>HOSA 2nd Place, State Biomedical Debate<span>·</span>Science Montgomery 3rd Place<span>·</span>Metro Bethesda Rotary James Phang Aspiring Scientist Award</p>
+        <p class="honors"><strong>Regeneron Biomedical Science Award</strong><span>·</span>AstraZeneca Exceptional Project Award<span>·</span>MRIGlobal Project Award<span>·</span>HOSA State Biomedical Debate<span>·</span>Science Montgomery<span>·</span>Metro Bethesda Rotary James Phang Aspiring Scientist Award</p>
       </div>
     </div>
   </section>
-
 </main>
 
 <footer class="foot band" id="contact">
-  <svg class="blob splash s-red" data-seed="61" data-amp="0.07" viewBox="0 0 100 100" aria-hidden="true"><path/></svg>
-  <svg class="blob splash s-yellow" data-seed="29" data-amp="0.08" viewBox="0 0 100 100" aria-hidden="true"><path/></svg>
-  <svg class="blob splash s-blue" data-seed="7" data-amp="0.07" viewBox="0 0 100 100" aria-hidden="true"><path/></svg>
-  <svg class="blob splash s-white" data-seed="13" data-amp="0.09" viewBox="0 0 100 100" aria-hidden="true"><path/></svg>
+  <svg class="blob splash s-red" data-seed="61" data-amp="0.07" data-pull="28" viewBox="0 0 100 100" aria-hidden="true"><path/></svg>
+  <svg class="blob splash s-yellow" data-seed="29" data-amp="0.08" data-pull="44" viewBox="0 0 100 100" aria-hidden="true"><path/></svg>
+  <svg class="blob splash s-blue" data-seed="7" data-amp="0.07" data-pull="20" viewBox="0 0 100 100" aria-hidden="true"><path/></svg>
+  <svg class="blob splash s-white" data-seed="13" data-amp="0.09" data-pull="60" viewBox="0 0 100 100" aria-hidden="true"><path/></svg>
   <div class="wrap">
     <h2>Let's talk.</h2>
     <p class="lead">Collaborations, research questions, or opportunities. My inbox is open.</p>
     <div class="btns">
-      <button class="btn primary" id="copy-email" type="button" aria-label="Copy email address neilpanchal08@gmail.com">
-        <span id="copy-label">neilpanchal08@gmail.com</span>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+      <button class="btn primary" id="copy-email" type="button" data-magnet data-cursor="Copy" aria-label="Copy email address neilpanchal08@gmail.com">
+        <span><span id="copy-label">neilpanchal08@gmail.com</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg></span>
       </button>
-      <a class="btn" href="https://www.linkedin.com/in/neilpanch" target="_blank" rel="noopener">LinkedIn ↗</a>
-      <a class="btn" href="Neil_Panchal_Resume.pdf" target="_blank" rel="noopener">Full résumé (PDF) ↗</a>
+      <a class="btn" href="https://www.linkedin.com/in/neilpanch" target="_blank" rel="noopener" data-magnet data-cursor="Open"><span>LinkedIn ↗</span></a>
+      <a class="btn" href="Neil_Panchal_Resume.pdf" target="_blank" rel="noopener" data-magnet data-cursor="PDF"><span>Full résumé ↗</span></a>
     </div>
     <div class="foot-bottom"><span>© 2026 Neil Panchal</span><span>Clarksburg, MD</span></div>
   </div>
 </footer>
 
+<div id="cursor" aria-hidden="true"><div class="c-ring"><div class="c-body"><span class="c-label"></span></div></div><div class="c-dot"><i></i></div></div>
+<div id="peek" aria-hidden="true"><svg class="blob" data-seed="17" data-amp="0.08" viewBox="0 0 100 100"><path/></svg></div>
+
 <script>
 (function () {
   var root = document.documentElement;
-  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  function $(s) { return document.querySelector(s); }
   function tok(n) { return getComputedStyle(root).getPropertyValue(n).trim(); }
   function rgb(h) {
     h = h.replace('#', '');
     if (h.length === 3) h = h.split('').map(function (c) { return c + c; }).join('');
     return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
   }
-  function rng(s) { return function () { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; }; }
-  function ease(x) { return 1 - Math.pow(1 - x, 3); }
-  function onVisible(el, fn, threshold) {
-    if (!('IntersectionObserver' in window)) { fn(); return; }
-    var io = new IntersectionObserver(function (es) {
-      es.forEach(function (e) { if (e.isIntersecting) { io.disconnect(); fn(); } });
-    }, { threshold: threshold || 0.3 });
-    io.observe(el);
+  function mix(a, b, t, al) {
+    return 'rgba(' + Math.round(a[0] + (b[0] - a[0]) * t) + ',' + Math.round(a[1] + (b[1] - a[1]) * t) + ',' + Math.round(a[2] + (b[2] - a[2]) * t) + ',' + (al == null ? 1 : al) + ')';
   }
-  var redraws = [];
-  function themeChanged() { redraws.forEach(function (f) { f(); }); }
-  var mq = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
-  if (mq && mq.addEventListener) mq.addEventListener('change', themeChanged);
-  new MutationObserver(themeChanged).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+  function rng(s) { return function () { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; }; }
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  function lerp(a, b, t) { return a + (b - a) * t; }
 
-  /* ---- Morphing blobs (same seeded shapes as the Figma file) ---- */
+  // Theme colors, refreshed when the theme changes
+  var C = {};
+  var themeHooks = [];
+  function readColors() {
+    ['bg', 'ink', 'body', 'muted', 'faint', 'line', 'wash', 'chip', 'blue', 'red', 'yellow', 'blue-t', 'red-t', 'yellow-t', 'yellow-fg', 'lens-bg', 'lens-ink']
+      .forEach(function (k) { C[k] = rgb(tok('--' + k)); });
+    themeHooks.forEach(function (f) { f(); });
+  }
+  readColors();
+  var mq = window.matchMedia('(prefers-color-scheme: dark)');
+  if (mq.addEventListener) mq.addEventListener('change', readColors);
+  new MutationObserver(readColors).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+
+  /* ---------- Morphing blobs ---------- */
   function makeBlob(seed) {
     var n = 7, irr = 0.24, r = rng(seed), ph = rng(seed * 7 + 1), pts = [];
     for (var i = 0; i < n; i++) {
@@ -481,132 +487,483 @@ main { padding-bottom: 112px; }
     path.setAttribute('d', blobPath(pts, 0, amp));
     if (amp && !reduce) live.push({ el: svg, path: path, pts: pts, amp: amp, on: true });
   });
-  if (live.length) {
-    if ('IntersectionObserver' in window) {
-      var bio = new IntersectionObserver(function (es) {
-        es.forEach(function (e) { live.forEach(function (b) { if (b.el === e.target) b.on = e.isIntersecting; }); });
-      });
-      live.forEach(function (b) { bio.observe(b.el); });
-    }
-    var t0 = performance.now();
-    (function tick(now) {
-      var t = (now - t0) / 1000 * 0.9;
-      if (!document.hidden) live.forEach(function (b) { if (b.on) b.path.setAttribute('d', blobPath(b.pts, t, b.amp)); });
-      requestAnimationFrame(tick);
-    })(t0);
+  if (live.length && 'IntersectionObserver' in window) {
+    var bio = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { live.forEach(function (b) { if (b.el === e.target) b.on = e.isIntersecting; }); });
+    });
+    live.forEach(function (b) { if (b.el.closest('#peek') == null) bio.observe(b.el); });
   }
 
-  /* ---- NeKtar-1: 100,000 bacteria, one survivor ---- */
-  (function () {
-    var cv = document.getElementById('kill'); if (!cv) return;
-    var W = 400, H = 250, N = W * H, ctx = cv.getContext('2d'), img = ctx.createImageData(W, H), d = img.data;
-    var out = document.getElementById('kill-count');
-    var r = rng(4242), death = new Float32Array(N), shade = new Float32Array(N);
-    for (var i = 0; i < N; i++) { death[i] = r(); shade[i] = 0.25 + 0.75 * r(); }
-    var survivor = Math.round(H * 0.382) * W + Math.round(W * 0.621);
-    var p = 0, bg, fg, hi, running = false;
-    function colors() { bg = rgb(tok('--bg')); fg = rgb(tok('--muted')); hi = rgb(tok('--red')); }
-    function draw() {
-      var alive = 0;
-      for (var i = 0, k = 0; i < N; i++, k += 4) {
-        if (i === survivor) { d[k] = hi[0]; d[k + 1] = hi[1]; d[k + 2] = hi[2]; d[k + 3] = 255; alive++; continue; }
-        if (p <= death[i]) alive++;
-        var life = p <= death[i] ? 1 : Math.max(0, 1 - (p - death[i]) / 0.05);
-        var a = shade[i] * life * 0.85;
-        d[k] = bg[0] + (fg[0] - bg[0]) * a;
-        d[k + 1] = bg[1] + (fg[1] - bg[1]) * a;
-        d[k + 2] = bg[2] + (fg[2] - bg[2]) * a;
-        d[k + 3] = 255;
+  /* ---------- Pointer state shared by the page ---------- */
+  var M = { x: -999, y: -999, seen: false };
+  window.addEventListener('pointermove', function (e) { if (e.pointerType === 'mouse') { M.x = e.clientX; M.y = e.clientY; M.seen = true; } }, { passive: true });
+
+  /* ---------- Custom cursor ---------- */
+  var cur = $('#cursor'), ring = cur.querySelector('.c-ring'), body = cur.querySelector('.c-body'), dot = cur.querySelector('.c-dot'), lab = cur.querySelector('.c-label');
+  var R = { x: -999, y: -999, vx: 0, vy: 0 };
+  var cursorOn = fine && !reduce;
+  if (cursorOn) {
+    root.classList.add('cursor-on');
+    cur.classList.add('out');
+    window.addEventListener('pointermove', function first(e) {
+      if (e.pointerType !== 'mouse') return;
+      cur.classList.remove('out'); window.removeEventListener('pointermove', first);
+    });
+    document.addEventListener('mouseover', function (e) {
+      var t = e.target;
+      var el = t.closest('[data-cursor], a, button');
+      var mode = el ? (el.getAttribute('data-cursor') || 'link') : '';
+      cur.classList.remove('link', 'labeled', 'hide');
+      if (mode === 'hide') cur.classList.add('hide');
+      else if (mode === 'link') cur.classList.add('link');
+      else if (mode) { cur.classList.add('labeled'); lab.textContent = mode; }
+      var inFoot = t.closest('.foot');
+      var colored = t.closest('[style*="--c"]');
+      var c = inFoot ? tok('--foot-fg') : (colored ? getComputedStyle(colored).getPropertyValue('--c').trim() : tok('--ink'));
+      cur.style.setProperty('--cur', c);
+      cur.style.setProperty('--cur-fg', inFoot ? tok('--foot-bg') : (colored && mode && mode !== 'link' && mode !== 'hide' ? '#ffffff' : tok('--bg')));
+      if (colored && !inFoot && cur.classList.contains('labeled')) {
+        var cc = getComputedStyle(colored).getPropertyValue('--c').trim();
+        if (cc.toLowerCase() === tok('--yellow').toLowerCase()) cur.style.setProperty('--cur-fg', '#191919');
       }
-      ctx.putImageData(img, 0, 0);
-      out.textContent = alive.toLocaleString('en-US');
-    }
-    function run() {
-      if (running) return;
-      if (reduce) { p = 1.06; draw(); return; }
-      running = true; p = 0;
-      var start = performance.now(), D = 2800;
-      (function f(now) {
-        var x = Math.min(1, (now - start) / D);
-        p = ease(x) * 1.06; draw();
-        if (x < 1) requestAnimationFrame(f); else running = false;
-      })(start);
-    }
-    colors(); draw();
-    redraws.push(function () { colors(); draw(); });
-    onVisible(cv, run, 0.45);
-    document.getElementById('kill-replay').addEventListener('click', run);
-  })();
+    });
+    document.addEventListener('mousedown', function (e) {
+      cur.classList.add('down');
+      var s = document.createElement('div');
+      s.className = 'split';
+      s.style.transform = 'translate(' + e.clientX + 'px,' + e.clientY + 'px)';
+      s.style.setProperty('--c', cur.style.getPropertyValue('--cur') || tok('--ink'));
+      s.innerHTML = '<i></i><i></i>';
+      document.body.appendChild(s);
+      setTimeout(function () { s.remove(); }, 650);
+    });
+    document.addEventListener('mouseup', function () { cur.classList.remove('down'); });
+    document.addEventListener('mouseleave', function () { cur.classList.add('out'); });
+    document.addEventListener('mouseenter', function () { cur.classList.remove('out'); });
+  }
 
-  /* ---- Bone imaging: Dice overlap of two outlines ---- */
+  /* ---------- Work index: preview blob follows the pointer ---------- */
+  var peek = $('#peek'), P = { x: 0, y: 0 };
+  if (fine && !reduce) {
+    document.querySelectorAll('.row').forEach(function (row) {
+      row.addEventListener('mouseenter', function () {
+        peek.style.setProperty('--t', getComputedStyle(row).getPropertyValue('--t'));
+        if (!peek.classList.contains('on')) { P.x = M.x; P.y = M.y; }
+        peek.classList.add('on');
+      });
+      row.addEventListener('mouseleave', function () { peek.classList.remove('on'); });
+    });
+  }
+
+  /* ---------- Hero cells drift away from the pointer ---------- */
+  var cells = [].slice.call(document.querySelectorAll('.cell')).map(function (el) { return { el: el, x: 0, y: 0 }; });
+
+  /* ---------- Footer splashes lean toward the pointer ---------- */
+  var foot = $('.foot');
+  if (fine && !reduce) {
+    foot.addEventListener('mousemove', function (e) {
+      var r = foot.getBoundingClientRect();
+      var nx = (e.clientX - r.left) / r.width - 0.5, ny = (e.clientY - r.top) / r.height - 0.5;
+      foot.querySelectorAll('.splash').forEach(function (s) {
+        var k = +s.getAttribute('data-pull');
+        s.style.transform = 'translate(' + (nx * k * 2).toFixed(1) + 'px,' + (ny * k * 2).toFixed(1) + 'px)';
+      });
+    });
+    foot.addEventListener('mouseleave', function () { foot.querySelectorAll('.splash').forEach(function (s) { s.style.transform = ''; }); });
+
+    // Magnetic buttons
+    document.querySelectorAll('[data-magnet]').forEach(function (b) {
+      var inner = b.firstElementChild;
+      b.addEventListener('mousemove', function (e) {
+        var r = b.getBoundingClientRect();
+        var dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
+        b.style.transform = 'translate(' + (dx * 0.28).toFixed(1) + 'px,' + (dy * 0.4).toFixed(1) + 'px)';
+        if (inner) inner.style.transform = 'translate(' + (dx * 0.12).toFixed(1) + 'px,' + (dy * 0.16).toFixed(1) + 'px)';
+      });
+      b.addEventListener('mouseleave', function () { b.style.transform = ''; if (inner) inner.style.transform = ''; });
+    });
+  }
+
+  /* ---------- Headline: "in code" scrambles into DNA letters, "the bench" ripples ---------- */
+  var dna = $('#dna');
+  if (dna && !reduce) {
+    var orig = dna.textContent, busy = false;
+    dna.addEventListener('mouseenter', function () {
+      if (busy) return; busy = true;
+      var frame = 0, letters = 'ACGT';
+      var id = setInterval(function () {
+        frame++;
+        dna.textContent = orig.split('').map(function (ch, i) {
+          if (ch === ' ' || ch === ',') return ch;
+          return i < frame / 2 ? orig[i] : letters[Math.floor(Math.random() * 4)];
+        }).join('');
+        if (frame / 2 > orig.length) { clearInterval(id); dna.textContent = orig; busy = false; }
+      }, 45);
+    });
+  }
+  var wave = $('#wave');
+  if (wave) {
+    // Letters are grouped per word so lines still break only between words.
+    var words = wave.textContent.split(' '), n = 0;
+    wave.textContent = '';
+    words.forEach(function (w, wi) {
+      var ws = document.createElement('span'); ws.className = 'wd';
+      w.split('').forEach(function (ch) {
+        var s = document.createElement('span'); s.className = 'ch'; s.style.setProperty('--i', n++); s.textContent = ch; ws.appendChild(s);
+      });
+      wave.appendChild(ws);
+      if (wi < words.length - 1) { wave.appendChild(document.createTextNode(' ')); n++; }
+    });
+  }
+
+  /* ---------- One animation loop for cursor, preview, cells and blobs ---------- */
+  var t0 = performance.now();
+  (function tick(now) {
+    var t = (now - t0) / 1000;
+    if (cursorOn && M.seen) {
+      var nx = lerp(R.x === -999 ? M.x : R.x, M.x, 0.2), ny = lerp(R.y === -999 ? M.y : R.y, M.y, 0.2);
+      R.vx = nx - (R.x === -999 ? nx : R.x); R.vy = ny - (R.y === -999 ? ny : R.y); R.x = nx; R.y = ny;
+      var sp = Math.min(Math.hypot(R.vx, R.vy) * 0.035, 0.5), ang = Math.atan2(R.vy, R.vx) * 180 / Math.PI;
+      ring.style.transform = 'translate(' + R.x.toFixed(1) + 'px,' + R.y.toFixed(1) + 'px)';
+      body.style.transform = cur.classList.contains('labeled') ? '' : 'rotate(' + ang.toFixed(1) + 'deg) scale(' + (1 + sp).toFixed(3) + ',' + (1 - sp * 0.55).toFixed(3) + ')';
+      dot.style.transform = 'translate(' + M.x + 'px,' + M.y + 'px)';
+    }
+    if (peek.classList.contains('on')) {
+      P.x = lerp(P.x, M.x, 0.12); P.y = lerp(P.y, M.y, 0.12);
+      peek.style.transform = 'translate(' + P.x.toFixed(1) + 'px,' + P.y.toFixed(1) + 'px)';
+    }
+    if (fine && !reduce && cells.length && M.seen) {
+      cells.forEach(function (c) {
+        var r = c.el.getBoundingClientRect();
+        var cx = r.left + r.width / 2 - c.x, cy = r.top + r.height / 2 - c.y;
+        var dx = cx - M.x, dy = cy - M.y, d = Math.hypot(dx, dy) || 1, reach = 200 + r.width / 2;
+        var push = d < reach ? (reach - d) * 0.45 : 0;
+        c.x = lerp(c.x, dx / d * push, 0.08); c.y = lerp(c.y, dy / d * push, 0.08);
+        c.el.style.transform = 'translate(' + c.x.toFixed(1) + 'px,' + c.y.toFixed(1) + 'px)';
+      });
+    }
+    if (!document.hidden) live.forEach(function (b) { if (b.on || b.el.closest('#peek')) b.path.setAttribute('d', blobPath(b.pts, t * 0.9, b.amp)); });
+    requestAnimationFrame(tick);
+  })(t0);
+
+  /* ---------- Canvas helpers ---------- */
+  function setupCanvas(cv, onFit) {
+    var o = { w: 0, h: 0, dpr: 1, ctx: cv.getContext('2d') };
+    function fit() {
+      var r = cv.getBoundingClientRect();
+      o.dpr = Math.min(2, window.devicePixelRatio || 1);
+      o.w = Math.max(1, r.width); o.h = Math.max(1, r.height);
+      cv.width = Math.round(o.w * o.dpr); cv.height = Math.round(o.h * o.dpr);
+      o.ctx.setTransform(o.dpr, 0, 0, o.dpr, 0, 0);
+      if (onFit) onFit(o);
+    }
+    // First fit runs after the caller has stored the returned object.
+    if ('ResizeObserver' in window) new ResizeObserver(fit).observe(cv);
+    else setTimeout(fit, 0);
+    return o;
+  }
+  function runWhileVisible(el, step) {
+    var on = false, last = 0, raf = 0;
+    function frame(now) {
+      var dt = Math.min(0.05, (now - last) / 1000 || 0.016); last = now;
+      step(dt, now / 1000);
+      if (on) raf = requestAnimationFrame(frame);
+    }
+    if (!('IntersectionObserver' in window)) { on = true; last = performance.now(); raf = requestAnimationFrame(frame); return; }
+    new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (e.isIntersecting && !on) { on = true; last = performance.now(); raf = requestAnimationFrame(frame); }
+        else if (!e.isIntersecting && on) { on = false; cancelAnimationFrame(raf); }
+      });
+    }).observe(el);
+  }
+  function localPoint(cv, e) { var r = cv.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
+  function capsule(ctx, len, w) {
+    var r = w / 2, h = len / 2 - r;
+    ctx.beginPath();
+    ctx.moveTo(-h, -r); ctx.lineTo(h, -r); ctx.arc(h, 0, r, -Math.PI / 2, Math.PI / 2);
+    ctx.lineTo(-h, r); ctx.arc(-h, 0, r, Math.PI / 2, Math.PI * 1.5); ctx.closePath();
+  }
+
+  /* ---------- NeKtar-1: clear bacteria from a dish ---------- */
   (function () {
-    var R = 95, CX = 200, D_FINAL = 16.44, D_START = 175;
-    var ex = document.getElementById('expert-c'), cl = document.getElementById('clip-c');
-    var mo = document.getElementById('model-c'), ag = document.getElementById('agree-c');
-    var out = document.getElementById('dice-out');
-    if (!ex) return;
-    function dice(dd) { var x = dd / (2 * R); if (x >= 1) return 0; return (2 / Math.PI) * (Math.acos(x) - x * Math.sqrt(1 - x * x)); }
-    function set(dd) {
-      var a = (CX - dd / 2).toFixed(2), b = (CX + dd / 2).toFixed(2);
-      ex.setAttribute('cx', a); cl.setAttribute('cx', a); mo.setAttribute('cx', b); ag.setAttribute('cx', b);
-      out.textContent = dice(dd).toFixed(2);
+    var cv = $('#dish'); if (!cv) return;
+    var bugs = [], bits = [], rr = rng(31), Pt = { x: 0, y: 0, last: -99, inside: false }, status = $('#dish-status'), lastStatus = '';
+    var S = setupCanvas(cv, function () { if (!bugs.length) seed(); draw(performance.now() / 1000); });
+    function dish() { return { cx: S.w / 2, cy: S.h / 2, r: Math.min(S.w, S.h) / 2 - 12 }; }
+    function place(b, fresh) {
+      var d = dish(), a = rr() * Math.PI * 2, rad = Math.sqrt(rr()) * (d.r - 20);
+      b.x = d.cx + Math.cos(a) * rad; b.y = d.cy + Math.sin(a) * rad;
+      b.ang = rr() * Math.PI; b.len = 13 + rr() * 9; b.w = 6 + rr() * 1.6;
+      b.vx = (rr() - 0.5) * 10; b.vy = (rr() - 0.5) * 10; b.spin = (rr() - 0.5) * 0.7;
+      b.state = fresh ? 'alive' : 'grow'; b.g = fresh ? 1 : 0; b.hit = 0;
+      return b;
     }
-    if (reduce) return;
-    onVisible(document.getElementById('dice'), function () {
-      var start = performance.now(), T = 2000;
-      (function f(now) {
-        var x = Math.min(1, (now - start) / T);
-        set(D_START + (D_FINAL - D_START) * ease(x));
-        if (x < 1) requestAnimationFrame(f);
-      })(start);
-    }, 0.1);
+    function seed() { var n = Math.round(clamp(S.w * S.h / 2300, 40, 110)); for (var i = 0; i < n; i++) bugs.push(place({}, true)); }
+    function burst(b) {
+      for (var i = 0; i < 7; i++) { var a = rr() * Math.PI * 2, s = 20 + rr() * 50; bits.push({ x: b.x, y: b.y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: 1 }); }
+    }
+    function step(dt, t) {
+      if (!bugs.length) return;
+      var d = dish(), Rr = Math.max(34, d.r * 0.26), active = Pt.inside && t - Pt.last < 3;
+      var alive = 0;
+      bugs.forEach(function (b) {
+        if (b.state === 'dead') { b.g -= dt; if (b.g <= 0) place(b, false); return; }
+        alive++;
+        if (b.state === 'grow') { b.g = Math.min(1, b.g + dt * 0.9); if (b.g >= 1) b.state = 'alive'; }
+        if (!reduce) {
+          b.vx += (rr() - 0.5) * 36 * dt; b.vy += (rr() - 0.5) * 36 * dt; b.vx *= 0.985; b.vy *= 0.985;
+          b.x += b.vx * dt; b.y += b.vy * dt; b.ang += b.spin * dt;
+        }
+        var dx = b.x - d.cx, dy = b.y - d.cy, dist = Math.hypot(dx, dy), lim = d.r - 14;
+        if (dist > lim) { b.x = d.cx + dx / dist * lim; b.y = d.cy + dy / dist * lim; b.vx *= -0.6; b.vy *= -0.6; }
+        if (active && Math.hypot(b.x - Pt.x, b.y - Pt.y) < Rr) {
+          b.hit += dt * 2.4;
+          if (b.hit >= 1) { burst(b); b.state = 'dead'; b.g = 2.5 + rr() * 4; }
+        } else b.hit = Math.max(0, b.hit - dt * 0.8);
+      });
+      bits = bits.filter(function (p) { p.x += p.vx * dt; p.y += p.vy * dt; p.vx *= 0.94; p.vy *= 0.94; p.life -= dt * 1.8; return p.life > 0; });
+      var f = alive / bugs.length;
+      var s = f > 0.85 ? 'Colony thriving' : f > 0.55 ? 'Colony thinning' : f > 0.2 ? 'Mostly cleared' : 'Cleared';
+      if (s !== lastStatus) { status.textContent = s; lastStatus = s; }
+      draw(t, active, Rr);
+    }
+    function draw(t, active, Rr) {
+      var ctx = S.ctx, d = dish();
+      ctx.clearRect(0, 0, S.w, S.h);
+      ctx.beginPath(); ctx.arc(d.cx, d.cy, d.r, 0, Math.PI * 2);
+      ctx.fillStyle = mix(C.bg, C.bg, 0); ctx.fill();
+      ctx.lineWidth = 2; ctx.strokeStyle = mix(C.line, C.line, 0); ctx.stroke();
+      ctx.beginPath(); ctx.arc(d.cx, d.cy, d.r - 6, 0, Math.PI * 2); ctx.lineWidth = 1; ctx.strokeStyle = mix(C.line, C.line, 0, 0.7); ctx.stroke();
+      bugs.forEach(function (b) {
+        if (b.state === 'dead') return;
+        ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(b.ang);
+        var g = b.state === 'grow' ? b.g : 1, k = clamp(b.hit, 0, 1);
+        ctx.scale(g * (1 - k * 0.25), g * (1 - k * 0.25));
+        capsule(ctx, b.len, b.w);
+        ctx.fillStyle = mix(C.muted, C.red, k, 0.75 * g);
+        ctx.fill(); ctx.restore();
+      });
+      bits.forEach(function (p) { ctx.beginPath(); ctx.arc(p.x, p.y, 1.8 * p.life + 0.6, 0, Math.PI * 2); ctx.fillStyle = mix(C.red, C.red, 0, p.life); ctx.fill(); });
+      if (active) {
+        var gr = ctx.createRadialGradient(Pt.x, Pt.y, 0, Pt.x, Pt.y, Rr);
+        gr.addColorStop(0, mix(C.red, C.red, 0, 0.26)); gr.addColorStop(1, mix(C.red, C.red, 0, 0));
+        ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(Pt.x, Pt.y, Rr, 0, Math.PI * 2); ctx.fill();
+        for (var i = 0; i < 12; i++) {
+          var a = t * (1.2 + (i % 3) * 0.3) + i * 0.52, rad = Rr * (0.35 + 0.5 * ((i * 37) % 10) / 10);
+          ctx.beginPath(); ctx.arc(Pt.x + Math.cos(a) * rad, Pt.y + Math.sin(a) * rad, 2.2, 0, Math.PI * 2);
+          ctx.fillStyle = mix(C.red, C.red, 0, 0.9); ctx.fill();
+        }
+        ctx.beginPath(); ctx.arc(Pt.x, Pt.y, 4, 0, Math.PI * 2); ctx.fillStyle = mix(C.red, C.red, 0); ctx.fill();
+      }
+    }
+    function move(e) { var p = localPoint(cv, e); Pt.x = p.x; Pt.y = p.y; Pt.last = performance.now() / 1000; Pt.inside = true; }
+    cv.addEventListener('pointermove', move);
+    cv.addEventListener('pointerdown', move);
+    cv.addEventListener('pointerleave', function () { Pt.inside = false; });
+    themeHooks.push(function () { draw(performance.now() / 1000); });
+    runWhileVisible(cv, step);
   })();
 
-  /* ---- NET mechanics: ~9,700 papers ---- */
+  /* ---------- Bone viability: a fluorescence lens ---------- */
   (function () {
-    var cv = document.getElementById('papers'); if (!cv) return;
-    var COLS = 100, ROWS = 97, CELL = 5, N = COLS * ROWS, MECH = 243, QUANT = 29;
-    var dpr = Math.min(2, window.devicePixelRatio || 1);
-    cv.width = COLS * CELL * dpr; cv.height = ROWS * CELL * dpr;
-    var ctx = cv.getContext('2d'); ctx.scale(dpr, dpr);
-    var r = rng(9700), idx = [];
-    for (var i = 0; i < N; i++) idx.push(i);
-    for (var j = N - 1; j > 0; j--) { var k = Math.floor(r() * (j + 1)); var t = idx[j]; idx[j] = idx[k]; idx[k] = t; }
-    var mech = idx.slice(0, MECH), quant = idx.slice(MECH, MECH + QUANT);
-    var out = document.getElementById('nets-out');
-    var prog = 1;
-    function dot(i, rad, col) {
-      var x = (i % COLS) * CELL + CELL / 2, y = Math.floor(i / COLS) * CELL + CELL / 2;
-      ctx.beginPath(); ctx.arc(x, y, rad, 0, Math.PI * 2); ctx.fillStyle = col; ctx.fill();
+    var cv = $('#lens'); if (!cv) return;
+    var status = $('#lens-status'), lastStatus = '', G = null, Lp = { x: 0, y: 0 }, Pt = { x: 0, y: 0, last: -99 }, speck = [];
+    var S = setupCanvas(cv, function () { G = geo(); Lp.x = G.cx + G.L * 0.3; Lp.y = G.cy; draw(performance.now() / 1000); });
+    function geo() {
+      var w = S.w, h = S.h, cx = w / 2, cy = h / 2, L = w * 0.6, T = h * 0.15, kr = h * 0.115;
+      var bone = new Path2D();
+      bone.rect(cx - L / 2, cy - T / 2, L, T);
+      [[-1, -1], [-1, 1], [1, -1], [1, 1]].forEach(function (s) {
+        var p = new Path2D(); p.arc(cx + s[0] * L / 2, cy + s[1] * kr * 0.62, kr, 0, Math.PI * 2); bone.addPath(p);
+      });
+      var dead = new Path2D(), dr = rng(7), n = 9, dc = { x: cx + L * 0.3, y: cy + T * 0.05 }, rad = h * 0.12, pts = [];
+      for (var i = 0; i < n; i++) { var a = i / n * Math.PI * 2; var rr2 = rad * (0.75 + dr() * 0.5); pts.push([dc.x + Math.cos(a) * rr2 * 1.3, dc.y + Math.sin(a) * rr2 * 0.8]); }
+      dead.moveTo((pts[0][0] + pts[n - 1][0]) / 2, (pts[0][1] + pts[n - 1][1]) / 2);
+      for (var j = 0; j < n; j++) { var p1 = pts[j], p2 = pts[(j + 1) % n]; dead.quadraticCurveTo(p1[0], p1[1], (p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2); }
+      dead.closePath();
+      var sr = rng(11); speck = [];
+      for (var k = 0; k < 140; k++) speck.push([cx - L / 2 - kr + sr() * (L + kr * 2), cy - kr * 1.6 + sr() * kr * 3.2, sr()]);
+      return { cx: cx, cy: cy, L: L, T: T, kr: kr, bone: bone, dead: dead, LR: clamp(Math.min(w, h) * 0.2, 46, 84) };
     }
-    function draw() {
-      var bg = tok('--bg'), faint = tok('--faint'), ink = tok('--ink'), yel = tok('--yellow');
-      ctx.fillStyle = bg; ctx.fillRect(0, 0, COLS * CELL, ROWS * CELL);
-      ctx.globalAlpha = 0.45;
-      for (var i = 0; i < N; i++) dot(i, 1.15, faint);
-      ctx.globalAlpha = 1;
-      var m = Math.round(MECH * Math.min(1, prog / 0.6));
-      for (var a = 0; a < m; a++) dot(mech[a], 1.6, ink);
-      var qp = Math.max(0, Math.min(1, (prog - 0.6) / 0.4));
-      var q = Math.round(QUANT * qp);
-      for (var b = 0; b < q; b++) dot(quant[b], 2.9, yel);
-      out.textContent = prog < 0.6 ? '≈' + m + ' mechanics' : '≈' + q + ' quantitative';
+    function inPath(path, x, y) { return S.ctx.isPointInPath(path, x * S.dpr, y * S.dpr); }
+    function step(dt, t) {
+      if (!G) return;
+      var idle = t - Pt.last > 2;
+      var tx, ty, k;
+      if (!idle) { tx = Pt.x; ty = Pt.y; k = 0.35; }
+      else if (!reduce) { tx = G.cx + G.L * 0.48 * Math.sin(t * 0.45); ty = G.cy + G.kr * 0.9 * Math.sin(t * 0.9); k = 0.05; }
+      else { tx = Lp.x; ty = Lp.y; k = 1; }
+      Lp.x = lerp(Lp.x, tx, k); Lp.y = lerp(Lp.y, ty, k);
+      var s = inPath(G.dead, Lp.x, Lp.y) ? 'No blood flow' : inPath(G.bone, Lp.x, Lp.y) ? 'Living bone' : 'Soft tissue';
+      if (s !== lastStatus) { status.textContent = s; lastStatus = s; }
+      draw(t);
     }
-    draw();
-    redraws.push(draw);
-    if (reduce) return;
-    onVisible(cv, function () {
-      var start = performance.now(), T = 2600;
-      (function f(now) {
-        var x = Math.min(1, (now - start) / T);
-        prog = ease(x); draw();
-        if (x < 1) requestAnimationFrame(f);
-      })(start);
-    }, 0.1);
+    function draw(t) {
+      if (!G) return;
+      var ctx = S.ctx;
+      ctx.clearRect(0, 0, S.w, S.h);
+      ctx.fillStyle = mix(C.wash, C.wash, 0); ctx.fillRect(0, 0, S.w, S.h);
+      ctx.fillStyle = mix(C.wash, C.red, 0.06); ctx.beginPath(); ctx.ellipse(G.cx, G.cy, G.L * 0.72, G.kr * 2.6, 0, 0, Math.PI * 2); ctx.fill();
+      // Stroke first, then fill, so only the outer silhouette of the bone shows.
+      ctx.lineWidth = 3; ctx.lineJoin = 'round'; ctx.strokeStyle = mix(C.faint, C.faint, 0, 0.7); ctx.stroke(G.bone);
+      ctx.fillStyle = mix(C.bg, C.ink, 0.08); ctx.fill(G.bone);
+      ctx.fillStyle = mix(C.bg, C.ink, 0.11); ctx.fill(G.dead);
+      // Lens view
+      ctx.save();
+      ctx.beginPath(); ctx.arc(Lp.x, Lp.y, G.LR, 0, Math.PI * 2); ctx.clip();
+      ctx.fillStyle = mix(C['lens-bg'], C['lens-bg'], 0); ctx.fillRect(0, 0, S.w, S.h);
+      ctx.shadowColor = mix(C.blue, C.blue, 0, 0.9); ctx.shadowBlur = 22;
+      ctx.fillStyle = mix(C.blue, C['lens-ink'], 0.12, 0.95); ctx.fill(G.bone);
+      ctx.shadowBlur = 0;
+      speck.forEach(function (p) { ctx.fillStyle = mix(C['lens-ink'], C['lens-ink'], 0, 0.12 + p[2] * 0.2); ctx.fillRect(p[0], p[1], 1.5, 1.5); });
+      ctx.fillStyle = mix(C['lens-bg'], C.blue, 0.08); ctx.fill(G.dead);
+      ctx.setLineDash([5, 4]); ctx.lineWidth = 1.5; ctx.strokeStyle = mix(C['lens-ink'], C['lens-ink'], 0, 0.9); ctx.stroke(G.dead); ctx.setLineDash([]);
+      ctx.restore();
+      ctx.beginPath(); ctx.arc(Lp.x, Lp.y, G.LR, 0, Math.PI * 2); ctx.lineWidth = 2; ctx.strokeStyle = mix(C.ink, C.ink, 0); ctx.stroke();
+      ctx.lineWidth = 1.5;
+      [[0, -1], [0, 1], [-1, 0], [1, 0]].forEach(function (v) {
+        ctx.beginPath(); ctx.moveTo(Lp.x + v[0] * (G.LR + 3), Lp.y + v[1] * (G.LR + 3)); ctx.lineTo(Lp.x + v[0] * (G.LR + 10), Lp.y + v[1] * (G.LR + 10)); ctx.stroke();
+      });
+    }
+    function move(e) { var p = localPoint(cv, e); Pt.x = p.x; Pt.y = p.y; Pt.last = performance.now() / 1000; }
+    cv.addEventListener('pointermove', move);
+    cv.addEventListener('pointerdown', move);
+    themeHooks.push(function () { draw(performance.now() / 1000); });
+    runWhileVisible(cv, step);
   })();
 
-  /* ---- Copy email ---- */
-  var btn = document.getElementById('copy-email'), label = document.getElementById('copy-label');
+  /* ---------- NET mechanics: squeeze a neutrophil until it casts a net ---------- */
+  (function () {
+    var cv = $('#net'); if (!cv) return;
+    var status = $('#net-status'), lastStatus = '', state = 'cell', p = 0, pressing = false, bt = 0, strands = [], caught = [], frags = [], gran = [], fade = 1;
+    var S = setupCanvas(cv, function () { makeGranules(); draw(performance.now() / 1000); });
+    function R0() { return Math.min(S.w, S.h) * 0.2; }
+    function makeGranules() { var r = rng(5); gran = []; for (var i = 0; i < 26; i++) { var a = r() * Math.PI * 2, d = Math.sqrt(r()) * 0.82; gran.push([Math.cos(a) * d, Math.sin(a) * d]); } }
+    function release() {
+      var r = rng(Math.floor(performance.now()) % 9973 + 1), R = R0(), cx = S.w / 2, cy = S.h / 2, n = 24;
+      strands = []; caught = []; frags = [];
+      for (var i = 0; i < n; i++) {
+        var a = i / n * Math.PI * 2 + (r() - 0.5) * 0.35, len = R * (1.5 + r() * 1.1), pts = [[cx, cy]], seg = 16, off = 0;
+        for (var s = 1; s <= seg; s++) {
+          off += (r() - 0.5) * 0.5; var d = len * s / seg;
+          pts.push([cx + Math.cos(a + off * 0.25) * d, cy + Math.sin(a + off * 0.25) * d]);
+        }
+        strands.push(pts);
+        if (r() < 0.45) {
+          var m = 6 + Math.floor(r() * 6), b = [pts[m]], ba = a + (r() < 0.5 ? 0.7 : -0.7), bl = len * 0.35;
+          for (var q = 1; q <= 7; q++) b.push([pts[m][0] + Math.cos(ba) * bl * q / 7 + (r() - 0.5) * 3, pts[m][1] + Math.sin(ba) * bl * q / 7 + (r() - 0.5) * 3]);
+          strands.push(b);
+        }
+        if (r() < 0.4) { var at = pts[8 + Math.floor(r() * 7)]; caught.push({ x: at[0], y: at[1], ang: r() * Math.PI, len: 11 + r() * 6 }); }
+      }
+      for (var f = 0; f < 12; f++) { var fa = f / 12 * Math.PI * 2; frags.push({ a: fa, v: R * (1.2 + r()), life: 1 }); }
+    }
+    function reset() { state = 'cell'; p = 0; bt = 0; fade = 0; strands = []; caught = []; frags = []; }
+    function step(dt, t) {
+      if (state === 'cell') {
+        fade = Math.min(1, fade + dt * 2);
+        if (pressing) p = Math.min(1, p + dt / 1.4); else p = Math.max(0, p - dt * 0.9);
+        if (p >= 1) { state = 'net'; bt = 0; release(); }
+      } else {
+        bt += dt;
+        frags.forEach(function (f) { f.life = Math.max(0, f.life - dt * 1.6); });
+        if (bt > 6 && !pressing) reset();
+      }
+      var s = state === 'net' ? 'NET released' : p > 0.04 ? 'Under pressure' : 'Resting';
+      if (s !== lastStatus) { status.textContent = s; lastStatus = s; }
+      draw(t);
+    }
+    function ease(x) { return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2; }
+    function draw(t) {
+      var ctx = S.ctx, R = R0(), cx = S.w / 2, cy = S.h / 2;
+      ctx.clearRect(0, 0, S.w, S.h);
+      ctx.fillStyle = mix(C.wash, C.wash, 0); ctx.fillRect(0, 0, S.w, S.h);
+      if (state === 'cell') {
+        var e = ease(p), sx = 1 + 0.32 * e, sy = 1 - 0.42 * e, wob = reduce ? 0 : 1;
+        // confining plates
+        if (p > 0.01) {
+          var pa = Math.min(1, p * 4), gap = R * sy + 6;
+          ctx.fillStyle = mix(C.muted, C.muted, 0, 0.5 * pa);
+          ctx.fillRect(cx - R * 1.9, cy - gap - 9, R * 3.8, 9);
+          ctx.fillRect(cx - R * 1.9, cy + gap, R * 3.8, 9);
+        }
+        ctx.save(); ctx.globalAlpha = fade; ctx.translate(cx, cy);
+        // membrane
+        var n = 12, pts = [];
+        for (var i = 0; i < n; i++) {
+          var a = i / n * Math.PI * 2, rad = R * (1 + wob * 0.045 * Math.sin(t * 1.6 + i * 1.7) + wob * 0.03 * Math.sin(t * 2.3 + i * 0.9));
+          pts.push([Math.cos(a) * rad * sx, Math.sin(a) * rad * sy]);
+        }
+        ctx.beginPath(); ctx.moveTo((pts[0][0] + pts[n - 1][0]) / 2, (pts[0][1] + pts[n - 1][1]) / 2);
+        for (var j = 0; j < n; j++) { var p1 = pts[j], p2 = pts[(j + 1) % n]; ctx.quadraticCurveTo(p1[0], p1[1], (p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2); }
+        ctx.closePath();
+        ctx.fillStyle = mix(C['yellow-t'], C['yellow-t'], 0); ctx.fill();
+        ctx.lineWidth = 2.2; ctx.strokeStyle = mix(C.yellow, C.yellow, 0); ctx.stroke();
+        gran.forEach(function (g) { ctx.beginPath(); ctx.arc(g[0] * R * sx, g[1] * R * sy, 1.6, 0, Math.PI * 2); ctx.fillStyle = mix(C['yellow-fg'], C['yellow-fg'], 0, 0.35); ctx.fill(); });
+        // lobed nucleus that swells and rounds as force builds
+        var lobes = [[-0.34, 0.06], [0, -0.14], [0.32, 0.08]], lr = R * (0.22 + 0.2 * e);
+        ctx.fillStyle = mix(C.ink, C.ink, 0, 0.82);
+        lobes.forEach(function (l) {
+          ctx.beginPath(); ctx.arc(l[0] * R * sx * (1 - 0.65 * e), l[1] * R * sy * (1 - 0.65 * e), lr, 0, Math.PI * 2); ctx.fill();
+        });
+        ctx.lineWidth = R * 0.08; ctx.strokeStyle = mix(C.ink, C.ink, 0, 0.82);
+        ctx.beginPath(); ctx.moveTo(lobes[0][0] * R * sx * (1 - 0.65 * e), lobes[0][1] * R * sy * (1 - 0.65 * e));
+        ctx.lineTo(lobes[1][0] * R * sx * (1 - 0.65 * e), lobes[1][1] * R * sy * (1 - 0.65 * e));
+        ctx.lineTo(lobes[2][0] * R * sx * (1 - 0.65 * e), lobes[2][1] * R * sy * (1 - 0.65 * e)); ctx.stroke();
+        ctx.restore();
+      } else {
+        var g = Math.min(1, bt / 1.1), ge = 1 - Math.pow(1 - g, 3), out = bt > 5 ? Math.max(0, 1 - (bt - 5)) : 1;
+        ctx.save(); ctx.globalAlpha = out;
+        var gr = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 0.9);
+        gr.addColorStop(0, mix(C.yellow, C.yellow, 0, 0.35)); gr.addColorStop(1, mix(C.yellow, C.yellow, 0, 0));
+        ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(cx, cy, R * 0.9, 0, Math.PI * 2); ctx.fill();
+        ctx.lineWidth = 1.6; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+        ctx.strokeStyle = mix(C.yellow, C['yellow-fg'], 0.25, 0.95);
+        strands.forEach(function (s) {
+          var m = Math.max(1, Math.round((s.length - 1) * ge));
+          ctx.beginPath(); ctx.moveTo(s[0][0], s[0][1]);
+          for (var k = 1; k <= m; k++) ctx.lineTo(s[k][0], s[k][1]);
+          ctx.stroke();
+        });
+        frags.forEach(function (f) {
+          if (f.life <= 0) return;
+          var d = R + (1 - f.life) * f.v * 0.6;
+          ctx.beginPath(); ctx.arc(cx, cy, d, f.a, f.a + 0.28);
+          ctx.lineWidth = 2.2; ctx.strokeStyle = mix(C.yellow, C.yellow, 0, f.life); ctx.stroke();
+        });
+        if (ge > 0.6) {
+          var ca = (ge - 0.6) / 0.4;
+          caught.forEach(function (b) {
+            ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(b.ang); capsule(ctx, b.len, 6);
+            ctx.fillStyle = mix(C.muted, C.muted, 0, 0.8 * ca); ctx.fill(); ctx.restore();
+          });
+        }
+        ctx.restore();
+      }
+    }
+    function down(e) { pressing = true; if (cv.setPointerCapture && e.pointerId != null) try { cv.setPointerCapture(e.pointerId); } catch (x) {} }
+    function up() { pressing = false; }
+    cv.addEventListener('pointerdown', down);
+    window.addEventListener('pointerup', up);
+    cv.addEventListener('pointercancel', up);
+    cv.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+    cv.addEventListener('keydown', function (e) { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); pressing = true; } });
+    cv.addEventListener('keyup', function (e) { if (e.key === ' ' || e.key === 'Enter') pressing = false; });
+    cv.addEventListener('blur', up);
+    $('#net-reset').addEventListener('click', reset);
+    themeHooks.push(function () { draw(performance.now() / 1000); });
+    runWhileVisible(cv, step);
+  })();
+
+  /* ---------- Touch wording for the hints ---------- */
+  if (!fine) {
+    $('#nektar .hint').textContent = 'Tap or drag in the dish to release NeKtar-1';
+    $('#bone .hint').textContent = 'Tap or drag to move the lens';
+  }
+
+  /* ---------- Copy email ---------- */
+  var btn = $('#copy-email'), label = $('#copy-label');
   var email = 'neilpanchal08@gmail.com', timer;
   function done(msg) {
     label.textContent = msg;
