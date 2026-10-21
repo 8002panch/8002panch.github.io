@@ -136,7 +136,7 @@ p { margin: 0; }
 .roll:hover span { transform: translateY(-20px); }
 
 /* ---------- Hero ---------- */
-.hero { position: relative; padding-block: clamp(56px, 9vw, 120px) 0; }
+.hero { position: relative; padding-block: clamp(48px, 7vw, 96px) 0; }
 .hero .wrap { position: relative; }
 .cells { position: absolute; inset: -40px 0 auto auto; width: 46%; height: 460px; pointer-events: none; }
 .cell { position: absolute; color: var(--chip); }
@@ -162,61 +162,65 @@ h1 em { font-family: var(--serif); font-style: italic; font-weight: 400; letter-
 @keyframes wave { 0% { transform: translateY(0); } 35% { transform: translateY(-0.14em); color: var(--red); } 100% { transform: translateY(0); } }
 .lede { position: relative; margin-top: 28px; max-width: 560px; font-size: clamp(17px, 1rem + 0.35vw, 19px); line-height: 1.55; color: var(--muted); text-wrap: pretty; }
 
-/* ---------- Work index ---------- */
-.index { padding-top: clamp(64px, 9vw, 104px); }
-.rows { position: relative; z-index: 2; margin-top: 16px; border-bottom: 1px solid var(--line); }
-.row {
-  display: grid; grid-template-columns: 12px minmax(0, 1fr) minmax(0, 1.5fr) auto; gap: 8px 24px; align-items: center;
-  padding: 24px 4px; border-top: 1px solid var(--line); text-decoration: none;
-  transition: opacity .35s, padding-left .45s var(--spring);
+/* ---------- Work: three tabs share one panel ---------- */
+main { padding-bottom: 88px; }
+.work { padding-top: clamp(56px, 7vw, 88px); scroll-margin-top: 48px; }
+.tabs { margin-top: 14px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-bottom: 1px solid var(--line); }
+.tab {
+  position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 2px 10px; padding: 16px 6px 14px;
+  border: 0; border-radius: 8px 8px 0 0; background: none; font: inherit; text-align: left; color: var(--muted); cursor: pointer;
 }
-.rows:hover .row:not(:hover) { opacity: .32; }
-.row:hover { padding-left: 18px; }
-.row .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--c); transition: transform .45s var(--spring); }
-.row:hover .dot { transform: scale(1.7); }
-.row .t { font-size: clamp(20px, 1rem + 1vw, 28px); line-height: 1.15; font-weight: 600; letter-spacing: -0.025em; color: var(--ink); }
-.row .d { font-size: 15px; line-height: 22px; color: var(--muted); text-wrap: pretty; }
-.row .k { font: 12px/18px var(--mono); color: var(--muted); white-space: nowrap; }
-
-/* ---------- Cases ---------- */
-main { padding-bottom: 112px; }
-.case { padding-top: clamp(72px, 10vw, 128px); scroll-margin-top: 48px; }
-.case .wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(32px, 5vw, 72px); align-items: center; }
-.case.flip .text { order: 2; }
-.case .wrap::before { content: ""; grid-column: 1 / -1; height: 1px; background: var(--line); margin-bottom: clamp(8px, 2vw, 24px); }
+.tab .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--c); flex: none; opacity: .4; transition: opacity .3s, transform .45s var(--spring); }
+.tab .t { font-size: clamp(16px, .85rem + .6vw, 22px); line-height: 1.2; font-weight: 600; letter-spacing: -0.02em; transition: color .25s; }
+.tab .k { grid-column: 2; font: 12px/18px var(--mono); color: var(--faint); white-space: nowrap; }
+.tab::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--c); transform: scaleX(0); transform-origin: left; transition: transform .5s var(--spring); }
+.tab:hover, .tab[aria-selected="true"] { color: var(--ink); }
+.tab[aria-selected="true"] .dot { opacity: 1; transform: scale(1.3); }
+.tab[aria-selected="true"]::after { transform: scaleX(1); }
+/* Panels share one grid cell, so the section keeps a steady height and can crossfade. */
+.panels { display: grid; margin-top: clamp(28px, 4vw, 44px); }
+.case {
+  grid-area: 1 / 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(32px, 5vw, 64px); align-items: center;
+  opacity: 0; transform: translateY(10px); visibility: hidden;
+  transition: opacity .35s ease, transform .6s var(--spring), visibility 0s linear .35s;
+}
+.case.on { opacity: 1; transform: none; visibility: visible; transition: opacity .45s ease .05s, transform .6s var(--spring), visibility 0s; }
 .eyebrow { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; font: 12px/18px var(--mono); color: var(--muted); }
 .eyebrow i { width: 10px; height: 10px; border-radius: 2px; background: var(--c); flex: none; }
 .eyebrow b { color: var(--ink); font-weight: 500; }
-.case h2 { margin-top: 16px; font-size: clamp(28px, 1.2rem + 1.8vw, 40px); line-height: 1.1; font-weight: 600; letter-spacing: -0.03em; }
-.case .text > p { margin-top: 16px; font-size: 16px; line-height: 1.65; max-width: 33em; text-wrap: pretty; }
-.case .text > p:first-of-type { margin-top: 20px; }
-.case .meta { margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--line); display: flex; gap: 10px; align-items: baseline; font-size: 14px; line-height: 20px; color: var(--ink); max-width: 33em; }
+.case h3 { margin-top: 14px; font-size: clamp(26px, 1.1rem + 1.6vw, 38px); line-height: 1.1; font-weight: 600; letter-spacing: -0.03em; }
+.case .text > p { margin-top: 14px; font-size: 16px; line-height: 1.62; max-width: 33em; text-wrap: pretty; }
+.case .text > p:first-of-type { margin-top: 18px; }
+.case .meta { margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--line); display: flex; gap: 10px; align-items: baseline; font-size: 14px; line-height: 20px; color: var(--ink); max-width: 33em; }
 .case .meta::before { content: "→"; color: var(--c); font-weight: 600; }
+.case .meta a { color: inherit; text-decoration: underline; text-decoration-color: var(--faint); text-underline-offset: 3px; transition: text-decoration-color .2s; }
+.case .meta a:hover { text-decoration-color: var(--ink); }
 
 .toy { margin: 0; padding: 14px; border-radius: 14px; background: var(--wash); display: grid; gap: 12px; min-width: 0; }
 .toy-top { display: flex; justify-content: space-between; align-items: center; gap: 6px 12px; flex-wrap: wrap; }
 .hint { font-size: 13px; line-height: 18px; color: var(--muted); }
 .status { display: inline-flex; align-items: center; gap: 8px; font: 12px/18px var(--mono); color: var(--ink); }
 .status i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
-.stage { position: relative; border-radius: 10px; overflow: hidden; aspect-ratio: 5 / 4; max-width: 100%; background: var(--wash); }
+.stage { position: relative; border-radius: 10px; overflow: hidden; aspect-ratio: 4 / 3; max-width: 100%; background: var(--wash); }
 .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 .toy figcaption { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 12.5px; line-height: 18px; color: var(--muted); }
 .mini { font: 12px/18px var(--mono); color: var(--muted); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-decoration-color: var(--faint); text-underline-offset: 3px; }
 .mini:hover { color: var(--ink); }
 
 /* ---------- More ---------- */
-.more { padding-top: clamp(80px, 11vw, 128px); }
-.more .wrap { display: grid; gap: 56px; }
+.more { padding-top: clamp(64px, 8vw, 104px); }
+.more .wrap { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 48px 56px; align-items: start; }
 .more h2 { font-size: 22px; line-height: 30px; font-weight: 600; letter-spacing: -0.015em; }
 .also { margin-top: 20px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 40px; }
 .also article { border-top: 1px solid var(--line); padding-block: 18px 20px; display: grid; gap: 6px; }
 .also h3 { font-size: 16px; line-height: 24px; font-weight: 600; letter-spacing: -0.005em; }
 .also p { font-size: 14.5px; line-height: 22px; text-wrap: pretty; }
+.also .art-foot { display: flex; justify-content: space-between; align-items: baseline; gap: 4px 12px; flex-wrap: wrap; }
 .also .where { font: 12px/18px var(--mono); color: var(--muted); }
-.honors { position: relative; margin-top: 18px; font-size: clamp(17px, 1rem + 0.4vw, 20px); line-height: 1.6; color: var(--muted); }
-/* The separator lives inside each button, so it never wraps onto its own line. */
-.award:not(:last-of-type)::after { content: "·"; color: var(--faint); font-weight: 400; padding-left: 0.4em; }
-.award { font: inherit; color: inherit; background: none; border: 0; padding: 0; margin: 0; text-align: left; cursor: pointer; border-radius: 6px; white-space: nowrap; }
+.ext { font: 500 13px/18px var(--sans); color: var(--ink); text-decoration: underline; text-decoration-color: var(--faint); text-underline-offset: 3px; white-space: nowrap; transition: text-decoration-color .2s; }
+.ext:hover { text-decoration-color: var(--ink); }
+.honors { position: relative; margin-top: 14px; font-size: 16px; line-height: 1.45; color: var(--muted); }
+.award { display: block; font: inherit; color: inherit; background: none; border: 0; padding: 6px 0; margin: 0; text-align: left; cursor: pointer; border-radius: 6px; }
 /* A hidden bold copy reserves the bold width, so hovering does not shift the line. */
 .award span { display: inline-grid; transition: color .2s; }
 .award span::after { content: attr(data-t); font-weight: 600; visibility: hidden; height: 0; overflow: hidden; pointer-events: none; }
@@ -246,7 +250,7 @@ main { padding-bottom: 112px; }
   position: relative; overflow: hidden; isolation: isolate;
   background: var(--foot-bg); color: var(--foot-fg);
   border-top: 1px solid var(--line);
-  padding-block: 112px 40px;
+  padding-block: 88px 32px;
 }
 .splash { position: absolute; z-index: -1; pointer-events: none; transition: transform 1.2s var(--spring); }
 .s-red { width: 460px; height: 460px; left: calc(50% + 173px); top: -120px; color: var(--red); }
@@ -268,7 +272,7 @@ main { padding-bottom: 112px; }
 .btn svg { width: 15px; height: 15px; flex: none; }
 .btn:focus-visible { outline-color: var(--yellow); }
 .foot-bottom {
-  margin-top: 72px; padding-top: 20px; border-top: 1px solid var(--foot-line);
+  margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--foot-line);
   display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px;
   font: 12px/18px var(--mono); color: var(--foot-faint);
 }
@@ -279,35 +283,47 @@ main { padding-bottom: 112px; }
   .cell { display: none; }
   .me { position: static; width: 84px; height: 84px; margin-bottom: 20px; }
   .who .blob { display: none; }
-  .case .wrap { grid-template-columns: minmax(0, 1fr); }
-  .case.flip .text { order: 0; }
-  .row { grid-template-columns: 12px minmax(0, 1fr); padding-block: 20px; }
-  .row .d { grid-column: 2; }
-  .row .k { display: none; }
-  .also { grid-template-columns: minmax(0, 1fr); }
-  .foot { padding-top: 300px; }
+  .case { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .tab .k { display: none; }
+  .more .wrap { grid-template-columns: minmax(0, 1fr); }
+  .foot { padding-top: 270px; }
   .s-red { width: 300px; height: 300px; left: auto; right: -80px; top: -90px; }
   .s-yellow { width: 200px; height: 200px; left: -60px; top: 40px; }
   .s-blue { width: 170px; height: 170px; left: auto; right: -30px; top: 150px; }
   .s-white { width: 70px; height: 70px; left: 31%; top: 210px; }
 }
-@media (max-width: 600px) {
-  .award { display: block; white-space: normal; padding-block: 4px; }
-  .award::after { display: none; }
-}
 @media (max-width: 560px) {
+  .also { grid-template-columns: minmax(0, 1fr); }
+  .tab { gap: 8px; padding-inline: 4px; }
   .links .roll:not(.keep) { display: none; }
   .toy { padding: 10px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .row, .roll span, .btn, .btn > span, .splash, .crumb .mark { transition: none; }
+  .tab::after, .case, .roll span, .btn, .btn > span, .splash, .crumb .mark { transition: none; }
   .wave:hover .ch { animation: none; }
 }
+
+/* ---------- Scroll-linked motion ----------
+   Runs only where the browser supports scroll timelines; elsewhere everything is simply visible. */
+.progress { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; transform: scaleX(0); transform-origin: left; background: linear-gradient(90deg, var(--red), var(--yellow), var(--blue)); display: none; }
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .progress { display: block; animation: grow linear both; animation-timeline: scroll(root); }
+    .reveal { animation: rise linear both; animation-timeline: view(); animation-range: entry 0% cover 25%; }
+    .cells { animation: drift linear both; animation-timeline: scroll(root); animation-range: 0 80vh; }
+    .splash { animation: bloom linear both; animation-timeline: view(); animation-range: entry 0% cover 40%; }
+  }
+}
+@keyframes grow { to { transform: scaleX(1); } }
+@keyframes rise { from { opacity: 0; translate: 0 36px; } }
+@keyframes drift { to { translate: 0 -80px; opacity: .2; } }
+@keyframes bloom { from { scale: .3; } }
 </style>
 </head>
 <body>
 
 <nav class="nav band" aria-label="Site">
+  <span class="progress" aria-hidden="true"></span>
   <div class="wrap">
     <a class="crumb" href="#top"><span class="mark" aria-hidden="true"></span><span class="name">Neil Panchal</span><span class="sep">/</span><span class="page">Portfolio</span></a>
     <div class="links">
@@ -338,65 +354,58 @@ main { padding-bottom: 112px; }
 </header>
 
 <main>
-  <section class="index band" id="work" aria-labelledby="work-h">
+  <section class="work band" id="work" aria-labelledby="work-h">
     <div class="wrap">
-      <h2 class="label" id="work-h">Selected work</h2>
-      <div class="rows">
-        <a class="row" href="#nektar" style="--c: var(--red); --t: var(--red-t)"><span class="dot"></span><span class="t">NeKtar-1</span><span class="d">An antimicrobial peptide, designed by a model and tested in the lab</span><span class="k">Protein design</span></a>
-        <a class="row" href="#bone" style="--c: var(--blue); --t: var(--blue-t)"><span class="dot"></span><span class="t">Bone viability</span><span class="d">Teaching a model to see which bone is still alive during surgery</span><span class="k">Surgical imaging</span></a>
-        <a class="row" href="#nets" style="--c: var(--yellow); --t: var(--yellow-t)"><span class="dot"></span><span class="t">NET mechanics</span><span class="d">How physical force makes immune cells throw out nets of DNA</span><span class="k">Cell mechanics</span></a>
+      <h2 class="label reveal" id="work-h">Selected work</h2>
+      <div class="tabs reveal" role="tablist" aria-label="Projects">
+        <button class="tab" type="button" role="tab" id="tab-nektar" aria-controls="nektar" aria-selected="true" style="--c: var(--red)"><span class="dot"></span><span class="t">NeKtar-1</span><span class="k">Protein design</span></button>
+        <button class="tab" type="button" role="tab" id="tab-bone" aria-controls="bone" aria-selected="false" tabindex="-1" style="--c: var(--blue)"><span class="dot"></span><span class="t">Bone viability</span><span class="k">Surgical imaging</span></button>
+        <button class="tab" type="button" role="tab" id="tab-nets" aria-controls="nets" aria-selected="false" tabindex="-1" style="--c: var(--yellow)"><span class="dot"></span><span class="t">NET mechanics</span><span class="k">Cell mechanics</span></button>
       </div>
-    </div>
-  </section>
-
-  <section class="case band" id="nektar" aria-labelledby="nektar-h" style="--c: var(--red)">
-    <div class="wrap">
-      <div class="text">
-        <p class="eyebrow"><i></i><b>Protein design + wet lab</b><span>UMD Institute for Bioscience &amp; Biotechnology Research</span></p>
-        <h2 id="nektar-h">A peptide designed in code, then tested on superbugs</h2>
-        <p>Drug-resistant bacteria are outrunning antibiotics. I used a protein language model to propose antimicrobial peptides, and showed that the examples you teach it to reject change how well it works.</p>
-        <p>Then I took one of its designs, NeKtar-1, into a BSL-2 lab and tested it myself. It wiped out drug-resistant E. coli and P. aeruginosa.</p>
-        <p class="meta">Published in the National High School Journal of Science</p>
+      <div class="panels reveal">
+        <article class="case on" id="nektar" role="tabpanel" aria-labelledby="tab-nektar" style="--c: var(--red)">
+          <div class="text">
+          <p class="eyebrow"><i></i><b>Protein design + wet lab</b><span>UMD Institute for Bioscience &amp; Biotechnology Research</span></p>
+          <h3 id="nektar-h">A peptide designed in code, then tested on superbugs</h3>
+          <p>Drug-resistant bacteria are outrunning antibiotics. I used a protein language model to propose antimicrobial peptides, and showed that the examples you teach it to reject change how well it works.</p>
+          <p>Then I took one of its designs, NeKtar&#8209;1, into a BSL-2 lab and tested it myself. It wiped out drug-resistant E. coli and P. aeruginosa.</p>
+          <p class="meta"><a href="https://nhsjs.com/2026/nektar-1-amp_031-a-computationally-designed-antimicrobial-peptide-with-selective-bactericidal-activity-against-gram-negative-bacterial-pathogens/" target="_blank" rel="noopener">Published in the National High School Journal of Science ↗</a></p>
+          </div>
+          <figure class="toy" aria-label="Interactive petri dish: move the pointer to release the peptide and clear bacteria">
+          <div class="toy-top"><span class="hint">Move through the dish to release NeKtar-1</span><span class="status"><i></i><span id="dish-status">Colony thriving</span></span></div>
+          <div class="stage"><canvas id="dish" data-cursor="hide"></canvas></div>
+          <figcaption><span>A sketch of the idea, not lab data.</span></figcaption>
+          </figure>
+        </article>
+        <article class="case" id="bone" role="tabpanel" aria-labelledby="tab-bone" style="--c: var(--blue)" inert aria-hidden="true">
+          <div class="text">
+          <p class="eyebrow"><i></i><b>Surgical imaging</b><span>Gan Lab, UMD · with Dartmouth</span></p>
+          <h3 id="bone-h">Telling living bone from dead bone, mid-surgery</h3>
+          <p>Surgeons often judge by eye whether bone still has blood flow. With collaborators at Dartmouth, I'm building models that read white-light and fluorescence images instead.</p>
+          <p>The model outlines living bone and flags the cases where it shouldn't be trusted, so a surgeon knows when to look twice.</p>
+          <p class="meta">Presented as a poster this October; paper in progress for ISBI 2027</p>
+          </div>
+          <figure class="toy" aria-label="Interactive fluorescence lens: move the pointer over the bone to reveal blood flow">
+          <div class="toy-top"><span class="hint">Move the lens to see what the camera sees</span><span class="status"><i></i><span id="lens-status">Scanning</span></span></div>
+          <div class="stage"><canvas id="lens" data-cursor="hide"></canvas></div>
+          <figcaption><span>A sketch of the idea, not patient data.</span></figcaption>
+          </figure>
+        </article>
+        <article class="case" id="nets" role="tabpanel" aria-labelledby="tab-nets" style="--c: var(--yellow)" inert aria-hidden="true">
+          <div class="text">
+          <p class="eyebrow"><i></i><b>Cell mechanics</b><span>Aranda-Espinoza Lab, UMD</span></p>
+          <h3 id="nets-h">How force makes immune cells cast their nets</h3>
+          <p>Neutrophils can fight infection by bursting and throwing out webs of DNA called NETs. Squeezing, sticking, and flow can all set this off, but almost nobody has modeled how.</p>
+          <p>I mapped the research to find the gaps and proposed one framework that ties the triggers together.</p>
+          <p class="meta">Next: testing it at the bench</p>
+          </div>
+          <figure class="toy" aria-label="Interactive neutrophil: press and hold to squeeze it until it releases a NET">
+          <div class="toy-top"><span class="hint">Press and hold to squeeze the cell</span><span class="status"><i></i><span id="net-status">Resting</span></span></div>
+          <div class="stage"><canvas id="net" tabindex="0" data-cursor="Hold" aria-label="Neutrophil. Press and hold, or hold the space bar, to apply force."></canvas></div>
+          <figcaption><span>A sketch of the idea, not a simulation.</span><button class="mini" id="net-reset" type="button">New cell</button></figcaption>
+          </figure>
+        </article>
       </div>
-      <figure class="toy" aria-label="Interactive petri dish: move the pointer to release the peptide and clear bacteria">
-        <div class="toy-top"><span class="hint">Move through the dish to release NeKtar-1</span><span class="status"><i></i><span id="dish-status">Colony thriving</span></span></div>
-        <div class="stage"><canvas id="dish" data-cursor="hide"></canvas></div>
-        <figcaption><span>A sketch of the idea, not lab data.</span></figcaption>
-      </figure>
-    </div>
-  </section>
-
-  <section class="case band flip" id="bone" aria-labelledby="bone-h" style="--c: var(--blue)">
-    <div class="wrap">
-      <div class="text">
-        <p class="eyebrow"><i></i><b>Surgical imaging</b><span>Gan Lab, UMD · with Dartmouth</span></p>
-        <h2 id="bone-h">Telling living bone from dead bone, mid-surgery</h2>
-        <p>Surgeons often judge by eye whether bone still has blood flow. With collaborators at Dartmouth, I'm building models that read white-light and fluorescence images instead.</p>
-        <p>The model outlines living bone and flags the cases where it shouldn't be trusted, so a surgeon knows when to look twice.</p>
-        <p class="meta">Presented as a poster this October; paper in progress for ISBI 2027</p>
-      </div>
-      <figure class="toy" aria-label="Interactive fluorescence lens: move the pointer over the bone to reveal blood flow">
-        <div class="toy-top"><span class="hint">Move the lens to see what the camera sees</span><span class="status"><i></i><span id="lens-status">Scanning</span></span></div>
-        <div class="stage"><canvas id="lens" data-cursor="hide"></canvas></div>
-        <figcaption><span>A sketch of the idea, not patient data.</span></figcaption>
-      </figure>
-    </div>
-  </section>
-
-  <section class="case band" id="nets" aria-labelledby="nets-h" style="--c: var(--yellow)">
-    <div class="wrap">
-      <div class="text">
-        <p class="eyebrow"><i></i><b>Cell mechanics</b><span>Aranda-Espinoza Lab, UMD</span></p>
-        <h2 id="nets-h">How force makes immune cells cast their nets</h2>
-        <p>Neutrophils can fight infection by bursting and throwing out webs of DNA called NETs. Squeezing, sticking, and flow can all set this off, but almost nobody has modeled how.</p>
-        <p>I mapped the research to find the gaps and proposed one framework that ties the triggers together.</p>
-        <p class="meta">Next: testing it at the bench</p>
-      </div>
-      <figure class="toy" aria-label="Interactive neutrophil: press and hold to squeeze it until it releases a NET">
-        <div class="toy-top"><span class="hint">Press and hold to squeeze the cell</span><span class="status"><i></i><span id="net-status">Resting</span></span></div>
-        <div class="stage"><canvas id="net" tabindex="0" data-cursor="Hold" aria-label="Neutrophil. Press and hold, or hold the space bar, to apply force."></canvas></div>
-        <figcaption><span>A sketch of the idea, not a simulation.</span><button class="mini" id="net-reset" type="button">New cell</button></figcaption>
-      </figure>
     </div>
   </section>
 
@@ -405,29 +414,29 @@ main { padding-bottom: 112px; }
       <div>
         <h2>Also built</h2>
         <div class="also">
-          <article>
+          <article class="reveal">
             <h3>OrganoidEDF</h3>
             <p>An open-source tool that turns blurry organoid z-stacks into one sharp image and a depth map.</p>
-            <span class="where">Johns Hopkins Biomedical Engineering</span>
+            <div class="art-foot"><span class="where">Johns Hopkins Biomedical Engineering</span></div>
           </article>
-          <article>
+          <article class="reveal">
             <h3>Protein graph embeddings</h3>
             <p>Protein language model embeddings for a graph neural network that predicts what proteins do.</p>
-            <span class="where">Vaisman Lab, George Mason University</span>
+            <div class="art-foot"><span class="where">Vaisman Lab, George Mason University</span></div>
           </article>
-          <article>
+          <article class="reveal">
             <h3>Bias-aware advising chatbot</h3>
-            <p>An AI advising chatbot built with bias in mind. The paper is on arXiv.</p>
-            <span class="where">ESTEEM / SER-Quest, UMD</span>
+            <p>An AI advising chatbot built with bias in mind, checked for biased answers across a range of student questions.</p>
+            <div class="art-foot"><span class="where">ESTEEM / SER-Quest, UMD</span><a class="ext" href="https://arxiv.org/abs/2510.09636" target="_blank" rel="noopener">Paper on arXiv ↗</a></div>
           </article>
-          <article>
+          <article class="reveal">
             <h3>Wildfire simulator</h3>
             <p>An interactive model of how drought and wind change the way wildfire spreads.</p>
-            <span class="where">MobilizeGreen</span>
+            <div class="art-foot"><span class="where">MobilizeGreen</span><a class="ext" href="https://huggingface.co/spaces/armstrong8002/drought-wildfire-simulator" target="_blank" rel="noopener">Try it on Hugging Face ↗</a></div>
           </article>
         </div>
       </div>
-      <div>
+      <div class="reveal">
         <h2>Recognition</h2>
         <div class="honors" id="honors">
           <button class="award" type="button" data-award="0" aria-expanded="false"><span data-t="Regeneron Biomedical Science Award">Regeneron Biomedical Science Award</span></button>
@@ -455,7 +464,7 @@ main { padding-bottom: 112px; }
   <svg class="blob splash s-blue" data-seed="7" data-amp="0.07" data-pull="20" viewBox="0 0 100 100" aria-hidden="true"><path/></svg>
   <svg class="blob splash s-white" data-seed="13" data-amp="0.09" data-pull="60" viewBox="0 0 100 100" aria-hidden="true"><path/></svg>
   <div class="wrap">
-    <h2>Let's talk.</h2>
+    <h2 class="reveal">Let's talk.</h2>
     <p class="lead">Collaborations, research questions, or opportunities. My inbox is open.</p>
     <div class="btns">
       <button class="btn primary" id="copy-email" type="button" aria-label="Copy email address neilpanchal08@gmail.com">
@@ -690,7 +699,7 @@ main { padding-bottom: 112px; }
     var on = false, last = 0, raf = 0;
     function frame(now) {
       var dt = Math.min(0.05, (now - last) / 1000 || 0.016); last = now;
-      step(dt, now / 1000);
+      if (!el.closest('[inert]')) step(dt, now / 1000);   // skip sketches in hidden tabs
       if (on) raf = requestAnimationFrame(frame);
     }
     if (!('IntersectionObserver' in window)) { on = true; last = performance.now(); raf = requestAnimationFrame(frame); return; }
@@ -978,6 +987,29 @@ main { padding-bottom: 112px; }
     $('#net-reset').addEventListener('click', reset);
     themeHooks.push(function () { draw(performance.now() / 1000); });
     runWhileVisible(cv, step);
+  })();
+
+  /* ---------- Work tabs ---------- */
+  (function () {
+    var tabs = [].slice.call(document.querySelectorAll('.tab')); if (!tabs.length) return;
+    function select(id, focus) {
+      tabs.forEach(function (t) {
+        var on = t.getAttribute('aria-controls') === id, panel = document.getElementById(t.getAttribute('aria-controls'));
+        t.setAttribute('aria-selected', on ? 'true' : 'false'); t.tabIndex = on ? 0 : -1;
+        panel.classList.toggle('on', on);
+        if (on) { panel.removeAttribute('inert'); panel.removeAttribute('aria-hidden'); if (focus) t.focus(); }
+        else { panel.setAttribute('inert', ''); panel.setAttribute('aria-hidden', 'true'); }
+      });
+    }
+    tabs.forEach(function (t, i) {
+      t.addEventListener('click', function () { select(t.getAttribute('aria-controls')); });
+      t.addEventListener('keydown', function (e) {
+        var d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0; if (!d) return;
+        e.preventDefault(); select(tabs[(i + d + tabs.length) % tabs.length].getAttribute('aria-controls'), true);
+      });
+    });
+    function fromHash() { var id = location.hash.slice(1); if (['nektar', 'bone', 'nets'].indexOf(id) >= 0) select(id); }
+    window.addEventListener('hashchange', fromHash); fromHash();
   })();
 
   /* ---------- Awards: hover to bold, click for a small card ---------- */
