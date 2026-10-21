@@ -96,19 +96,17 @@ p { margin: 0; }
 .cursor-on, .cursor-on * { cursor: none !important; }
 .c-dot, .c-ring { position: fixed; left: 0; top: 0; will-change: transform; }
 .c-dot i { position: absolute; width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%; background: var(--cur); transition: opacity .2s, background-color .25s; }
+/* Size, position and corner radius of .c-body are set every frame by the script. */
 .c-body {
-  --s: 34px;
-  position: absolute; width: var(--s); height: var(--s); margin: calc(var(--s) / -2) 0 0 calc(var(--s) / -2);
-  border-radius: 50%; border: 1.5px solid var(--cur); display: grid; place-items: center;
-  transition: width .35s var(--spring), height .35s var(--spring), margin .35s var(--spring), background-color .25s, border-color .25s, opacity .2s;
+  position: absolute; width: 34px; height: 34px; margin: -17px 0 0 -17px;
+  border-radius: 17px; border: 1.5px solid var(--cur); display: grid; place-items: center;
+  transition: background-color .25s, border-color .25s, opacity .2s;
 }
 .c-label { font: 500 11px/1 var(--mono); letter-spacing: 0.04em; text-transform: uppercase; color: var(--cur-fg); opacity: 0; transition: opacity .2s; white-space: nowrap; }
-#cursor.link .c-body { --s: 54px; background: color-mix(in srgb, var(--cur) 12%, transparent); }
-#cursor.labeled .c-body { --s: 74px; background: var(--cur); }
+#cursor.attached .c-body { background: color-mix(in srgb, var(--cur) 6%, transparent); border-color: color-mix(in srgb, var(--cur) 45%, transparent); }
+#cursor.labeled .c-body { background: var(--cur); }
 #cursor.labeled .c-label { opacity: 1; }
-#cursor.labeled .c-dot i, #cursor.link .c-dot i { opacity: 0; }
-#cursor.down .c-body { --s: 22px; }
-#cursor.labeled.down .c-body { --s: 62px; }
+#cursor.labeled .c-dot i, #cursor.attached .c-dot i { opacity: 0; }
 #cursor.hide .c-body, #cursor.hide .c-dot i, #cursor.out .c-body, #cursor.out .c-dot i { opacity: 0; }
 .split { position: fixed; left: 0; top: 0; pointer-events: none; z-index: 99; }
 .split i { position: absolute; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; background: var(--c, var(--ink)); animation: divide .6s var(--spring) forwards; }
@@ -140,7 +138,12 @@ p { margin: 0; }
 .hero { position: relative; padding-block: clamp(56px, 9vw, 120px) 0; }
 .hero .wrap { position: relative; }
 .cells { position: absolute; inset: -40px 0 auto auto; width: 46%; height: 460px; pointer-events: none; }
-.cell { position: absolute; color: var(--chip); will-change: transform; }
+.cell { position: absolute; color: var(--chip); }
+.me {
+  position: absolute; left: 44%; top: 6px; width: 196px; height: 196px; pointer-events: auto;
+  filter: grayscale(1) contrast(1.04); transition: filter .8s ease;
+}
+.me:hover { filter: none; }
 .who { display: flex; align-items: center; gap: 12px; font-size: 14px; line-height: 20px; color: var(--muted); position: relative; }
 .who .blob { width: 30px; height: 30px; color: var(--blue); flex: none; }
 .who b { color: var(--ink); font-weight: 600; }
@@ -173,9 +176,6 @@ h1 em { font-family: var(--serif); font-style: italic; font-weight: 400; letter-
 .row .t { font-size: clamp(20px, 1rem + 1vw, 28px); line-height: 1.15; font-weight: 600; letter-spacing: -0.025em; color: var(--ink); }
 .row .d { font-size: 15px; line-height: 22px; color: var(--muted); text-wrap: pretty; }
 .row .k { font: 12px/18px var(--mono); color: var(--muted); white-space: nowrap; }
-#peek { position: fixed; left: 0; top: 0; z-index: 1; pointer-events: none; will-change: transform; }
-#peek .blob { width: 220px; height: 220px; margin: -110px 0 0 -110px; color: var(--t, var(--blue-t)); opacity: 0; transform: scale(.3) rotate(-30deg); transition: opacity .35s, transform .6s var(--spring), color .3s; }
-#peek.on .blob { opacity: 1; transform: scale(1) rotate(0deg); }
 
 /* ---------- Cases ---------- */
 main { padding-bottom: 112px; }
@@ -212,9 +212,30 @@ main { padding-bottom: 112px; }
 .also h3 { font-size: 16px; line-height: 24px; font-weight: 600; letter-spacing: -0.005em; }
 .also p { font-size: 14.5px; line-height: 22px; text-wrap: pretty; }
 .also .where { font: 12px/18px var(--mono); color: var(--muted); }
-.honors { margin-top: 18px; font-size: clamp(17px, 1rem + 0.4vw, 20px); line-height: 1.6; color: var(--muted); text-wrap: pretty; }
-.honors strong { color: var(--ink); font-weight: 600; }
-.honors span { color: var(--faint); padding-inline: 0.35em; }
+.honors { position: relative; margin-top: 18px; font-size: clamp(17px, 1rem + 0.4vw, 20px); line-height: 1.6; color: var(--muted); }
+/* The separator lives inside each button, so it never wraps onto its own line. */
+.award:not(:last-of-type)::after { content: "·"; color: var(--faint); font-weight: 400; padding-left: 0.4em; }
+.award { font: inherit; color: inherit; background: none; border: 0; padding: 0; margin: 0; text-align: left; cursor: pointer; border-radius: 6px; white-space: nowrap; }
+/* A hidden bold copy reserves the bold width, so hovering does not shift the line. */
+.award span { display: inline-grid; transition: color .2s; }
+.award span::after { content: attr(data-t); font-weight: 600; visibility: hidden; height: 0; overflow: hidden; pointer-events: none; }
+.award:hover span, .award[aria-expanded="true"] span { font-weight: 600; color: var(--ink); }
+.pop {
+  position: absolute; z-index: 6; width: min(340px, 100%);
+  display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 14px; align-items: center;
+  padding: 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--bg);
+  box-shadow: 0 16px 40px -18px rgba(0, 0, 0, 0.28);
+  transform-origin: top left; animation: pop-in .4s var(--spring);
+}
+@keyframes pop-in { from { opacity: 0; transform: translateY(-6px) scale(.96); } }
+.pop-art { width: 64px; height: 64px; border-radius: 12px; background: var(--wash); display: grid; place-items: center; overflow: hidden; }
+.pop-art img { width: 100%; height: 100%; object-fit: contain; }
+.pop-art svg { width: 40px; height: 40px; }
+.pop-name { font-size: 15px; line-height: 21px; font-weight: 600; color: var(--ink); text-wrap: pretty; }
+.pop-org { margin-top: 2px; font: 12px/18px var(--mono); color: var(--muted); }
+.pop-x { align-self: start; width: 28px; height: 28px; border: 0; border-radius: 8px; background: none; color: var(--muted); display: grid; place-items: center; cursor: pointer; }
+.pop-x:hover { color: var(--ink); background: var(--wash); }
+.pop-x svg { width: 16px; height: 16px; }
 
 /* ---------- Footer ---------- */
 .foot {
@@ -250,7 +271,10 @@ main { padding-bottom: 112px; }
 
 /* ---------- Narrow screens ---------- */
 @media (max-width: 860px) {
-  .cells { display: none; }
+  .cells { position: static; width: auto; height: auto; }
+  .cell { display: none; }
+  .me { position: static; width: 84px; height: 84px; margin-bottom: 20px; }
+  .who .blob { display: none; }
   .case .wrap { grid-template-columns: minmax(0, 1fr); }
   .case.flip .text { order: 0; }
   .row { grid-template-columns: 12px minmax(0, 1fr); padding-block: 20px; }
@@ -262,6 +286,10 @@ main { padding-bottom: 112px; }
   .s-yellow { width: 200px; height: 200px; left: -60px; top: 40px; }
   .s-blue { width: 170px; height: 170px; left: auto; right: -30px; top: 150px; }
   .s-white { width: 70px; height: 70px; left: 31%; top: 210px; }
+}
+@media (max-width: 600px) {
+  .award { display: block; white-space: normal; padding-block: 4px; }
+  .award::after { display: none; }
 }
 @media (max-width: 560px) {
   .links .roll:not(.keep) { display: none; }
@@ -280,7 +308,7 @@ main { padding-bottom: 112px; }
     <a class="crumb" href="#top"><span class="mark" aria-hidden="true"></span><span class="name">Neil Panchal</span><span class="sep">/</span><span class="page">Portfolio</span></a>
     <div class="links">
       <a class="roll" href="#work"><span data-t="Work">Work</span></a>
-      <a class="roll" href="Neil_Panchal_Resume.pdf" target="_blank" rel="noopener" data-cursor="PDF"><span data-t="Résumé">Résumé</span></a>
+      <a class="roll" href="Neil_Panchal_Resume.pdf" target="_blank" rel="noopener"><span data-t="Résumé">Résumé</span></a>
       <a class="roll keep" href="#contact"><span data-t="Contact">Contact</span></a>
     </div>
   </div>
@@ -289,11 +317,14 @@ main { padding-bottom: 112px; }
 <header class="hero band" id="top">
   <div class="wrap">
     <div class="cells" aria-hidden="true">
-      <svg class="blob cell" data-seed="3" data-amp="0.08" viewBox="0 0 100 100" style="width:150px;height:150px;left:52%;top:30px"><path/></svg>
+      <svg class="blob me" data-seed="44" data-amp="0.04" viewBox="0 0 100 100" role="img" aria-label="Photo of Neil Panchal">
+        <defs><clipPath id="me-clip"><path/></clipPath></defs>
+        <image href="me.jpg" x="4" y="4" width="92" height="92" preserveAspectRatio="xMidYMid slice" clip-path="url(#me-clip)"/>
+      </svg>
       <svg class="blob cell" data-seed="19" data-amp="0.09" viewBox="0 0 100 100" style="width:90px;height:90px;left:18%;top:120px"><path/></svg>
       <svg class="blob cell" data-seed="37" data-amp="0.1" viewBox="0 0 100 100" style="width:64px;height:64px;left:78%;top:220px"><path/></svg>
       <svg class="blob cell" data-seed="53" data-amp="0.08" viewBox="0 0 100 100" style="width:118px;height:118px;left:40%;top:250px"><path/></svg>
-      <svg class="blob cell" data-seed="71" data-amp="0.12" viewBox="0 0 100 100" style="width:38px;height:38px;left:70%;top:20px;color:var(--blue)"><path/></svg>
+      <svg class="blob cell" data-seed="71" data-amp="0.12" viewBox="0 0 100 100" style="width:38px;height:38px;left:92%;top:150px;color:var(--blue)"><path/></svg>
       <svg class="blob cell" data-seed="89" data-amp="0.12" viewBox="0 0 100 100" style="width:30px;height:30px;left:12%;top:300px;color:var(--ink)"><path/></svg>
     </div>
     <p class="who"><svg class="blob" data-seed="23" data-amp="0.06" viewBox="0 0 100 100" aria-hidden="true"><path/></svg><span><b>Neil Panchal</b> · Bioengineering, University of Maryland</span></p>
@@ -307,9 +338,9 @@ main { padding-bottom: 112px; }
     <div class="wrap">
       <h2 class="label" id="work-h">Selected work</h2>
       <div class="rows">
-        <a class="row" href="#nektar" style="--c: var(--red); --t: var(--red-t)" data-cursor="Try it"><span class="dot"></span><span class="t">NeKtar-1</span><span class="d">An antimicrobial peptide, designed by a model and tested in the lab</span><span class="k">Protein design</span></a>
-        <a class="row" href="#bone" style="--c: var(--blue); --t: var(--blue-t)" data-cursor="Try it"><span class="dot"></span><span class="t">Bone viability</span><span class="d">Teaching a model to see which bone is still alive during surgery</span><span class="k">Surgical imaging</span></a>
-        <a class="row" href="#nets" style="--c: var(--yellow); --t: var(--yellow-t)" data-cursor="Try it"><span class="dot"></span><span class="t">NET mechanics</span><span class="d">How physical force makes immune cells throw out nets of DNA</span><span class="k">Cell mechanics</span></a>
+        <a class="row" href="#nektar" style="--c: var(--red); --t: var(--red-t)"><span class="dot"></span><span class="t">NeKtar-1</span><span class="d">An antimicrobial peptide, designed by a model and tested in the lab</span><span class="k">Protein design</span></a>
+        <a class="row" href="#bone" style="--c: var(--blue); --t: var(--blue-t)"><span class="dot"></span><span class="t">Bone viability</span><span class="d">Teaching a model to see which bone is still alive during surgery</span><span class="k">Surgical imaging</span></a>
+        <a class="row" href="#nets" style="--c: var(--yellow); --t: var(--yellow-t)"><span class="dot"></span><span class="t">NET mechanics</span><span class="d">How physical force makes immune cells throw out nets of DNA</span><span class="k">Cell mechanics</span></a>
       </div>
     </div>
   </section>
@@ -338,7 +369,7 @@ main { padding-bottom: 112px; }
         <h2 id="bone-h">Telling living bone from dead bone, mid-surgery</h2>
         <p>Surgeons often judge by eye whether bone still has blood flow. With collaborators at Dartmouth, I'm building models that read white-light and fluorescence images instead.</p>
         <p>The model outlines living bone and flags the cases where it shouldn't be trusted, so a surgeon knows when to look twice.</p>
-        <p class="meta">Paper in progress for ISBI 2027</p>
+        <p class="meta">Presented as a poster this October; paper in progress for ISBI 2027</p>
       </div>
       <figure class="toy" aria-label="Interactive fluorescence lens: move the pointer over the bone to reveal blood flow">
         <div class="toy-top"><span class="hint">Move the lens to see what the camera sees</span><span class="status"><i></i><span id="lens-status">Scanning</span></span></div>
@@ -394,7 +425,21 @@ main { padding-bottom: 112px; }
       </div>
       <div>
         <h2>Recognition</h2>
-        <p class="honors"><strong>Regeneron Biomedical Science Award</strong><span>·</span>AstraZeneca Exceptional Project Award<span>·</span>MRIGlobal Project Award<span>·</span>HOSA State Biomedical Debate<span>·</span>Science Montgomery<span>·</span>Metro Bethesda Rotary James Phang Aspiring Scientist Award</p>
+        <div class="honors" id="honors">
+          <button class="award" type="button" data-award="0" aria-expanded="false"><span data-t="Regeneron Biomedical Science Award">Regeneron Biomedical Science Award</span></button>
+          <button class="award" type="button" data-award="1" aria-expanded="false"><span data-t="AstraZeneca Exceptional Project Award">AstraZeneca Exceptional Project Award</span></button>
+          <button class="award" type="button" data-award="2" aria-expanded="false"><span data-t="MRIGlobal Project Award">MRIGlobal Project Award</span></button>
+          <button class="award" type="button" data-award="3" aria-expanded="false"><span data-t="HOSA State Biomedical Debate">HOSA State Biomedical Debate</span></button>
+          <button class="award" type="button" data-award="4" aria-expanded="false"><span data-t="Science Montgomery">Science Montgomery</span></button>
+          <button class="award" type="button" data-award="5" aria-expanded="false"><span data-t="Metro Bethesda Rotary James Phang Aspiring Scientist Award">Metro Bethesda Rotary James Phang Aspiring Scientist Award</span></button>
+          <div class="pop" id="award-pop" role="dialog" aria-labelledby="pop-name" hidden>
+            <div class="pop-art" id="pop-art"></div>
+            <div class="pop-text"><p class="pop-name" id="pop-name"></p><p class="pop-org" id="pop-org"></p></div>
+            <button class="pop-x" id="pop-x" type="button" aria-label="Close">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -409,20 +454,18 @@ main { padding-bottom: 112px; }
     <h2>Let's talk.</h2>
     <p class="lead">Collaborations, research questions, or opportunities. My inbox is open.</p>
     <div class="btns">
-      <button class="btn primary" id="copy-email" type="button" data-magnet data-cursor="Copy" aria-label="Copy email address neilpanchal08@gmail.com">
+      <button class="btn primary" id="copy-email" type="button" aria-label="Copy email address neilpanchal08@gmail.com">
         <span><span id="copy-label">neilpanchal08@gmail.com</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg></span>
       </button>
-      <a class="btn" href="https://www.linkedin.com/in/neilpanch" target="_blank" rel="noopener" data-magnet data-cursor="Open"><span>LinkedIn ↗</span></a>
-      <a class="btn" href="Neil_Panchal_Resume.pdf" target="_blank" rel="noopener" data-magnet data-cursor="PDF"><span>Full résumé ↗</span></a>
+      <a class="btn" href="https://www.linkedin.com/in/neilpanch" target="_blank" rel="noopener"><span>LinkedIn ↗</span></a>
+      <a class="btn" href="Neil_Panchal_Resume.pdf" target="_blank" rel="noopener"><span>Full résumé ↗</span></a>
     </div>
     <div class="foot-bottom"><span>© 2026 Neil Panchal</span><span>Clarksburg, MD</span></div>
   </div>
 </footer>
 
 <div id="cursor" aria-hidden="true"><div class="c-ring"><div class="c-body"><span class="c-label"></span></div></div><div class="c-dot"><i></i></div></div>
-<div id="peek" aria-hidden="true"><svg class="blob" data-seed="17" data-amp="0.08" viewBox="0 0 100 100"><path/></svg></div>
-
 <script>
 (function () {
   var root = document.documentElement;
@@ -491,7 +534,7 @@ main { padding-bottom: 112px; }
     var bio = new IntersectionObserver(function (es) {
       es.forEach(function (e) { live.forEach(function (b) { if (b.el === e.target) b.on = e.isIntersecting; }); });
     });
-    live.forEach(function (b) { if (b.el.closest('#peek') == null) bio.observe(b.el); });
+    live.forEach(function (b) { bio.observe(b.el); });
   }
 
   /* ---------- Pointer state shared by the page ---------- */
@@ -499,9 +542,16 @@ main { padding-bottom: 112px; }
   window.addEventListener('pointermove', function (e) { if (e.pointerType === 'mouse') { M.x = e.clientX; M.y = e.clientY; M.seen = true; } }, { passive: true });
 
   /* ---------- Custom cursor ---------- */
+  // Modes: 'free' (a small cell), 'attach' (wraps a clickable element and pulls it a little),
+  // 'label' (a filled disc with a word, used on the press-and-hold cell), 'hide' (the sketch draws its own pointer).
   var cur = $('#cursor'), ring = cur.querySelector('.c-ring'), body = cur.querySelector('.c-body'), dot = cur.querySelector('.c-dot'), lab = cur.querySelector('.c-label');
-  var R = { x: -999, y: -999, vx: 0, vy: 0 };
+  var B = { x: -999, y: -999, w: 34, h: 34, r: 17 }, mode = 'free', target = null, isDown = false;
+  var pulled = [];   // elements currently offset toward the pointer: { el, x, y }
   var cursorOn = fine && !reduce;
+  function pullOf(el) {
+    for (var i = 0; i < pulled.length; i++) if (pulled[i].el === el) return pulled[i];
+    var p = { el: el, x: 0, y: 0 }; pulled.push(p); return p;
+  }
   if (cursorOn) {
     root.classList.add('cursor-on');
     cur.classList.add('out');
@@ -512,22 +562,19 @@ main { padding-bottom: 112px; }
     document.addEventListener('mouseover', function (e) {
       var t = e.target;
       var el = t.closest('[data-cursor], a, button');
-      var mode = el ? (el.getAttribute('data-cursor') || 'link') : '';
-      cur.classList.remove('link', 'labeled', 'hide');
-      if (mode === 'hide') cur.classList.add('hide');
-      else if (mode === 'link') cur.classList.add('link');
-      else if (mode) { cur.classList.add('labeled'); lab.textContent = mode; }
+      var m = el ? el.getAttribute('data-cursor') : null;
+      mode = !el ? 'free' : m === 'hide' ? 'hide' : m ? 'label' : 'attach';
+      target = mode === 'attach' ? el : null;
+      cur.classList.toggle('attached', mode === 'attach');
+      cur.classList.toggle('labeled', mode === 'label');
+      cur.classList.toggle('hide', mode === 'hide');
+      if (mode === 'label') lab.textContent = m;
       var inFoot = t.closest('.foot');
-      var colored = t.closest('[style*="--c"]');
-      var c = inFoot ? tok('--foot-fg') : (colored ? getComputedStyle(colored).getPropertyValue('--c').trim() : tok('--ink'));
-      cur.style.setProperty('--cur', c);
-      cur.style.setProperty('--cur-fg', inFoot ? tok('--foot-bg') : (colored && mode && mode !== 'link' && mode !== 'hide' ? '#ffffff' : tok('--bg')));
-      if (colored && !inFoot && cur.classList.contains('labeled')) {
-        var cc = getComputedStyle(colored).getPropertyValue('--c').trim();
-        if (cc.toLowerCase() === tok('--yellow').toLowerCase()) cur.style.setProperty('--cur-fg', '#191919');
-      }
+      cur.style.setProperty('--cur', inFoot ? tok('--foot-fg') : tok('--ink'));
+      cur.style.setProperty('--cur-fg', inFoot ? tok('--foot-bg') : tok('--bg'));
     });
     document.addEventListener('mousedown', function (e) {
+      isDown = true;
       cur.classList.add('down');
       var s = document.createElement('div');
       s.className = 'split';
@@ -537,52 +584,11 @@ main { padding-bottom: 112px; }
       document.body.appendChild(s);
       setTimeout(function () { s.remove(); }, 650);
     });
-    document.addEventListener('mouseup', function () { cur.classList.remove('down'); });
+    document.addEventListener('mouseup', function () { isDown = false; cur.classList.remove('down'); });
     document.addEventListener('mouseleave', function () { cur.classList.add('out'); });
     document.addEventListener('mouseenter', function () { cur.classList.remove('out'); });
   }
 
-  /* ---------- Work index: preview blob follows the pointer ---------- */
-  var peek = $('#peek'), P = { x: 0, y: 0 };
-  if (fine && !reduce) {
-    document.querySelectorAll('.row').forEach(function (row) {
-      row.addEventListener('mouseenter', function () {
-        peek.style.setProperty('--t', getComputedStyle(row).getPropertyValue('--t'));
-        if (!peek.classList.contains('on')) { P.x = M.x; P.y = M.y; }
-        peek.classList.add('on');
-      });
-      row.addEventListener('mouseleave', function () { peek.classList.remove('on'); });
-    });
-  }
-
-  /* ---------- Hero cells drift away from the pointer ---------- */
-  var cells = [].slice.call(document.querySelectorAll('.cell')).map(function (el) { return { el: el, x: 0, y: 0 }; });
-
-  /* ---------- Footer splashes lean toward the pointer ---------- */
-  var foot = $('.foot');
-  if (fine && !reduce) {
-    foot.addEventListener('mousemove', function (e) {
-      var r = foot.getBoundingClientRect();
-      var nx = (e.clientX - r.left) / r.width - 0.5, ny = (e.clientY - r.top) / r.height - 0.5;
-      foot.querySelectorAll('.splash').forEach(function (s) {
-        var k = +s.getAttribute('data-pull');
-        s.style.transform = 'translate(' + (nx * k * 2).toFixed(1) + 'px,' + (ny * k * 2).toFixed(1) + 'px)';
-      });
-    });
-    foot.addEventListener('mouseleave', function () { foot.querySelectorAll('.splash').forEach(function (s) { s.style.transform = ''; }); });
-
-    // Magnetic buttons
-    document.querySelectorAll('[data-magnet]').forEach(function (b) {
-      var inner = b.firstElementChild;
-      b.addEventListener('mousemove', function (e) {
-        var r = b.getBoundingClientRect();
-        var dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
-        b.style.transform = 'translate(' + (dx * 0.28).toFixed(1) + 'px,' + (dy * 0.4).toFixed(1) + 'px)';
-        if (inner) inner.style.transform = 'translate(' + (dx * 0.12).toFixed(1) + 'px,' + (dy * 0.16).toFixed(1) + 'px)';
-      });
-      b.addEventListener('mouseleave', function () { b.style.transform = ''; if (inner) inner.style.transform = ''; });
-    });
-  }
 
   /* ---------- Headline: "in code" scrambles into DNA letters, "the bench" ripples ---------- */
   var dna = $('#dna');
@@ -616,33 +622,47 @@ main { padding-bottom: 112px; }
     });
   }
 
-  /* ---------- One animation loop for cursor, preview, cells and blobs ---------- */
+  /* ---------- One animation loop for cursor, preview and blobs ---------- */
   var t0 = performance.now();
   (function tick(now) {
     var t = (now - t0) / 1000;
     if (cursorOn && M.seen) {
-      var nx = lerp(R.x === -999 ? M.x : R.x, M.x, 0.2), ny = lerp(R.y === -999 ? M.y : R.y, M.y, 0.2);
-      R.vx = nx - (R.x === -999 ? nx : R.x); R.vy = ny - (R.y === -999 ? ny : R.y); R.x = nx; R.y = ny;
-      var sp = Math.min(Math.hypot(R.vx, R.vy) * 0.035, 0.5), ang = Math.atan2(R.vy, R.vx) * 180 / Math.PI;
-      ring.style.transform = 'translate(' + R.x.toFixed(1) + 'px,' + R.y.toFixed(1) + 'px)';
-      body.style.transform = cur.classList.contains('labeled') ? '' : 'rotate(' + ang.toFixed(1) + 'deg) scale(' + (1 + sp).toFixed(3) + ',' + (1 - sp * 0.55).toFixed(3) + ')';
+      if (B.x === -999) { B.x = M.x; B.y = M.y; }
+      var tx = M.x, ty = M.y, tw = 34, th = 34, trad = 17, k = 0.22;
+      if (mode === 'attach' && target && target.isConnected) {
+        var p = pullOf(target), r = target.getBoundingClientRect();
+        var cx = r.left + r.width / 2 - p.x, cy = r.top + r.height / 2 - p.y;   // centre without our own offset
+        var dx = M.x - cx, dy = M.y - cy;
+        p.x = lerp(p.x, clamp(dx * 0.1, -6, 6), 0.2); p.y = lerp(p.y, clamp(dy * 0.18, -4, 4), 0.2);
+        var small = r.height < 44, padX = small ? 18 : 10, padY = small ? 12 : 8;
+        var br = parseFloat(getComputedStyle(target).borderTopLeftRadius) || 0;
+        tw = r.width + padX; th = r.height + padY;
+        trad = br >= r.height / 2 - 1 ? th / 2 : Math.max(10, br + 4);
+        tx = cx + p.x + dx * 0.06; ty = cy + p.y + dy * 0.06; k = 0.25;
+        if (isDown) { tw *= 0.97; th *= 0.94; }
+      } else if (mode === 'label') { tw = th = isDown ? 62 : 74; trad = tw / 2; }
+      else if (isDown) { tw = th = 22; trad = 11; }
+      // Ease any element we are no longer on back to rest
+      pulled = pulled.filter(function (q) {
+        if (q.el !== target || mode !== 'attach') { q.x = lerp(q.x, 0, 0.2); q.y = lerp(q.y, 0, 0.2); }
+        var done = Math.abs(q.x) < 0.05 && Math.abs(q.y) < 0.05 && q.el !== target;
+        q.el.style.translate = done ? '' : q.x.toFixed(2) + 'px ' + q.y.toFixed(2) + 'px';
+        return !done;
+      });
+      var vx = tx - B.x, vy = ty - B.y;
+      B.x = lerp(B.x, tx, k); B.y = lerp(B.y, ty, k);
+      B.w = lerp(B.w, tw, 0.25); B.h = lerp(B.h, th, 0.25); B.r = lerp(B.r, trad, 0.25);
+      ring.style.transform = 'translate(' + B.x.toFixed(1) + 'px,' + B.y.toFixed(1) + 'px)';
+      body.style.width = B.w.toFixed(1) + 'px'; body.style.height = B.h.toFixed(1) + 'px';
+      body.style.margin = (-B.h / 2).toFixed(1) + 'px 0 0 ' + (-B.w / 2).toFixed(1) + 'px';
+      body.style.borderRadius = B.r.toFixed(1) + 'px';
+      if (mode === 'free') {   // squash and stretch only while moving freely
+        var sp = Math.min(Math.hypot(vx, vy) * 0.03, 0.45), ang = Math.atan2(vy, vx) * 180 / Math.PI;
+        body.style.transform = 'rotate(' + ang.toFixed(1) + 'deg) scale(' + (1 + sp).toFixed(3) + ',' + (1 - sp * 0.55).toFixed(3) + ')';
+      } else body.style.transform = '';
       dot.style.transform = 'translate(' + M.x + 'px,' + M.y + 'px)';
     }
-    if (peek.classList.contains('on')) {
-      P.x = lerp(P.x, M.x, 0.12); P.y = lerp(P.y, M.y, 0.12);
-      peek.style.transform = 'translate(' + P.x.toFixed(1) + 'px,' + P.y.toFixed(1) + 'px)';
-    }
-    if (fine && !reduce && cells.length && M.seen) {
-      cells.forEach(function (c) {
-        var r = c.el.getBoundingClientRect();
-        var cx = r.left + r.width / 2 - c.x, cy = r.top + r.height / 2 - c.y;
-        var dx = cx - M.x, dy = cy - M.y, d = Math.hypot(dx, dy) || 1, reach = 200 + r.width / 2;
-        var push = d < reach ? (reach - d) * 0.45 : 0;
-        c.x = lerp(c.x, dx / d * push, 0.08); c.y = lerp(c.y, dy / d * push, 0.08);
-        c.el.style.transform = 'translate(' + c.x.toFixed(1) + 'px,' + c.y.toFixed(1) + 'px)';
-      });
-    }
-    if (!document.hidden) live.forEach(function (b) { if (b.on || b.el.closest('#peek')) b.path.setAttribute('d', blobPath(b.pts, t * 0.9, b.amp)); });
+    if (!document.hidden) live.forEach(function (b) { if (b.on) b.path.setAttribute('d', blobPath(b.pts, t * 0.9, b.amp)); });
     requestAnimationFrame(tick);
   })(t0);
 
@@ -954,6 +974,51 @@ main { padding-bottom: 112px; }
     $('#net-reset').addEventListener('click', reset);
     themeHooks.push(function () { draw(performance.now() / 1000); });
     runWhileVisible(cv, step);
+  })();
+
+  /* ---------- Awards: hover to bold, click for a small card ---------- */
+  // Set img to a file path (e.g. 'awards/regeneron.png') to show a logo or photo instead of the medal.
+  var AWARDS = [
+    { name: 'Regeneron Biomedical Science Award', org: 'Regeneron', c: '--blue', img: '' },
+    { name: 'AstraZeneca Exceptional Project Award', org: 'AstraZeneca', c: '--yellow', img: '' },
+    { name: 'MRIGlobal 1st Place Project Award', org: 'MRIGlobal', c: '--red', img: '' },
+    { name: '2nd Place, State Biomedical Debate', org: 'HOSA-Future Health Professionals', c: '--blue', img: '' },
+    { name: '3rd Place', org: 'Science Montgomery', c: '--yellow', img: '' },
+    { name: 'James Phang Aspiring Scientist Award', org: 'Metro Bethesda Rotary', c: '--red', img: '' }
+  ];
+  (function () {
+    var wrap = $('#honors'); if (!wrap) return;
+    var pop = $('#award-pop'), art = $('#pop-art'), nm = $('#pop-name'), og = $('#pop-org'), open = null;
+    function medal(c) {
+      return '<svg viewBox="0 0 40 40" aria-hidden="true">' +
+        '<path d="M12 2h7l3 11h-7z" fill="var(--faint)"/><path d="M28 2h-7l-3 11h7z" fill="var(--muted)"/>' +
+        '<circle cx="20" cy="25" r="12" fill="var(' + c + ')"/>' +
+        '<circle cx="20" cy="25" r="7.5" fill="none" stroke="var(--bg)" stroke-width="1.5" opacity=".75"/></svg>';
+    }
+    function show(btn) {
+      var a = AWARDS[+btn.getAttribute('data-award')];
+      nm.textContent = a.name;
+      og.textContent = 'Presented by ' + a.org;
+      art.innerHTML = '';
+      if (a.img) { var im = document.createElement('img'); im.src = a.img; im.alt = a.org + ' logo'; art.appendChild(im); }
+      else art.innerHTML = medal(a.c);
+      pop.hidden = false;
+      pop.style.animation = 'none'; void pop.offsetWidth; pop.style.animation = '';
+      var wr = wrap.getBoundingClientRect(), br = btn.getBoundingClientRect();
+      pop.style.left = clamp(br.left - wr.left, 0, Math.max(0, wr.width - pop.offsetWidth)) + 'px';
+      pop.style.top = (br.bottom - wr.top + 10) + 'px';
+      if (open) open.setAttribute('aria-expanded', 'false');
+      btn.setAttribute('aria-expanded', 'true'); open = btn;
+    }
+    function hide() { pop.hidden = true; if (open) { open.setAttribute('aria-expanded', 'false'); open = null; } }
+    wrap.addEventListener('click', function (e) {
+      var b = e.target.closest('.award'); if (!b) return;
+      if (open === b) hide(); else show(b);
+    });
+    $('#pop-x').addEventListener('click', function () { var b = open; hide(); if (b) b.focus(); });
+    document.addEventListener('click', function (e) { if (open && !e.target.closest('#honors')) hide(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && open) { var b = open; hide(); b.focus(); } });
+    window.addEventListener('resize', hide);
   })();
 
   /* ---------- Touch wording for the hints ---------- */
