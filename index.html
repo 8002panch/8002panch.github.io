@@ -6,12 +6,12 @@
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>Neil Panchal</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Neil Panchal, bioengineering student at the University of Maryland working across biophysics, biomedical imaging, and protein machine learning.">
+<meta name="description" content="Neil Panchal models biology in code, then tests it at the bench: an AI-designed antimicrobial peptide, surgical bone-viability imaging, and the mechanics of NET formation.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@1&family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: one Notion-width reading column on a plain page; primary colors enter a little at a time and peak in the black footer. */
+/* Layout: a plain Notion-like page built around three case studies. Each case brings in one primary color and one live figure drawn from its own data; the black footer collects all three. */
 :root {
   --bg: #ffffff;
   --ink: #191919;
@@ -21,13 +21,12 @@
   --line: #e9e9e7;
   --wash: #f7f7f5;
   --chip: #efefed;
-  --chip-fg: #37352f;
   --blue: #2453ff;
   --red: #f2361d;
   --yellow: #ffc400;
-  --blue-t: #e8edff;
-  --red-t: #ffe9e4;
-  --yellow-t: #fff5d1;
+  --blue-t: #dfe6ff;
+  --red-t: #ffe4dd;
+  --yellow-t: #fff1bf;
   --blue-fg: #1c40d6;
   --red-fg: #b5230f;
   --yellow-fg: #765a00;
@@ -42,16 +41,14 @@
   --sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
   --serif: "Instrument Serif", "Iowan Old Style", Georgia, serif;
-  --col: 860px;
-  --gutter-l: max(20px, env(safe-area-inset-left, 0px));
-  --gutter-r: max(20px, env(safe-area-inset-right, 0px));
+  --wide: 1040px;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #191919; --ink: #ededeb; --body: #d3d3d0; --muted: #9b9a97; --faint: #6b6a67;
-    --line: #2e2e2c; --wash: #222221; --chip: #2c2c2a; --chip-fg: #d3d3d0;
+    --line: #2e2e2c; --wash: #212120; --chip: #2c2c2a;
     --blue: #4a72ff; --red: #ff4a30; --yellow: #ffc400;
-    --blue-t: #1c2547; --red-t: #3b1d17; --yellow-t: #352c12;
+    --blue-t: #1f2a52; --red-t: #45201a; --yellow-t: #3d3214;
     --blue-fg: #9cb2ff; --red-fg: #ff9a87; --yellow-fg: #ffd866;
     --nav-bg: rgba(25, 25, 25, 0.86); --foot-bg: #0e0e0e;
     color-scheme: dark;
@@ -59,9 +56,9 @@
 }
 :root[data-theme="dark"] {
   --bg: #191919; --ink: #ededeb; --body: #d3d3d0; --muted: #9b9a97; --faint: #6b6a67;
-  --line: #2e2e2c; --wash: #222221; --chip: #2c2c2a; --chip-fg: #d3d3d0;
+  --line: #2e2e2c; --wash: #212120; --chip: #2c2c2a;
   --blue: #4a72ff; --red: #ff4a30; --yellow: #ffc400;
-  --blue-t: #1c2547; --red-t: #3b1d17; --yellow-t: #352c12;
+  --blue-t: #1f2a52; --red-t: #45201a; --yellow-t: #3d3214;
   --blue-fg: #9cb2ff; --red-fg: #ff9a87; --yellow-fg: #ffd866;
   --nav-bg: rgba(25, 25, 25, 0.86); --foot-bg: #0e0e0e;
   color-scheme: dark;
@@ -82,8 +79,15 @@ body::before {
 }
 a { color: inherit; }
 :focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 4px; }
+h1, h2, h3 { margin: 0; color: var(--ink); text-wrap: balance; }
+p { margin: 0; }
 .blob { display: block; overflow: visible; }
 .blob path { fill: currentColor; }
+.band {
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: var(--wide); margin-inline: auto; }
 
 /* ---------- Nav ---------- */
 .nav {
@@ -91,110 +95,103 @@ a { color: inherit; }
   background: var(--nav-bg);
   -webkit-backdrop-filter: saturate(1.4) blur(10px); backdrop-filter: saturate(1.4) blur(10px);
   border-bottom: 1px solid var(--line);
-  padding-left: max(20px, env(safe-area-inset-left, 0px));
-  padding-right: max(20px, env(safe-area-inset-right, 0px));
 }
-.nav-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 48px; }
+.nav .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 48px; }
 .crumb { display: flex; align-items: center; gap: 8px; font-size: 14px; line-height: 20px; text-decoration: none; min-width: 0; }
 .crumb .mark { width: 20px; height: 20px; border-radius: 5px; background: var(--ink); flex: none; }
 .crumb .name { color: var(--ink); font-weight: 500; }
 .crumb .sep { color: var(--faint); }
 .crumb .page { color: var(--muted); }
-.links { display: flex; gap: 24px; font-size: 14px; }
+.links { display: flex; gap: 22px; font-size: 14px; }
 .links a { color: var(--muted); text-decoration: none; transition: color .2s; }
 .links a:hover { color: var(--ink); }
 
-/* ---------- Main column ---------- */
-main {
-  padding-left: max(20px, env(safe-area-inset-left, 0px));
-  padding-right: max(20px, env(safe-area-inset-right, 0px));
-  padding-block: 88px 128px;
-}
-.col { max-width: var(--col); margin-inline: auto; display: grid; gap: 72px; }
-.col > * { min-width: 0; }
-section { scroll-margin-top: 72px; }
-
-h1, h2, h3 { color: var(--ink); text-wrap: balance; margin: 0; }
-.icon { width: 72px; height: 72px; color: var(--blue); }
+/* ---------- Hero ---------- */
+.hero { padding-block: clamp(56px, 9vw, 112px) 0; }
+.who { display: flex; align-items: center; gap: 12px; font-size: 14px; line-height: 20px; color: var(--muted); }
+.who .blob { width: 30px; height: 30px; color: var(--blue); flex: none; }
+.who b { color: var(--ink); font-weight: 600; }
 h1 {
-  margin-top: 20px;
-  font-size: clamp(2.5rem, 1.7rem + 3vw, 3.5rem);
-  font-weight: 700; line-height: 1.1; letter-spacing: -0.035em;
+  margin-top: 28px; max-width: 15ch;
+  font-size: clamp(2.6rem, 1.1rem + 5vw, 5rem);
+  font-weight: 700; line-height: 1.02; letter-spacing: -0.045em;
 }
-.tagline { margin: 20px 0 0; max-width: 640px; font-size: clamp(17px, 1rem + 0.3vw, 19px); line-height: 1.53; color: var(--muted); text-wrap: pretty; }
+h1 em { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: -0.015em; font-size: 1.08em; }
+.lede { margin-top: 28px; max-width: 600px; font-size: clamp(17px, 1rem + 0.35vw, 19px); line-height: 1.55; color: var(--muted); text-wrap: pretty; }
+.lede strong { color: var(--body); font-weight: 500; }
 
-.props { margin: 32px 0 0; display: grid; gap: 2px; }
-.prop { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 12px; align-items: center; padding-block: 5px; }
-.prop dt { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 14px; line-height: 20px; }
-.prop dt svg { width: 16px; height: 16px; flex: none; }
-.prop dd { margin: 0; display: flex; flex-wrap: wrap; gap: 6px; font-size: 14px; line-height: 20px; color: var(--body); min-width: 0; overflow-wrap: anywhere; }
-.u { text-decoration: underline; text-decoration-color: var(--faint); text-underline-offset: 3px; transition: text-decoration-color .2s; }
-.u:hover { text-decoration-color: var(--ink); }
+.proof { margin-top: 56px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.proof a {
+  display: flex; flex-direction: column; gap: 10px; padding: 20px 20px 18px;
+  border: 1px solid var(--line); border-radius: 12px; text-decoration: none;
+  transition: border-color .25s, transform .35s cubic-bezier(.2, .8, .2, 1), background-color .25s;
+}
+.proof a:hover { border-color: var(--c); transform: translateY(-3px); }
+.proof .num { font-size: clamp(34px, 1.6rem + 1.6vw, 46px); line-height: 1; font-weight: 600; letter-spacing: -0.045em; color: var(--ink); font-variant-numeric: tabular-nums; }
+.proof .num::after { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--c); margin-left: 8px; vertical-align: 0.5em; }
+.proof .lbl { font-size: 14px; line-height: 20px; color: var(--muted); text-wrap: pretty; }
+.proof .go { margin-top: auto; padding-top: 6px; font: 12px/18px var(--mono); color: var(--faint); transition: color .25s; }
+.proof a:hover .go { color: var(--ink); }
 
-.tag { display: inline-flex; padding: 3px 8px; border-radius: 4px; font-size: 13px; line-height: 18px; background: var(--chip); color: var(--chip-fg); max-width: 100%; }
-.tag.blue { background: var(--blue-t); color: var(--blue-fg); }
-.tag.red { background: var(--red-t); color: var(--red-fg); }
-.tag.yellow { background: var(--yellow-t); color: var(--yellow-fg); }
+/* ---------- Cases ---------- */
+main { padding-bottom: 112px; }
+.case { padding-top: clamp(72px, 10vw, 120px); scroll-margin-top: 48px; }
+.case .wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 72px); align-items: center; }
+.case.flip .text { order: 2; }
+.case .wrap::before {
+  content: ""; grid-column: 1 / -1; height: 1px; background: var(--line); margin-bottom: clamp(8px, 2vw, 24px);
+}
+.eyebrow { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; font: 12px/18px var(--mono); color: var(--muted); }
+.eyebrow i { width: 10px; height: 10px; border-radius: 2px; background: var(--c); flex: none; }
+.eyebrow b { color: var(--ink); font-weight: 500; }
+.case h2 { margin-top: 16px; font-size: clamp(28px, 1.2rem + 1.8vw, 40px); line-height: 1.1; font-weight: 600; letter-spacing: -0.03em; }
+.case .text > p { margin-top: 16px; font-size: 16px; line-height: 1.65; max-width: 34em; text-wrap: pretty; }
+.case .text > p:first-of-type { margin-top: 20px; }
+.facts { margin: 28px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: 16px 20px; padding-top: 20px; border-top: 1px solid var(--line); }
+.facts dt { font: 11px/16px var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+.facts dd { margin: 4px 0 0; font-size: 14px; line-height: 20px; color: var(--ink); }
+.facts dd small { display: block; color: var(--muted); font-size: 12.5px; }
 
-.callout { display: flex; gap: 14px; align-items: flex-start; padding: 18px 20px; border-radius: 8px; background: var(--wash); }
-.callout .blob { width: 22px; height: 22px; color: var(--yellow); flex: none; margin-top: 1px; }
-.callout p { margin: 0; font-size: 15px; line-height: 24px; min-width: 0; }
-.callout strong { color: var(--ink); font-weight: 600; }
+.viz { margin: 0; padding: 18px; border-radius: 14px; background: var(--wash); display: grid; gap: 14px; min-width: 0; }
+.viz-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font: 12px/18px var(--mono); color: var(--muted); }
+.viz-top output { color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; }
+.viz figcaption { font-size: 13px; line-height: 19px; color: var(--muted); text-wrap: pretty; }
+.stage { position: relative; border-radius: 8px; overflow: hidden; background: var(--bg); }
+.stage canvas, .stage svg { display: block; width: 100%; height: auto; }
+#kill { image-rendering: pixelated; }
+.ring {
+  position: absolute; width: 26px; height: 26px; margin: -13px 0 0 -13px; border-radius: 50%;
+  border: 2px solid var(--red); pointer-events: none;
+  animation: pulse 2.4s ease-in-out infinite;
+}
+@keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.35); opacity: .55; } }
+.replay {
+  font: 12px/18px var(--mono); color: var(--muted); background: none; border: 0; padding: 0; cursor: pointer;
+  text-decoration: underline; text-decoration-color: var(--faint); text-underline-offset: 3px;
+}
+.replay:hover { color: var(--ink); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; line-height: 18px; color: var(--muted); list-style: none; margin: 0; padding: 0; }
+.legend li { display: flex; align-items: center; gap: 6px; }
+.legend i { width: 9px; height: 9px; border-radius: 50%; flex: none; }
 
-h2 { display: flex; align-items: center; gap: 12px; font-size: 22px; line-height: 30px; font-weight: 600; letter-spacing: -0.015em; }
-h2::before { content: ""; width: 10px; height: 10px; border-radius: 2px; background: var(--marker, var(--ink)); flex: none; }
-
-/* Stats */
-.stats { margin-top: 28px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: 28px 32px; }
-.stat .bar { width: 24px; height: 3px; border-radius: 2px; background: var(--c, var(--ink)); }
-.stat .num { margin-top: 8px; font-size: clamp(32px, 1.4rem + 1.4vw, 40px); line-height: 1.15; font-weight: 600; letter-spacing: -0.04em; color: var(--ink); font-variant-numeric: tabular-nums; }
-.stat .lbl { margin-top: 8px; font-size: 13px; line-height: 19px; color: var(--muted); }
-
-/* Experience */
-.list { margin-top: 20px; }
-.item { border-top: 1px solid var(--line); padding: 20px 0 22px; }
-.row { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 12px; }
-.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--c, var(--ink)); flex: none; }
-.role { flex: 1 1 240px; min-width: 0; font-size: 16px; line-height: 24px; font-weight: 600; letter-spacing: -0.005em; }
-.date { margin-left: auto; font-family: var(--mono); font-size: 12px; line-height: 18px; color: var(--muted); white-space: nowrap; }
-.detail { padding-left: 20px; }
-.org { margin: 6px 0 0; font-size: 14px; line-height: 20px; color: var(--muted); }
-.detail ul { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 6px; }
-.detail li { position: relative; padding-left: 16px; font-size: 14.5px; line-height: 22px; text-wrap: pretty; }
-.detail li::before { content: ""; position: absolute; left: 1px; top: 9px; width: 4px; height: 4px; border-radius: 50%; background: var(--faint); }
-
-/* Work */
-.work { margin-top: 24px; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr)); gap: 16px; }
-.card { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--bg); display: flex; flex-direction: column; }
-.cover { position: relative; height: 128px; overflow: hidden; background: var(--t); }
-.cover .big { position: absolute; width: 170px; height: 170px; right: -24px; top: -34px; color: var(--c); transition: transform .7s cubic-bezier(.2, .8, .2, 1); }
-.cover .small { position: absolute; width: 34px; height: 34px; left: 28px; top: 70px; color: var(--ink); transition: transform .7s cubic-bezier(.2, .8, .2, 1); }
-.card:hover .big { transform: translate(-10px, 6px) rotate(-10deg) scale(1.05); }
-.card:hover .small { transform: translate(6px, -4px) rotate(14deg); }
-.card-body { padding: 14px 16px 16px; display: flex; flex-direction: column; flex: 1; }
-.card h3 { font-size: 15.5px; line-height: 22px; font-weight: 600; letter-spacing: -0.005em; }
-.card p { margin: 6px 0 0; font-size: 13.5px; line-height: 20px; color: var(--muted); text-wrap: pretty; }
-.card .tags { margin-top: auto; padding-top: 12px; display: flex; flex-wrap: wrap; gap: 6px; }
-
-/* Skills */
-.skills { margin-top: 28px; display: grid; gap: 28px; }
-.group { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 10px 24px; }
-.group h3 { padding-top: 3px; font: 400 12px/18px var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
-.group .tags { display: flex; flex-wrap: wrap; gap: 8px 6px; }
-
-/* Awards */
-.awards { list-style: none; margin: 20px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); column-gap: 24px; }
-.awards li { display: flex; align-items: center; gap: 14px; border-top: 1px solid var(--line); padding-block: 14px; font-size: 14.5px; line-height: 22px; }
-.awards li span { flex: 1; min-width: 0; }
-.awards li i { width: 6px; height: 6px; border-radius: 50%; background: var(--c, var(--ink)); flex: none; }
+/* ---------- Also / recognition ---------- */
+.more { padding-top: clamp(80px, 11vw, 128px); }
+.more .wrap { display: grid; gap: 56px; }
+.more h2 { font-size: 22px; line-height: 30px; font-weight: 600; letter-spacing: -0.015em; }
+.also { margin-top: 20px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 40px; }
+.also article { border-top: 1px solid var(--line); padding-block: 18px 20px; display: grid; gap: 6px; }
+.also h3 { font-size: 16px; line-height: 24px; font-weight: 600; letter-spacing: -0.005em; }
+.also p { font-size: 14.5px; line-height: 22px; text-wrap: pretty; }
+.also .where { font: 12px/18px var(--mono); color: var(--muted); }
+.honors { margin-top: 18px; font-size: clamp(17px, 1rem + 0.4vw, 20px); line-height: 1.6; color: var(--muted); text-wrap: pretty; }
+.honors strong { color: var(--ink); font-weight: 600; }
+.honors span { color: var(--faint); padding-inline: 0.35em; }
 
 /* ---------- Footer ---------- */
 .foot {
   position: relative; overflow: hidden; isolation: isolate;
   background: var(--foot-bg); color: var(--foot-fg);
   border-top: 1px solid var(--line);
-  padding-left: max(20px, env(safe-area-inset-left, 0px));
-  padding-right: max(20px, env(safe-area-inset-right, 0px));
   padding-block: 112px 40px;
 }
 .splash { position: absolute; z-index: -1; pointer-events: none; }
@@ -202,16 +199,14 @@ h2::before { content: ""; width: 10px; height: 10px; border-radius: 2px; backgro
 .s-yellow { width: 280px; height: 280px; left: calc(50% + 432px); top: 40px; color: var(--yellow); }
 .s-blue { width: 340px; height: 340px; left: calc(50% + 547px); top: 260px; color: var(--blue); }
 .s-white { width: 120px; height: 120px; left: calc(50% + 210px); top: 380px; color: var(--foot-fg); }
-.foot-col { max-width: var(--col); margin-inline: auto; }
-.foot h2 { display: block; color: var(--foot-fg); font: italic 400 clamp(64px, 2.6rem + 5vw, 104px)/1 var(--serif); letter-spacing: -0.02em; }
-.foot h2::before { display: none; }
-.foot .lead { margin: 28px 0 0; max-width: 460px; font-size: 19px; line-height: 29px; color: var(--foot-muted); }
+.foot h2 { color: var(--foot-fg); font: italic 400 clamp(64px, 2.6rem + 5vw, 104px)/1 var(--serif); letter-spacing: -0.02em; }
+.foot .lead { margin-top: 28px; max-width: 460px; font-size: 19px; line-height: 29px; color: var(--foot-muted); }
 .btns { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 10px; }
 .btn {
   display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; border-radius: 999px;
   font: 500 14px/20px var(--sans); text-decoration: none; cursor: pointer;
   border: 1px solid var(--foot-ghost); background: transparent; color: var(--foot-fg);
-  transition: border-color .2s, background-color .2s, transform .2s;
+  transition: border-color .2s, transform .2s;
 }
 .btn:hover { border-color: var(--foot-fg); }
 .btn.primary { background: var(--foot-fg); border-color: var(--foot-fg); color: var(--foot-bg); }
@@ -225,244 +220,196 @@ h2::before { content: ""; width: 10px; height: 10px; border-radius: 2px; backgro
 }
 
 /* ---------- Narrow screens ---------- */
-@media (max-width: 820px) {
+@media (max-width: 860px) {
+  .case .wrap { grid-template-columns: minmax(0, 1fr); }
+  .case.flip .text { order: 0; }
+  .proof { grid-template-columns: minmax(0, 1fr); }
+  .proof a { flex-direction: row; flex-wrap: wrap; align-items: baseline; column-gap: 14px; }
+  .proof .num { min-width: 5.2ch; }
+  .proof .lbl { flex: 1 1 180px; }
+  .proof .go { display: none; }
+  .also { grid-template-columns: minmax(0, 1fr); }
   .foot { padding-top: 300px; }
   .s-red { width: 300px; height: 300px; left: auto; right: -80px; top: -90px; }
   .s-yellow { width: 200px; height: 200px; left: -60px; top: 40px; }
   .s-blue { width: 170px; height: 170px; left: auto; right: -30px; top: 150px; }
   .s-white { width: 70px; height: 70px; left: 31%; top: 210px; }
 }
-@media (max-width: 600px) {
-  .links { display: none; }
-  main { padding-block: 48px 88px; }
-  .col { gap: 56px; }
-  .icon { width: 56px; height: 56px; }
-  .prop { grid-template-columns: 104px minmax(0, 1fr); }
-  .group { grid-template-columns: 1fr; }
+@media (max-width: 560px) {
+  .links a:not(.keep) { display: none; }
+  .viz { padding: 12px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .cover .big, .cover .small, .btn { transition: none; }
+  .proof a, .btn { transition: none; }
+  .ring { animation: none; }
 }
 </style>
 </head>
 <body>
 
-<nav class="nav" aria-label="Site">
-  <div class="nav-inner">
+<nav class="nav band" aria-label="Site">
+  <div class="wrap">
     <a class="crumb" href="#top"><span class="mark" aria-hidden="true"></span><span class="name">Neil Panchal</span><span class="sep">/</span><span class="page">Portfolio</span></a>
     <div class="links">
-      <a href="#experience">Experience</a>
-      <a href="#work">Work</a>
-      <a href="#skills">Skills</a>
-      <a href="#contact">Contact</a>
+      <a href="#nektar">Work</a>
+      <a href="Neil_Panchal_Resume.pdf" target="_blank" rel="noopener">Résumé</a>
+      <a class="keep" href="#contact">Contact</a>
     </div>
   </div>
 </nav>
 
-<main id="top">
-  <div class="col">
-
-    <header>
-      <svg class="blob icon" data-seed="23" data-amp="0.05" viewBox="0 0 100 100" aria-hidden="true"><path/></svg>
-      <h1>Neil Panchal</h1>
-      <p class="tagline">Bioengineering student at the University of Maryland, working where biophysics, biomedical imaging, and protein machine learning meet.</p>
-      <dl class="props">
-        <div class="prop">
-          <dt><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>Based in</dt>
-          <dd>Clarksburg, MD</dd>
-        </div>
-        <div class="prop">
-          <dt><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg>Studying</dt>
-          <dd>B.S. Bioengineering · University of Maryland, College Park · 2030</dd>
-        </div>
-        <div class="prop">
-          <dt><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2"/><path d="M6.453 15h11.094"/><path d="M8.5 2h7"/></svg>Focus</dt>
-          <dd><span class="tag">Biophysics</span><span class="tag">Biomedical imaging</span><span class="tag">Protein ML</span></dd>
-        </div>
-        <div class="prop">
-          <dt><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>Email</dt>
-          <dd><span class="u">neilpanchal08@gmail.com</span></dd>
-        </div>
-        <div class="prop">
-          <dt><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>LinkedIn</dt>
-          <dd><a class="u" href="https://www.linkedin.com/in/neilpanch" target="_blank" rel="noopener">linkedin.com/in/neilpanch</a></dd>
-        </div>
-        <div class="prop">
-          <dt><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="1"/></svg>Status</dt>
-          <dd><span class="tag blue">Open to research opportunities</span></dd>
-        </div>
-      </dl>
-    </header>
-
-    <div class="callout">
-      <svg class="blob" data-seed="41" data-amp="0.06" viewBox="0 0 100 100" aria-hidden="true"><path/></svg>
-      <p><strong>Now</strong> — modeling how adhesion, confinement, and shear trigger neutrophil extracellular traps in the Aranda-Espinoza Lab, and quantifying bone viability from surgical imaging in the Gan Lab.</p>
+<header class="hero band" id="top">
+  <div class="wrap">
+    <p class="who"><svg class="blob" data-seed="23" data-amp="0.06" viewBox="0 0 100 100" aria-hidden="true"><path/></svg><span><b>Neil Panchal</b> · Bioengineering, University of Maryland</span></p>
+    <h1>I model biology in code, <em>then test it at the bench.</em></h1>
+    <p class="lede">I'm a first-year bioengineering student who has already done research in <strong>five labs</strong> across UMD, Johns Hopkins, and George Mason. Three projects show how I work best.</p>
+    <div class="proof">
+      <a href="#nektar" style="--c: var(--red)">
+        <span class="num">99.999%</span>
+        <span class="lbl">of drug-resistant bacteria killed by a peptide I designed with a protein language model</span>
+        <span class="go">NeKtar-1 ↓</span>
+      </a>
+      <a href="#bone" style="--c: var(--blue)">
+        <span class="num">0.89</span>
+        <span class="lbl">Dice score for finding non-viable bone in surgical fluorescence images</span>
+        <span class="go">Bone imaging ↓</span>
+      </a>
+      <a href="#nets" style="--c: var(--yellow)">
+        <span class="num">0.3%</span>
+        <span class="lbl">of ~9,700 NET papers model the mechanics quantitatively. I'm working on that gap.</span>
+        <span class="go">NET mechanics ↓</span>
+      </a>
     </div>
-
-    <section aria-labelledby="glance-h">
-      <h2 id="glance-h">At a glance</h2>
-      <div class="stats">
-        <div class="stat" style="--c: var(--blue)"><div class="bar"></div><div class="num">0.89</div><div class="lbl">Dice score segmenting viable bone from fluorescence imaging</div></div>
-        <div class="stat"><div class="bar"></div><div class="num">~9,700</div><div class="lbl">NET papers reviewed to map where mechanics is missing</div></div>
-        <div class="stat" style="--c: var(--red)"><div class="bar"></div><div class="num">99.999%</div><div class="lbl">Peak kill rate of drug-resistant bacteria by NeKtar-1</div></div>
-        <div class="stat"><div class="bar"></div><div class="num">270</div><div class="lbl">Surgical imaging cases in the bone-viability dataset</div></div>
-      </div>
-    </section>
-
-    <section id="experience" aria-labelledby="exp-h">
-      <h2 id="exp-h">Experience</h2>
-      <div class="list">
-        <article class="item" style="--c: var(--blue)">
-          <div class="row"><span class="dot"></span><h3 class="role">Biophysics Undergraduate Researcher</h3><span class="date">Sep 2026 — Now</span></div>
-          <div class="detail">
-            <p class="org">Aranda-Espinoza Lab · Fischell Department of Bioengineering, UMD</p>
-            <ul>
-              <li>Modeling how adhesion, confinement, and shear trigger neutrophil extracellular trap (NET) formation, toward one unified mechanical model.</li>
-              <li>Reviewed ~9,700 NET papers. Only 2.5% address mechanics and 0.3% use quantitative models; ranked 11 open gaps and 8 experiments the lab can run now.</li>
-            </ul>
-          </div>
-        </article>
-        <article class="item">
-          <div class="row"><span class="dot"></span><h3 class="role">Biomedical Imaging Research Intern</h3><span class="date">Jun 2026 — Now</span></div>
-          <div class="detail">
-            <p class="org">Gan Lab · Fischell Department of Bioengineering, UMD · with Dartmouth</p>
-            <ul>
-              <li>Segment viable vs. non-viable bone at 0.89 Dice by fusing two fluorescence views, with calibrated confidence (error 0.10 → 0.06) and 0.85 patient-level AUC.</li>
-              <li>Scaled the dataset from 50 to 270 cases (207 patients); drafting an ISBI 2027 paper and presenting a poster at the Mickey Dale Organ Transplantation Symposium.</li>
-            </ul>
-          </div>
-        </article>
-        <article class="item">
-          <div class="row"><span class="dot"></span><h3 class="role">Undergraduate Research Intern</h3><span class="date">Jun 2026 — Now</span></div>
-          <div class="detail">
-            <p class="org">Vaisman Lab · George Mason University · Remote</p>
-            <ul>
-              <li>Generate frozen ESM-2 (650M) protein embeddings that feed a path-based graph neural network for Protein2GO link prediction on a 160K-node biomedical graph.</li>
-            </ul>
-          </div>
-        </article>
-        <article class="item" style="--c: var(--red)">
-          <div class="row"><span class="dot"></span><h3 class="role">Lab Researcher</h3><span class="date">Dec 2025 — Feb 2026</span></div>
-          <div class="detail">
-            <p class="org">Institute for Bioscience &amp; Biotechnology Research, UMD</p>
-            <ul>
-              <li>Ran the first ablation of negative sampling for ESM-2 antimicrobial peptide discovery; DisProt-based negatives won (F1 0.981 vs. 0.931–0.975).</li>
-              <li>Designed and validated NeKtar-1 under BSL-2, killing 99.9–99.999% of drug-resistant E. coli and P. aeruginosa; published in the National High School Journal of Science.</li>
-            </ul>
-          </div>
-        </article>
-        <article class="item">
-          <div class="row"><span class="dot"></span><h3 class="role">Research Intern</h3><span class="date">May 2025 — Jan 2026</span></div>
-          <div class="detail">
-            <p class="org">Biomedical Engineering · Johns Hopkins University</p>
-            <ul>
-              <li>Cultured patient-derived cancer organoids and ran the first benchmark of 10 focus metrics for extended-depth-of-field reconstruction across 990 images.</li>
-              <li>Built two open-source Python/Streamlit tools, including OrganoidEDF, which outputs a 16-bit all-in-focus image and depth map.</li>
-            </ul>
-          </div>
-        </article>
-        <article class="item" style="--c: var(--yellow)">
-          <div class="row"><span class="dot"></span><h3 class="role">Youth Conservation Crew Member</h3><span class="date">Jun — Jul 2026</span></div>
-          <div class="detail">
-            <p class="org">MobilizeGreen · Remote</p>
-            <ul>
-              <li>Co-developed an interactive drought and wildfire simulator on Hugging Face comparing flame spread under set drought and wind.</li>
-              <li>Wrote an article on development threats to Ten Mile Creek, which feeds the backup water supply for ~4.3M people.</li>
-            </ul>
-          </div>
-        </article>
-        <article class="item">
-          <div class="row"><span class="dot"></span><h3 class="role">Engineering Research Intern</h3><span class="date">Jul — Aug 2025</span></div>
-          <div class="detail">
-            <p class="org">ESTEEM / SER-Quest · Clark School of Engineering, UMD</p>
-            <ul>
-              <li>Selected as 1 of 15 from 125+ applicants; co-developed a bias-aware AI advising chatbot, published on arXiv.</li>
-            </ul>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <section aria-labelledby="edu-h">
-      <h2 id="edu-h">Education</h2>
-      <div class="list">
-        <article class="item">
-          <div class="row"><span class="dot"></span><h3 class="role">University of Maryland, College Park</h3><span class="date">Expected May 2030</span></div>
-          <div class="detail">
-            <p class="org">B.S. Bioengineering · Fischell Department of Bioengineering</p>
-            <ul><li>Virtus Living-Learning Community.</li></ul>
-          </div>
-        </article>
-        <article class="item">
-          <div class="row"><span class="dot"></span><h3 class="role">Poolesville High School</h3><span class="date">Jun 2026</span></div>
-          <div class="detail">
-            <p class="org">Global Ecology Magnet Program</p>
-            <ul><li>GPA 3.98 / 4.00 (unweighted).</li></ul>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <section id="work" aria-labelledby="work-h" style="--marker: var(--blue)">
-      <h2 id="work-h">Selected work</h2>
-      <div class="work">
-        <article class="card" style="--t: var(--red-t); --c: var(--red)">
-          <div class="cover"><svg class="blob big" data-seed="17" viewBox="0 0 100 100" aria-hidden="true"><path/></svg><svg class="blob small" data-seed="5" viewBox="0 0 100 100" aria-hidden="true"><path/></svg></div>
-          <div class="card-body"><h3>NeKtar-1</h3><p>An AI-designed antimicrobial peptide that killed 99.9–99.999% of drug-resistant E. coli and P. aeruginosa. Published in NHSJS.</p><div class="tags"><span class="tag red">Protein ML</span><span class="tag">Wet lab</span></div></div>
-        </article>
-        <article class="card" style="--t: var(--blue-t); --c: var(--blue)">
-          <div class="cover"><svg class="blob big" data-seed="17" viewBox="0 0 100 100" aria-hidden="true"><path/></svg><svg class="blob small" data-seed="5" viewBox="0 0 100 100" aria-hidden="true"><path/></svg></div>
-          <div class="card-body"><h3>Bone viability imaging</h3><p>Fusing two fluorescence views to segment viable bone at 0.89 Dice, with confidence that flags unreliable cases.</p><div class="tags"><span class="tag blue">Imaging</span><span class="tag">nnU-Net</span></div></div>
-        </article>
-        <article class="card" style="--t: var(--yellow-t); --c: var(--yellow)">
-          <div class="cover"><svg class="blob big" data-seed="17" viewBox="0 0 100 100" aria-hidden="true"><path/></svg><svg class="blob small" data-seed="5" viewBox="0 0 100 100" aria-hidden="true"><path/></svg></div>
-          <div class="card-body"><h3>NET mechanics map</h3><p>A review of ~9,700 NETosis papers ranking 11 open gaps in how force triggers NET formation.</p><div class="tags"><span class="tag yellow">Biophysics</span><span class="tag">Review</span></div></div>
-        </article>
-        <article class="card" style="--t: var(--blue-t); --c: var(--blue)">
-          <div class="cover"><svg class="blob big" data-seed="17" viewBox="0 0 100 100" aria-hidden="true"><path/></svg><svg class="blob small" data-seed="5" viewBox="0 0 100 100" aria-hidden="true"><path/></svg></div>
-          <div class="card-body"><h3>OrganoidEDF</h3><p>Open-source tool that turns organoid z-stacks into one 16-bit all-in-focus image plus a depth map.</p><div class="tags"><span class="tag blue">Open source</span><span class="tag">Streamlit</span></div></div>
-        </article>
-        <article class="card" style="--t: var(--yellow-t); --c: var(--yellow)">
-          <div class="cover"><svg class="blob big" data-seed="17" viewBox="0 0 100 100" aria-hidden="true"><path/></svg><svg class="blob small" data-seed="5" viewBox="0 0 100 100" aria-hidden="true"><path/></svg></div>
-          <div class="card-body"><h3>Protein2GO embeddings</h3><p>ESM-2 protein embeddings powering link prediction on a 160K-node biomedical knowledge graph.</p><div class="tags"><span class="tag yellow">GNN</span><span class="tag">ESM-2</span></div></div>
-        </article>
-        <article class="card" style="--t: var(--red-t); --c: var(--red)">
-          <div class="cover"><svg class="blob big" data-seed="17" viewBox="0 0 100 100" aria-hidden="true"><path/></svg><svg class="blob small" data-seed="5" viewBox="0 0 100 100" aria-hidden="true"><path/></svg></div>
-          <div class="card-body"><h3>Wildfire simulator</h3><p>An interactive model comparing flame spread under set drought and wind, built on Hugging Face.</p><div class="tags"><span class="tag red">Climate</span><span class="tag">Hugging Face</span></div></div>
-        </article>
-      </div>
-    </section>
-
-    <section id="skills" aria-labelledby="skills-h" style="--marker: var(--yellow)">
-      <h2 id="skills-h">Skills</h2>
-      <div class="skills">
-        <div class="group"><h3>Laboratory</h3><div class="tags"><span class="tag red">BSL-2 containment</span><span class="tag red">Cell &amp; organoid culture</span><span class="tag red">Bactericidal assays</span><span class="tag">Aseptic technique</span><span class="tag">Z-stack microscopy</span><span class="tag">MIC / MBC</span><span class="tag">Hemolysis assays</span></div></div>
-        <div class="group"><h3>Computational</h3><div class="tags"><span class="tag blue">Python</span><span class="tag blue">PyTorch</span><span class="tag blue">ESM-2 fine-tuning</span><span class="tag">PyTorch Geometric</span><span class="tag">GNNs</span><span class="tag">nnU-Net</span><span class="tag">UNet++</span><span class="tag">OpenCV</span><span class="tag">scikit-learn</span><span class="tag">Hugging Face</span><span class="tag">Streamlit</span><span class="tag">Onshape</span></div></div>
-        <div class="group"><h3>Research</h3><div class="tags"><span class="tag yellow">Experimental design</span><span class="tag yellow">Systematic review</span><span class="tag yellow">Ablation studies</span><span class="tag">Benchmarking</span><span class="tag">Model calibration</span><span class="tag">ROC / AUC</span><span class="tag">Dose-response</span><span class="tag">Manuscript writing</span></div></div>
-      </div>
-    </section>
-
-    <section aria-labelledby="awards-h" style="--marker: var(--red)">
-      <h2 id="awards-h">Awards &amp; honors</h2>
-      <ul class="awards">
-        <li style="--c: var(--red)"><span>Regeneron Biomedical Science Award</span><i></i></li>
-        <li><span>AstraZeneca Exceptional Project Award</span><i></i></li>
-        <li><span>HOSA — 2nd Place, State Biomedical Debate</span><i></i></li>
-        <li style="--c: var(--blue)"><span>MRIGlobal — 1st Place Project Award</span><i></i></li>
-        <li><span>Science Montgomery — 3rd Place</span><i></i></li>
-        <li style="--c: var(--yellow)"><span>Metro Bethesda Rotary James Phang Aspiring Scientist Award</span><i></i></li>
-      </ul>
-    </section>
-
   </div>
+</header>
+
+<main>
+
+  <section class="case band" id="nektar" aria-labelledby="nektar-h" style="--c: var(--red)">
+    <div class="wrap">
+      <div class="text">
+        <p class="eyebrow"><i></i><b>Protein design + wet lab</b><span>UMD Institute for Bioscience &amp; Biotechnology Research · 2025–26</span></p>
+        <h2 id="nektar-h">A peptide designed in code, then tested on superbugs</h2>
+        <p>Antimicrobial peptides are one answer to bacteria that shrug off antibiotics, and protein language models can propose new ones. Those models learn partly from negative examples, and no one had tested which negatives work best.</p>
+        <p>I ran that ablation for ESM-2: disordered-protein negatives from DisProt beat every alternative. Then I took one of the model's designs, NeKtar-1, into a BSL-2 lab and ran the bactericidal and hemolysis assays myself.</p>
+        <dl class="facts">
+          <div><dt>Model</dt><dd>F1 0.981<small>vs. 0.931–0.975 for other negative sets</small></dd></div>
+          <div><dt>Result</dt><dd>99.9–99.999% kill<small>drug-resistant E. coli and P. aeruginosa</small></dd></div>
+          <div><dt>Published</dt><dd>National High School Journal of Science</dd></div>
+        </dl>
+      </div>
+      <figure class="viz" aria-label="Animation of 100,000 bacteria dying until one survives">
+        <div class="viz-top"><span>Bacteria alive</span><output id="kill-count">100,000</output></div>
+        <div class="stage">
+          <canvas id="kill" width="400" height="250"></canvas>
+          <span class="ring" id="kill-ring" style="left: 62.1%; top: 38.2%"></span>
+        </div>
+        <figcaption>Each pixel is one bacterium, 100,000 in all. A 99.999% kill leaves one alive. <button class="replay" id="kill-replay" type="button">Replay</button></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="case band flip" id="bone" aria-labelledby="bone-h" style="--c: var(--blue)">
+    <div class="wrap">
+      <div class="text">
+        <p class="eyebrow"><i></i><b>Surgical imaging</b><span>Gan Lab, UMD · with Dartmouth · 2026–now</span></p>
+        <h2 id="bone-h">Telling living bone from dead bone, mid-surgery</h2>
+        <p>Whether bone still has blood flow is often judged by eye in the operating room. With collaborators at Dartmouth, I'm turning white-light and ICG fluorescence images into a measurement instead.</p>
+        <p>My model fuses two fluorescence views to segment viable from non-viable bone, and reports a calibrated confidence that flags the cases it shouldn't be trusted on. Growing the dataset from 50 to 270 cases lifted held-out scores from 0.878 to 0.906.</p>
+        <dl class="facts">
+          <div><dt>Patient-level AUC</dt><dd>0.85<small>p = 0.0001</small></dd></div>
+          <div><dt>Calibration error</dt><dd>0.10 → 0.06</dd></div>
+          <div><dt>Next</dt><dd>ISBI 2027 paper<small>poster, Oct 2026 symposium</small></dd></div>
+        </dl>
+      </div>
+      <figure class="viz" aria-label="Diagram of the model's outline overlapping the expert's outline at a Dice score of 0.89">
+        <div class="viz-top"><span>Overlap (Dice)</span><output id="dice-out">0.89</output></div>
+        <div class="stage">
+          <svg id="dice" viewBox="0 0 400 250" role="img" aria-label="Two nearly coinciding circles">
+            <defs><clipPath id="expert-clip"><circle id="clip-c" cx="191.78" cy="125" r="95"/></clipPath></defs>
+            <circle id="expert-c" cx="191.78" cy="125" r="95" fill="var(--ink)"/>
+            <circle id="model-c" cx="208.22" cy="125" r="95" fill="var(--blue)"/>
+            <circle id="agree-c" cx="208.22" cy="125" r="95" fill="var(--blue-t)" clip-path="url(#expert-clip)"/>
+          </svg>
+        </div>
+        <ul class="legend">
+          <li><i style="background: var(--blue-t)"></i>Both agree: viable bone</li>
+          <li><i style="background: var(--ink)"></i>Expert only</li>
+          <li><i style="background: var(--blue)"></i>Model only</li>
+        </ul>
+        <figcaption>Dice measures how much the model's outline overlaps the expert's. At 0.89 they nearly coincide; the thin slivers are where they disagree.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="case band" id="nets" aria-labelledby="nets-h" style="--c: var(--yellow)">
+    <div class="wrap">
+      <div class="text">
+        <p class="eyebrow"><i></i><b>Cell mechanics</b><span>Aranda-Espinoza Lab, UMD · 2026–now</span></p>
+        <h2 id="nets-h">How force makes immune cells cast their nets</h2>
+        <p>Neutrophils can fight infection by ejecting webs of DNA called NETs. Adhesion, confinement, and shear can all set this off, yet the field has barely modeled how.</p>
+        <p>I reviewed ~9,700 NET papers to map the gap, then ranked 11 open questions and 8 experiments the lab can run with equipment it already has. I proposed one framework linking all three triggers through calcium/calpain-driven failure of the nuclear envelope.</p>
+        <dl class="facts">
+          <div><dt>Mechanics papers</dt><dd>2.5%<small>of ~9,700 reviewed</small></dd></div>
+          <div><dt>Quantitative models</dt><dd>0.3%</dd></div>
+          <div><dt>Next</dt><dd>Stiffness dose-response<small>a curve no published study has fit</small></dd></div>
+        </dl>
+      </div>
+      <figure class="viz" aria-label="Dot plot of about 9,700 NET papers with the few mechanics and quantitative papers highlighted">
+        <div class="viz-top"><span>~9,700 NET papers</span><output id="nets-out">≈29 quantitative</output></div>
+        <div class="stage"><canvas id="papers" width="500" height="485"></canvas></div>
+        <ul class="legend">
+          <li><i style="background: var(--faint)"></i>Every other NET paper</li>
+          <li><i style="background: var(--ink)"></i>Addresses mechanics (≈243)</li>
+          <li><i style="background: var(--yellow)"></i>Quantitative model (≈29)</li>
+        </ul>
+        <figcaption>Each dot is one paper. Counts are rounded from 2.5% and 0.3% of ~9,700, and dot positions are illustrative.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="more band" aria-label="More work and recognition">
+    <div class="wrap">
+      <div>
+        <h2>Also built</h2>
+        <div class="also">
+          <article>
+            <h3>OrganoidEDF</h3>
+            <p>An open-source tool that turns organoid z-stacks into one all-in-focus image and depth map, built after I benchmarked 10 focus metrics across 990 images.</p>
+            <span class="where">Johns Hopkins Biomedical Engineering</span>
+          </article>
+          <article>
+            <h3>Protein graph embeddings</h3>
+            <p>ESM-2 embeddings that feed a graph neural network predicting protein function links across a 160K-node biomedical knowledge graph.</p>
+            <span class="where">Vaisman Lab, George Mason University</span>
+          </article>
+          <article>
+            <h3>Bias-aware advising chatbot</h3>
+            <p>Co-developed as 1 of 15 selected from 125+ applicants. The paper is on arXiv.</p>
+            <span class="where">ESTEEM / SER-Quest, UMD</span>
+          </article>
+          <article>
+            <h3>Wildfire simulator</h3>
+            <p>An interactive model on Hugging Face comparing flame spread under set drought and wind.</p>
+            <span class="where">MobilizeGreen</span>
+          </article>
+        </div>
+      </div>
+      <div>
+        <h2>Recognition</h2>
+        <p class="honors"><strong>Regeneron Biomedical Science Award</strong><span>·</span>AstraZeneca Exceptional Project Award<span>·</span>MRIGlobal 1st Place Project Award<span>·</span>HOSA 2nd Place, State Biomedical Debate<span>·</span>Science Montgomery 3rd Place<span>·</span>Metro Bethesda Rotary James Phang Aspiring Scientist Award</p>
+      </div>
+    </div>
+  </section>
+
 </main>
 
-<footer class="foot" id="contact">
+<footer class="foot band" id="contact">
   <svg class="blob splash s-red" data-seed="61" data-amp="0.07" viewBox="0 0 100 100" aria-hidden="true"><path/></svg>
   <svg class="blob splash s-yellow" data-seed="29" data-amp="0.08" viewBox="0 0 100 100" aria-hidden="true"><path/></svg>
   <svg class="blob splash s-blue" data-seed="7" data-amp="0.07" viewBox="0 0 100 100" aria-hidden="true"><path/></svg>
   <svg class="blob splash s-white" data-seed="13" data-amp="0.09" viewBox="0 0 100 100" aria-hidden="true"><path/></svg>
-  <div class="foot-col">
+  <div class="wrap">
     <h2>Let's talk.</h2>
     <p class="lead">Collaborations, research questions, or opportunities. My inbox is open.</p>
     <div class="btns">
@@ -471,6 +418,7 @@ h2::before { content: ""; width: 10px; height: 10px; border-radius: 2px; backgro
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
       </button>
       <a class="btn" href="https://www.linkedin.com/in/neilpanch" target="_blank" rel="noopener">LinkedIn ↗</a>
+      <a class="btn" href="Neil_Panchal_Resume.pdf" target="_blank" rel="noopener">Full résumé (PDF) ↗</a>
     </div>
     <div class="foot-bottom"><span>© 2026 Neil Panchal</span><span>Clarksburg, MD</span></div>
   </div>
@@ -478,8 +426,30 @@ h2::before { content: ""; width: 10px; height: 10px; border-radius: 2px; backgro
 
 <script>
 (function () {
-  // Seeded blob shapes (same generator as the Figma file), gently morphing.
+  var root = document.documentElement;
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function tok(n) { return getComputedStyle(root).getPropertyValue(n).trim(); }
+  function rgb(h) {
+    h = h.replace('#', '');
+    if (h.length === 3) h = h.split('').map(function (c) { return c + c; }).join('');
+    return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+  }
   function rng(s) { return function () { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; }; }
+  function ease(x) { return 1 - Math.pow(1 - x, 3); }
+  function onVisible(el, fn, threshold) {
+    if (!('IntersectionObserver' in window)) { fn(); return; }
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { io.disconnect(); fn(); } });
+    }, { threshold: threshold || 0.3 });
+    io.observe(el);
+  }
+  var redraws = [];
+  function themeChanged() { redraws.forEach(function (f) { f(); }); }
+  var mq = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
+  if (mq && mq.addEventListener) mq.addEventListener('change', themeChanged);
+  new MutationObserver(themeChanged).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+
+  /* ---- Morphing blobs (same seeded shapes as the Figma file) ---- */
   function makeBlob(seed) {
     var n = 7, irr = 0.24, r = rng(seed), ph = rng(seed * 7 + 1), pts = [];
     for (var i = 0; i < n; i++) {
@@ -489,7 +459,7 @@ h2::before { content: ""; width: 10px; height: 10px; border-radius: 2px; backgro
     }
     return pts;
   }
-  function pathFor(pts, t, amp) {
+  function blobPath(pts, t, amp) {
     var n = pts.length, p = [];
     for (var i = 0; i < n; i++) {
       var q = pts[i], rad = q.rad * (1 + amp * Math.sin(t * q.sp + q.ph));
@@ -504,33 +474,138 @@ h2::before { content: ""; width: 10px; height: 10px; border-radius: 2px; backgro
     }
     return d + 'Z';
   }
-
-  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var live = [];
   document.querySelectorAll('svg.blob[data-seed]').forEach(function (svg) {
-    var pts = makeBlob(+svg.getAttribute('data-seed'));
-    var path = svg.querySelector('path');
+    var pts = makeBlob(+svg.getAttribute('data-seed')), path = svg.querySelector('path');
     var amp = +(svg.getAttribute('data-amp') || 0);
-    path.setAttribute('d', pathFor(pts, 0, amp));
+    path.setAttribute('d', blobPath(pts, 0, amp));
     if (amp && !reduce) live.push({ el: svg, path: path, pts: pts, amp: amp, on: true });
   });
-
   if (live.length) {
     if ('IntersectionObserver' in window) {
-      var io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) { live.forEach(function (b) { if (b.el === e.target) b.on = e.isIntersecting; }); });
+      var bio = new IntersectionObserver(function (es) {
+        es.forEach(function (e) { live.forEach(function (b) { if (b.el === e.target) b.on = e.isIntersecting; }); });
       });
-      live.forEach(function (b) { io.observe(b.el); });
+      live.forEach(function (b) { bio.observe(b.el); });
     }
-    var start = performance.now();
+    var t0 = performance.now();
     (function tick(now) {
-      var t = (now - start) / 1000 * 0.9;
-      if (!document.hidden) live.forEach(function (b) { if (b.on) b.path.setAttribute('d', pathFor(b.pts, t, b.amp)); });
+      var t = (now - t0) / 1000 * 0.9;
+      if (!document.hidden) live.forEach(function (b) { if (b.on) b.path.setAttribute('d', blobPath(b.pts, t, b.amp)); });
       requestAnimationFrame(tick);
-    })(start);
+    })(t0);
   }
 
-  // Copy email
+  /* ---- NeKtar-1: 100,000 bacteria, one survivor ---- */
+  (function () {
+    var cv = document.getElementById('kill'); if (!cv) return;
+    var W = 400, H = 250, N = W * H, ctx = cv.getContext('2d'), img = ctx.createImageData(W, H), d = img.data;
+    var out = document.getElementById('kill-count');
+    var r = rng(4242), death = new Float32Array(N), shade = new Float32Array(N);
+    for (var i = 0; i < N; i++) { death[i] = r(); shade[i] = 0.25 + 0.75 * r(); }
+    var survivor = Math.round(H * 0.382) * W + Math.round(W * 0.621);
+    var p = 0, bg, fg, hi, running = false;
+    function colors() { bg = rgb(tok('--bg')); fg = rgb(tok('--muted')); hi = rgb(tok('--red')); }
+    function draw() {
+      var alive = 0;
+      for (var i = 0, k = 0; i < N; i++, k += 4) {
+        if (i === survivor) { d[k] = hi[0]; d[k + 1] = hi[1]; d[k + 2] = hi[2]; d[k + 3] = 255; alive++; continue; }
+        if (p <= death[i]) alive++;
+        var life = p <= death[i] ? 1 : Math.max(0, 1 - (p - death[i]) / 0.05);
+        var a = shade[i] * life * 0.85;
+        d[k] = bg[0] + (fg[0] - bg[0]) * a;
+        d[k + 1] = bg[1] + (fg[1] - bg[1]) * a;
+        d[k + 2] = bg[2] + (fg[2] - bg[2]) * a;
+        d[k + 3] = 255;
+      }
+      ctx.putImageData(img, 0, 0);
+      out.textContent = alive.toLocaleString('en-US');
+    }
+    function run() {
+      if (running) return;
+      if (reduce) { p = 1.06; draw(); return; }
+      running = true; p = 0;
+      var start = performance.now(), D = 2800;
+      (function f(now) {
+        var x = Math.min(1, (now - start) / D);
+        p = ease(x) * 1.06; draw();
+        if (x < 1) requestAnimationFrame(f); else running = false;
+      })(start);
+    }
+    colors(); draw();
+    redraws.push(function () { colors(); draw(); });
+    onVisible(cv, run, 0.45);
+    document.getElementById('kill-replay').addEventListener('click', run);
+  })();
+
+  /* ---- Bone imaging: Dice overlap of two outlines ---- */
+  (function () {
+    var R = 95, CX = 200, D_FINAL = 16.44, D_START = 175;
+    var ex = document.getElementById('expert-c'), cl = document.getElementById('clip-c');
+    var mo = document.getElementById('model-c'), ag = document.getElementById('agree-c');
+    var out = document.getElementById('dice-out');
+    if (!ex) return;
+    function dice(dd) { var x = dd / (2 * R); if (x >= 1) return 0; return (2 / Math.PI) * (Math.acos(x) - x * Math.sqrt(1 - x * x)); }
+    function set(dd) {
+      var a = (CX - dd / 2).toFixed(2), b = (CX + dd / 2).toFixed(2);
+      ex.setAttribute('cx', a); cl.setAttribute('cx', a); mo.setAttribute('cx', b); ag.setAttribute('cx', b);
+      out.textContent = dice(dd).toFixed(2);
+    }
+    if (reduce) return;
+    onVisible(document.getElementById('dice'), function () {
+      var start = performance.now(), T = 2000;
+      (function f(now) {
+        var x = Math.min(1, (now - start) / T);
+        set(D_START + (D_FINAL - D_START) * ease(x));
+        if (x < 1) requestAnimationFrame(f);
+      })(start);
+    }, 0.1);
+  })();
+
+  /* ---- NET mechanics: ~9,700 papers ---- */
+  (function () {
+    var cv = document.getElementById('papers'); if (!cv) return;
+    var COLS = 100, ROWS = 97, CELL = 5, N = COLS * ROWS, MECH = 243, QUANT = 29;
+    var dpr = Math.min(2, window.devicePixelRatio || 1);
+    cv.width = COLS * CELL * dpr; cv.height = ROWS * CELL * dpr;
+    var ctx = cv.getContext('2d'); ctx.scale(dpr, dpr);
+    var r = rng(9700), idx = [];
+    for (var i = 0; i < N; i++) idx.push(i);
+    for (var j = N - 1; j > 0; j--) { var k = Math.floor(r() * (j + 1)); var t = idx[j]; idx[j] = idx[k]; idx[k] = t; }
+    var mech = idx.slice(0, MECH), quant = idx.slice(MECH, MECH + QUANT);
+    var out = document.getElementById('nets-out');
+    var prog = 1;
+    function dot(i, rad, col) {
+      var x = (i % COLS) * CELL + CELL / 2, y = Math.floor(i / COLS) * CELL + CELL / 2;
+      ctx.beginPath(); ctx.arc(x, y, rad, 0, Math.PI * 2); ctx.fillStyle = col; ctx.fill();
+    }
+    function draw() {
+      var bg = tok('--bg'), faint = tok('--faint'), ink = tok('--ink'), yel = tok('--yellow');
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, COLS * CELL, ROWS * CELL);
+      ctx.globalAlpha = 0.45;
+      for (var i = 0; i < N; i++) dot(i, 1.15, faint);
+      ctx.globalAlpha = 1;
+      var m = Math.round(MECH * Math.min(1, prog / 0.6));
+      for (var a = 0; a < m; a++) dot(mech[a], 1.6, ink);
+      var qp = Math.max(0, Math.min(1, (prog - 0.6) / 0.4));
+      var q = Math.round(QUANT * qp);
+      for (var b = 0; b < q; b++) dot(quant[b], 2.9, yel);
+      out.textContent = prog < 0.6 ? '≈' + m + ' mechanics' : '≈' + q + ' quantitative';
+    }
+    draw();
+    redraws.push(draw);
+    if (reduce) return;
+    onVisible(cv, function () {
+      var start = performance.now(), T = 2600;
+      (function f(now) {
+        var x = Math.min(1, (now - start) / T);
+        prog = ease(x); draw();
+        if (x < 1) requestAnimationFrame(f);
+      })(start);
+    }, 0.1);
+  })();
+
+  /* ---- Copy email ---- */
   var btn = document.getElementById('copy-email'), label = document.getElementById('copy-label');
   var email = 'neilpanchal08@gmail.com', timer;
   function done(msg) {
@@ -539,14 +614,12 @@ h2::before { content: ""; width: 10px; height: 10px; border-radius: 2px; backgro
     timer = setTimeout(function () { label.textContent = email; }, 1800);
   }
   function selectFallback() {
-    var range = document.createRange();
-    range.selectNodeContents(label);
+    var range = document.createRange(); range.selectNodeContents(label);
     var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
   }
   btn.addEventListener('click', function () {
-    try {
-      navigator.clipboard.writeText(email).then(function () { done('Email copied'); }, selectFallback);
-    } catch (e) { selectFallback(); }
+    try { navigator.clipboard.writeText(email).then(function () { done('Email copied'); }, selectFallback); }
+    catch (e) { selectFallback(); }
   });
 })();
 </script>
