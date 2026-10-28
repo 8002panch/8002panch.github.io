@@ -449,7 +449,8 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
 
   /* What the cursor is over: links, buttons and [data-lens] rows get the lens; panels lift */
   var hov = null, hovRects = null;
-  function rectsOf(el) { return el && !el.classList.contains('panel') ? Array.prototype.slice.call(el.getClientRects()) : null; }
+  // glass buttons and panels are already glass: they lift, and the droplet melts into them instead of stacking a second lens
+  function rectsOf(el) { return el && !el.hasAttribute('data-glass') ? Array.prototype.slice.call(el.getClientRects()) : null; }
   D.addEventListener('pointerover', function (e) {
     var el = e.target.closest ? e.target.closest('a[href], button, [data-lens]') : null;
     if (el && el.classList.contains('solid')) el = null;
@@ -474,7 +475,7 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
   });
 
   /* ---------- The glass droplet: a soft ring of 24 points, like a bead of hydrogel ---------- */
-  var NR = 24;
+  var NR = 40;
   var drop = { x: -300, y: -300, vx: 0, vy: 0, w: 2, h: 2, r: 2, vw: 0, vh: 0, vr: 0, a: 0, k: 0, pts: [], mode: 0 };
   for (var di = 0; di < NR; di++) drop.pts.push({ x: -300, y: -300, vx: 0, vy: 0 });
   // point at fraction u along a rounded rectangle's outline (starting at the right, going round)
@@ -512,7 +513,7 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
       '#version 300 es',
       'precision highp float;',
       '#define MAXB 14',
-      '#define NR 24',
+      '#define NR 40',
       'uniform vec2 uRes,uPtr;uniform float uPx,uT;',
       'uniform vec4 uBox[MAXB];uniform vec2 uRL[MAXB];uniform int uN;',
       'uniform vec2 uPoly[NR];uniform vec4 uBB;uniform vec2 uDC;uniform float uDK,uDA,uDE;',
@@ -525,15 +526,14 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
       /* soft, slow colour fields (the same dyes as the panels), leaning gently toward the pointer */
       'const vec3 RED=vec3(.05,1.55,2.17),BLU=vec3(1.96,1.12,.02),YEL=vec3(0.,.26,2.6);',
       'vec3 field(vec2 p){vec2 q=p/uRes.y;float ar=uRes.x/uRes.y,t=uT;vec2 m=uPtr/uRes.y;vec3 a=vec3(0.);vec2 c;',
-      ' c=vec2(ar*(.10+.04*sin(t*.11)),.80+.05*cos(t*.09));c+=(m-c)*.05;a+=RED*exp(-dot(q-c,q-c)/.05)*.17;',
-      ' c=vec2(ar*(.47+.06*sin(t*.07+1.)),.26+.06*cos(t*.08+2.));c+=(m-c)*.05;a+=BLU*exp(-dot(q-c,q-c)/.07)*.13;',
-      ' c=vec2(ar*(.90+.03*sin(t*.09+3.)),.50+.07*cos(t*.06));c+=(m-c)*.05;a+=YEL*exp(-dot(q-c,q-c)/.06)*.17;',
+      ' c=vec2(ar*(.10+.04*sin(t*.11)),.80+.05*cos(t*.09));c+=(m-c)*.05;a+=RED*exp(-dot(q-c,q-c)/.16)*.055;',
+      ' c=vec2(ar*(.47+.06*sin(t*.07+1.)),.26+.06*cos(t*.08+2.));c+=(m-c)*.05;a+=BLU*exp(-dot(q-c,q-c)/.2)*.04;',
+      ' c=vec2(ar*(.90+.03*sin(t*.09+3.)),.50+.07*cos(t*.06));c+=(m-c)*.05;a+=YEL*exp(-dot(q-c,q-c)/.16)*.055;',
       ' return exp(-a);}',
       'vec3 paper(vec2 p,float w){float s=28.*uPx;vec2 g=abs(fract(p/s+.5)-.5)*s;float mi=1.-smoothstep(0.,w,min(g.x,g.y));float S=s*4.;vec2 G=abs(fract(p/S+.5)-.5)*S;float ma=1.-smoothstep(0.,w*1.25,min(G.x,G.y));return field(p)*(1.-max(mi*.05,ma*.085));}',
       'const vec2 LIT=vec2(-.5547,.8321);',
       'vec3 base(vec2 p){float px=uPx;float lift;float d=scene(p,lift);',
-      ' float sh=0.;if(d<70.*px){float l2;float ds=scene(p+vec2(0.,(7.+9.*lift)*px),l2);sh=exp(-max(ds,0.)/((12.+12.*lift)*px))*(.075+.05*lift);}',
-      ' vec3 outC=paper(p,px)*(1.-sh);',
+      ' vec3 outC=paper(p,px);',
       ' if(d>px)return outC;',
       ' vec2 e=vec2(px,0.);vec2 n=normalize(vec2(sceneD(p+e.xy)-sceneD(p-e.xy),sceneD(p+e.yx)-sceneD(p-e.yx))+1e-5);',
       ' float depth=-d;float edge=(20.+6.*lift)*px;float t=clamp(1.-depth/edge,0.,1.);float bend=t*t;',
@@ -548,7 +548,7 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
       ' float a=smoothstep(.8*px,-.8*px,d);return mix(outC,clamp(c,0.,1.),a);}',
       'void main(){vec2 p=gl_FragCoord.xy;float px=uPx;float m=40.*px;',
       ' float dd=1e5;if(uDA>.01&&p.x>uBB.x-m&&p.x<uBB.z+m&&p.y>uBB.y-m&&p.y<uBB.w+m)dd=drop(p);',
-      ' if(dd>px){vec3 c=base(p);if(dd<40.*px){float ds=drop(p+vec2(0.,6.*px));c*=1.-exp(-max(ds,0.)/(9.*px))*.11*uDA;}o=vec4(c,1.);return;}',
+      ' if(dd>px){o=vec4(base(p),1.);return;}',
       ' vec2 e=vec2(px,0.);vec2 n=normalize(vec2(drop(p+e.xy)-drop(p-e.xy),drop(p+e.yx)-drop(p-e.yx))+1e-5);',
       ' float depth=-dd;float edge=max(uDE,4.*px);float t=clamp(1.-depth/edge,0.,1.);float bend=t*t;',
       ' vec2 off=-n*bend*12.*px+(uDC-p)*.16;',
@@ -652,12 +652,12 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
     drop.mode = rect ? 1 : 0;
     if (rect) {
       tx = rect.left + rect.width / 2; ty = rect.top + rect.height / 2;
-      tw = rect.width / 2 + (rect.width > 60 ? 6 : 9); th = rect.height / 2 + 3; tr = Math.min(th, 16);
+      tw = rect.width / 2 + (rect.width > 60 ? 6 : 9); th = rect.height / 2 + 3; tr = th;
     } else {
       var bs = hov && hov.classList.contains('panel') ? 19 : 14;
       tw = th = tr = bs;
     }
-    if (!show) { tw = th = tr = 1.5; }
+    if (!show || (hov && hov.hasAttribute('data-glass') && !hov.classList.contains('panel'))) { tw = th = tr = 1.5; }
     if (drop.a < 0.02 && show) { drop.x = tx; drop.y = ty; drop.vx = drop.vy = drop.svx = drop.svy = 0; drop.pts.forEach(function (p) { p.x = tx; p.y = ty; p.vx = p.vy = 0; }); }
     drop.a += ((show ? 1 : 0) - drop.a) * (1 - Math.exp(-dt * 9));
     // Fixed small sub-steps: the gel behaves the same at 30, 60 or 120 fps and can't go unstable
