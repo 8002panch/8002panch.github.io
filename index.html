@@ -65,8 +65,8 @@ html:not(.gl) body { background-image: linear-gradient(rgba(20, 20, 20, .045) 1p
 /* Split text: letters (ripple + DNA decode) and words (part around the gel cursor) */
 .wd { display: inline-block; white-space: nowrap; }
 .ch, .gw { display: inline-block; }
-.nt { font-family: var(--mono); font-style: normal; font-weight: 600; font-size: .8em; text-align: center; letter-spacing: 0; }
-.nA { color: var(--red); } .nC { color: var(--blue); } .nG { color: var(--ochre); } .nU { color: var(--muted); }
+/* decode letters keep the heading's own font, weight and ink; they just sit lighter until they lock in */
+.nt { text-align: center; opacity: .32; }
 html.dna-pre [data-dna-load] { visibility: hidden; }
 
 /* ---------- One screen ---------- */
@@ -116,7 +116,7 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
 .pt > span.on { color: var(--ink); }
 
 .acks { display: grid; grid-template-rows: auto repeat(6, minmax(0, 1fr)); gap: 2px; padding: 14px 16px; border-radius: 24px; min-height: 0; }
-.acks h2 { font-size: 12.5px; font-weight: 600; color: var(--muted); padding-bottom: 4px; }
+.acks h2 { font-size: 12.5px; font-weight: 700; color: var(--ink); padding-bottom: 4px; }
 .acks li { display: grid; grid-template-columns: 74px minmax(0, 1fr); align-items: center; gap: 12px; padding: 3px 8px; margin: 0 -8px; border-radius: 14px; min-height: 0; overflow: hidden; }
 .lg { height: clamp(26px, 4vh, 34px); display: grid; place-items: center; padding: 4px 7px; border-radius: 9px; background: #fff; box-shadow: 0 0 0 1px rgba(20, 20, 20, .07); }
 .lg img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
@@ -125,8 +125,6 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
 .acks .short { display: none; }
 
 /* Wheel */
-.wheel { cursor: grab; touch-action: none; }
-.wheel.drag { cursor: grabbing; }
 .w-line { fill: none; stroke: var(--red); stroke-width: 1.2; stroke-opacity: .5; stroke-linejoin: round; }
 .w-n { stroke-width: 1.4; }
 .w-n.h { fill: var(--yellow); }
@@ -279,7 +277,7 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
     </section>
 
     <section class="acks" data-glass aria-labelledby="ack-h">
-      <h2 id="ack-h" data-dna data-dna-load>Acknowledgements</h2>
+      <h2 id="ack-h" data-dna data-dna-load>Recognized by</h2>
       <ul style="display:contents">
         <li data-lens><span class="lg"><img src="logos/regeneron.png" alt="Regeneron" loading="eager"></span><span><b data-gel><span class="full">Biomedical Science Award</span><span class="short">Regeneron Biomedical</span></b><span class="org">Regeneron</span></span></li>
         <li data-lens><span class="lg"><img src="logos/astrazeneca.png" alt="AstraZeneca"></span><span><b data-gel><span class="full">Exceptional Project Award</span><span class="short">AstraZeneca Exceptional</span></b><span class="org">AstraZeneca</span></span></li>
@@ -293,7 +291,7 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
 
   <section class="detail" id="A" aria-labelledby="A-h">
     <div class="big" data-glass><span class="L">A</span><span class="art" data-art="A"></span>
-      <p class="key"><span class="sw"><i style="background:var(--yellow)"></i>hydrophobic</span><span class="sw"><i style="background:var(--blue)"></i>cationic</span><span class="sw"><i style="border:1.4px solid var(--ink)"></i>glycine · serine</span><span class="say" data-say="Drag to spin · point at a residue">Drag to spin · point at a residue</span></p></div>
+      <p class="key"><span class="sw"><i style="background:var(--yellow)"></i>hydrophobic</span><span class="sw"><i style="background:var(--blue)"></i>cationic</span><span class="sw"><i style="border:1.4px solid var(--ink)"></i>glycine · serine</span><span class="say" data-say="Point at a residue to name it">Point at a residue to name it</span></p></div>
     <div class="info">
       <a class="back" href="#">← Back</a>
       <p class="k2" style="color:var(--red)">Panel A · Protein design + wet lab</p>
@@ -347,7 +345,7 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
 
   <footer class="supp" data-glass>
     <p class="list"><b>Supplementary</b><span class="s12" data-lens>S1 OrganoidEDF<span class="x"> · Johns Hopkins</span></span><span class="s12" data-lens>S2 Protein graph embeddings<span class="x"> · George Mason</span></span><a href="https://arxiv.org/abs/2510.09636" target="_blank" rel="noopener">S3 Bias‑aware advising chatbot ↗</a><a href="https://huggingface.co/spaces/armstrong8002/drought-wildfire-simulator" target="_blank" rel="noopener">S4 Wildfire simulator ↗</a></p>
-    <p class="hint" id="hint"><i>Drift</i> through the text · <i>flick</i> the wheel</p>
+    <p class="hint" id="hint"><i>Drift</i> through the text</p>
   </footer>
 </div>
 
@@ -474,7 +472,6 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
       u.cx = r.left + r.width / 2 - u.ox; u.cy = r.top + r.height / 2 - u.oy; u.hw = r.width / 2 / u.s; u.hh = r.height / 2 / u.s;
     });
   });
-  var near = [];
 
   /* ---------- The glass droplet: a soft ring of 24 points, like a bead of hydrogel ---------- */
   var NR = 24;
@@ -616,7 +613,6 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
   parts.push(function (dt) {
     if (reduce || !gel.length) return false;
     var on = drop.a > 0.3, R = Math.max(drop.w, drop.h) + 16, str = drop.mode ? 0.25 : 1, any = false;
-    near.length = 0;
     for (var i = 0; i < gel.length; i++) {
       var u = gel[i];
       if (!u.vis) continue;
@@ -625,12 +621,12 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
         var dx = u.cx - drop.x, dy = u.cy - drop.y, d = Math.hypot(dx, dy);
         if (d < R * 2.6) {
           var f = Math.exp(-(d * d) / (R * R)) * str, nx = d > 0.01 ? dx / d : 0, ny = d > 0.01 ? dy / d : 0;
-          tx = nx * f * 9 + clamp(drop.vx * 0.008, -6, 6) * f; ty = ny * f * 5 + clamp(drop.vy * 0.008, -4, 4) * f; ts = 1 + 0.06 * f;
-          if (d < R * 1.8) near.push(u);
+          tx = nx * f * 8 + clamp((drop.svx || 0) * 0.006, -5, 5) * f; ty = ny * f * 3.2 + clamp((drop.svy || 0) * 0.005, -2.5, 2.5) * f; ts = 1 + 0.05 * f;
         }
       }
       if (!u.act && !tx && !ty) continue;
-      spring(u, 'ox', tx, 'vx', 170, 15, dt); spring(u, 'oy', ty, 'vy', 170, 15, dt); spring(u, 's', ts, 'vs', 170, 15, dt);
+      // critically damped: words drift aside and settle back without bouncing
+      spring(u, 'ox', tx, 'vx', 110, 21, dt); spring(u, 'oy', ty, 'vy', 110, 21, dt); spring(u, 's', ts, 'vs', 110, 21, dt);
       u.act = Math.abs(u.ox) + Math.abs(u.oy) + Math.abs(u.vx) * 0.05 + Math.abs(u.vy) * 0.05 + Math.abs(u.s - 1) * 20 > 0.03 || !!tx || !!ty;
       u.el.style.transform = u.act ? 'translate3d(' + u.ox.toFixed(2) + 'px,' + u.oy.toFixed(2) + 'px,0) scale(' + u.s.toFixed(4) + ')' : '';
       if (u.act) any = true;
@@ -662,28 +658,39 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
       tw = th = tr = bs;
     }
     if (!show) { tw = th = tr = 1.5; }
-    if (drop.a < 0.02 && show) { drop.x = tx; drop.y = ty; drop.vx = drop.vy = 0; drop.pts.forEach(function (p) { p.x = tx; p.y = ty; p.vx = p.vy = 0; }); }
-    spring(drop, 'x', tx, 'vx', rect ? 240 : 360, rect ? 24 : 30, dt); spring(drop, 'y', ty, 'vy', rect ? 240 : 360, rect ? 24 : 30, dt);
-    spring(drop, 'w', tw, 'vw', 240, 20, dt); spring(drop, 'h', th, 'vh', 240, 20, dt); spring(drop, 'r', tr, 'vr', 240, 20, dt);
-    drop.a += ((show ? 1 : 0) - drop.a) * (1 - Math.exp(-dt * 10));
-    // the soft ring: each point springs to its place on the outline, smoothed by its neighbours, lagging the centre like jelly
-    var k = Math.min(5, Math.max(drop.r, 0) * 0.45), hw = Math.max(drop.w - k, 0.5), hh = Math.max(drop.h - k, 0.5), rr = Math.max(drop.r - k, 0.3);
+    if (drop.a < 0.02 && show) { drop.x = tx; drop.y = ty; drop.vx = drop.vy = drop.svx = drop.svy = 0; drop.pts.forEach(function (p) { p.x = tx; p.y = ty; p.vx = p.vy = 0; }); }
+    drop.a += ((show ? 1 : 0) - drop.a) * (1 - Math.exp(-dt * 9));
+    // Fixed small sub-steps: the gel behaves the same at 30, 60 or 120 fps and can't go unstable
+    var steps = Math.max(1, Math.ceil(dt / 0.008)), h = dt / steps, s;
+    var Kc = rect ? 170 : 230, Cc = 2 * Math.sqrt(Kc);            // critically damped centre: glides in, never overshoots
+    for (s = 0; s < steps; s++) {
+      spring(drop, 'x', tx, 'vx', Kc, Cc, h); spring(drop, 'y', ty, 'vy', Kc, Cc, h);
+      spring(drop, 'w', tw, 'vw', 190, 23, h); spring(drop, 'h', th, 'vh', 190, 23, h); spring(drop, 'r', tr, 'vr', 190, 23, h);
+    }
+    // smoothed velocity sets a gentle stretch along the direction of travel
+    var sm = 1 - Math.exp(-dt * 7);
+    drop.svx = (drop.svx || 0) + (drop.vx - (drop.svx || 0)) * sm; drop.svy = (drop.svy || 0) + (drop.vy - (drop.svy || 0)) * sm;
+    var sp = Math.hypot(drop.svx, drop.svy), st = rect ? 0 : Math.min(sp / 2400, 0.3), ux = sp > 1 ? drop.svx / sp : 1, uy = sp > 1 ? drop.svy / sp : 0;
+    var k = Math.min(5, Math.max(drop.r, 0) * 0.45), br = reduce || rect ? 0 : Math.sin(t * 2.1) * 0.45;
+    var hw = Math.max(drop.w - k + br, 0.5), hh = Math.max(drop.h - k + br, 0.5), rr = Math.max(drop.r - k + br, 0.3);
     drop.k = k;
     var T = [];
-    for (i = 0; i < NR; i++) { var q = rrPoint(i / NR, hw, hh, rr); T.push([drop.x + q[0], drop.y + q[1]]); }
     for (i = 0; i < NR; i++) {
-      var p = drop.pts[i], a = T[i], pa = drop.pts[(i + NR - 1) % NR], pb = drop.pts[(i + 1) % NR], ta = T[(i + NR - 1) % NR], tb = T[(i + 1) % NR];
-      var lx = (pa.x + pb.x) / 2 - p.x - ((ta[0] + tb[0]) / 2 - a[0]), ly = (pa.y + pb.y) / 2 - p.y - ((ta[1] + tb[1]) / 2 - a[1]);
-      var ax = 150 * (a[0] - p.x) + 55 * lx - 9 * (p.vx - drop.vx) - 2.5 * p.vx;
-      var ay = 150 * (a[1] - p.y) + 55 * ly - 9 * (p.vy - drop.vy) - 2.5 * p.vy;
-      // hydrogel: where the outline sits on a word it is nudged into the gap between lines, so the droplet threads through text
-      if (!drop.mode) for (var j = 0; j < near.length; j++) {
-        var w = near[j], ex = p.x - (w.cx + w.ox), ey = p.y - (w.cy + w.oy);
-        if (Math.abs(ex) < w.hw + 1 && Math.abs(ey) < w.hh * 0.75) { var pen = w.hh * 0.75 - Math.abs(ey); ay += (ey >= 0 ? 1 : -1) * Math.min(pen, 6) * 260; ax += (ex >= 0 ? 1 : -1) * Math.min(pen, 6) * 40; }
-      }
-      p.vx += ax * dt; p.vy += ay * dt; p.x += p.vx * dt; p.y += p.vy * dt;
-      if (Math.abs(p.x - a[0]) > 60 || Math.abs(p.y - a[1]) > 60) { p.x = a[0]; p.y = a[1]; }
+      var q = rrPoint(i / NR, hw, hh, rr), al = q[0] * ux + q[1] * uy, pe = -q[0] * uy + q[1] * ux;
+      al *= 1 + st; pe *= 1 - st * 0.4;                            // longer along travel, a little slimmer across
+      T.push([drop.x + al * ux - pe * uy, drop.y + al * uy + pe * ux]);
     }
+    // The skin: each point springs to its place, is smoothed by its neighbours, and lags the centre just enough to wobble once
+    for (s = 0; s < steps; s++) {
+      for (i = 0; i < NR; i++) {
+        var p = drop.pts[i], a = T[i], pa = drop.pts[(i + NR - 1) % NR], pb = drop.pts[(i + 1) % NR], ta = T[(i + NR - 1) % NR], tb = T[(i + 1) % NR];
+        var lx = (pa.x + pb.x) / 2 - p.x - ((ta[0] + tb[0]) / 2 - a[0]), ly = (pa.y + pb.y) / 2 - p.y - ((ta[1] + tb[1]) / 2 - a[1]);
+        var ax = 300 * (a[0] - p.x) + 90 * lx - 24 * (p.vx - drop.vx) - 3 * p.vx;
+        var ay = 300 * (a[1] - p.y) + 90 * ly - 24 * (p.vy - drop.vy) - 3 * p.vy;
+        p.vx += ax * h; p.vy += ay * h; p.x += p.vx * h; p.y += p.vy * h;
+      }
+    }
+    for (i = 0; i < NR; i++) { var pp = drop.pts[i]; if (Math.abs(pp.x - T[i][0]) > 120 || Math.abs(pp.y - T[i][1]) > 120) { pp.x = T[i][0]; pp.y = T[i][1]; pp.vx = drop.vx; pp.vy = drop.vy; } }
     G.render(t);
     G.perf(dt);
     if (!root.classList.contains('ready')) root.classList.add('ready');
@@ -728,7 +735,7 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
   function Decoder(el) {
     var L = letters(el).map(function (s) { return { el: s, c: s.textContent, on: false, s: 0, e: 0, last: 0, w: 0 }; });
     var d = { el: el, run: false, t0: 0, noise: false };
-    function flip(x) { var n = NT[(Math.random() * 4) | 0]; x.el.textContent = n; x.el.className = 'ch nt n' + n; x.on = true; }
+    function flip(x) { var n = NT[(Math.random() * 4) | 0]; if (x.c === x.c.toLowerCase()) n = n.toLowerCase(); x.el.textContent = n; x.el.className = 'ch nt'; x.on = true; }
     d.go = function (noise, delay) {
       if (reduce || d.run || !el.getClientRects().length) return;
       d.run = true; d.noise = noise; d.t0 = now() + (delay || 0);
@@ -776,13 +783,10 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
   var NAME = { G: 'glycine', R: 'arginine', W: 'tryptophan', F: 'phenylalanine', A: 'alanine', I: 'isoleucine', S: 'serine', V: 'valine', K: 'lysine' };
   function kind(a) { return 'AIVFWLM'.indexOf(a) >= 0 ? 'h' : 'RK'.indexOf(a) >= 0 ? 'c' : 'o'; }
   var KNAME = { h: 'hydrophobic', c: 'cationic', o: 'small, flexible' };
-  var SPIN = { a: 0, w: 10, drag: false }, suppressUntil = 0;
-  parts.push(function (dt) {
-    if (!reduce && !SPIN.drag) { SPIN.a += SPIN.w * dt; var tg = (SPIN.w >= 0 ? 1 : -1) * 10; SPIN.w += (tg - SPIN.w) * (1 - Math.exp(-0.7 * dt)); }
-    return false;
-  });
+  var SPIN = { a: 0 };
+  parts.push(function (dt) { if (!reduce) SPIN.a += 8 * dt; return false; });   // a slow, steady turn
   function Wheel(slot, say) {
-    var svg = mk('svg', { viewBox: '0 0 300 300', class: 'wheel', role: 'img', 'aria-label': 'Helical wheel of NeKtar-1, GRWGFGWARIRGSVGFGKK. Drag to spin.' }, slot);
+    var svg = mk('svg', { viewBox: '0 0 300 300', class: 'wheel', role: 'img', 'aria-label': 'Helical wheel of NeKtar-1, GRWGFGWARIRGSVGFGKK.' }, slot);
     var path = mk('path', { class: 'w-line' }, svg), B = [];
     for (var i = 0; i < SEQ.length; i++) {
       var k = kind(SEQ[i]), g = mk('g', {}, svg);
@@ -790,17 +794,7 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
       var tx = mk('text', { class: 'w-t ' + k }, g); tx.textContent = SEQ[i];
       B.push({ g: g, ox: 0, oy: 0, vx: 0, vy: 0, s: 1, vs: 0, x: 0, y: 0, rad: i < 18 ? 100 : 134 });
     }
-    var M = Mapper(svg), hovI = -2, defSay = say ? say.getAttribute('data-say') : '', drag = null;
-    function angAt(e) { return Math.atan2(e.clientY - (M.oy + 150 * M.s), e.clientX - (M.ox + 150 * M.s)) * 180 / Math.PI; }
-    svg.addEventListener('pointerdown', function (e) { if (e.button) return; M.read(); drag = { last: angAt(e), t: now(), moved: 0 }; SPIN.drag = true; svg.classList.add('drag'); try { svg.setPointerCapture(e.pointerId); } catch (x) {} });
-    svg.addEventListener('pointermove', function (e) {
-      if (!drag) return;
-      var a = angAt(e), d = ((a - drag.last + 540) % 360) - 180, tn = now(), dts = Math.max(0.008, (tn - drag.t) / 1000);
-      SPIN.a += d; SPIN.w = clamp(SPIN.w * 0.45 + (d / dts) * 0.55, -1600, 1600);
-      drag.last = a; drag.t = tn; drag.moved += Math.abs(d);
-    });
-    function end() { if (!drag) return; if (now() - drag.t > 90) SPIN.w *= 0.2; if (drag.moved > 6) suppressUntil = now() + 400; drag = null; SPIN.drag = false; svg.classList.remove('drag'); }
-    svg.addEventListener('pointerup', end); svg.addEventListener('pointercancel', end); svg.addEventListener('lostpointercapture', end);
+    var M = Mapper(svg), hovI = -2, defSay = say ? say.getAttribute('data-say') : '';
     parts.push(function (dt, t) {
       if (!M.vis) return false;
       var nr = M.near(40), lx = M.lx(), ly = M.ly(), pts = '', best = -1, bd = 18;
@@ -808,7 +802,7 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
         var b = B[i], ang = (-90 + i * 100 + SPIN.a) * Math.PI / 180;
         var bx = 150 + b.rad * Math.cos(ang), by = 150 + b.rad * Math.sin(ang) + (reduce ? 0 : Math.sin(t * 1.3 + i * 0.8) * 2.2);
         var ax = -150 * b.ox - 13 * b.vx, ay = -150 * b.oy - 13 * b.vy;
-        if (nr && !drag) {
+        if (nr) {
           var dx = bx + b.ox - lx, dy = by + b.oy - ly, d = Math.hypot(dx, dy);
           if (d < bd) { bd = d; best = i; }
           if (d < 58 && d > 0.01) { var f = (58 - d) / 58; f = f * f * 5200; ax += dx / d * f; ay += dy / d * f; }
@@ -919,7 +913,6 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
     else if (k === 'B') Bone(slot);
     else if (k === 'C') Net(slot);
   });
-  D.addEventListener('click', function (e) { if (now() < suppressUntil) { e.preventDefault(); e.stopPropagation(); suppressUntil = 0; } }, true);
 
   /* ---------- Panel ⇄ detail: the drawing morphs, and the new view pours in from where you clicked ---------- */
   var LETTERS = ['A', 'B', 'C'];
@@ -983,7 +976,6 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
   copyBtn.addEventListener('click', function () {
     try { navigator.clipboard.writeText('neilpanchal08@gmail.com').then(function () { said('Email copied'); }, function () { said('neilpanchal08@gmail.com'); }); } catch (e) { said('neilpanchal08@gmail.com'); }
   });
-  if (!fine) { var hn = $('#hint'); if (hn) hn.innerHTML = '<i>Drag</i> through the text · <i>flick</i> the wheel'; }
 
   measureAll();
   var started = false;
