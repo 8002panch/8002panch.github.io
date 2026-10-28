@@ -1,0 +1,16 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/me.jpg", "destination": "https://8002panch.github.io/me.jpg" },
+    { "source": "/og.png", "destination": "https://8002panch.github.io/og.png" },
+    { "source": "/Neil_Panchal_Resume.pdf", "destination": "https://8002panch.github.io/Neil_Panchal_Resume.pdf" },
+    { "source": "/logos/:file", "destination": "https://8002panch.github.io/logos/:file" }
+  ],
+  "headers": [
+    { "source": "/(me.jpg|og.png|logos/.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=604800, stale-while-revalidate=86400" }] },
+    { "source": "/(.*)", "headers": [
+      { "key": "X-Content-Type-Options", "value": "nosniff" },
+      { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+    ] }
+  ]
+}
