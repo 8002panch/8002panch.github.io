@@ -13,23 +13,39 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Neil Panchal: I model biology in code, then test it at the bench.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#ffffff" id="tc">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23fff'/%3E%3Ctext x='4' y='25' font-family='Arial' font-weight='700' font-size='24' fill='%23141414'%3EN%3C/text%3E%3Ccircle cx='25' cy='9' r='5' fill='%23f2361d'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&family=Inter:wght@400;500;600;700&display=swap">
+<script>
+// Theme before first paint: a saved choice wins, otherwise follow the system
+(function () {
+  var d = document.documentElement, t = null;
+  try { t = localStorage.getItem('theme'); } catch (e) {}
+  if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  d.setAttribute('data-theme', t);
+  d.classList.add('dna-pre');
+  setTimeout(function () { d.classList.remove('dna-pre'); }, 1500);
+})();
+</script>
 <style>
-/* One screen: who I am first, then the research (Figure 1) and the acknowledgements, all visible at once.
-   Glass surfaces and the soft colour behind them are drawn by the GPU on one canvas (see the script). */
+/* One screen: who I am first, then the research and the recognition, all visible at once.
+   Glass surfaces and the faint colour behind them are drawn by the GPU on one canvas (see the script). */
 :root {
   --paper: #ffffff;
   --ink: #141414;
   --body: #37352f;
   --muted: #6b6a66;
+  --hair: rgba(20, 20, 20, .09);
   --red: #f2361d;
   --blue: #2453ff;
   --yellow: #ffc400;
   --ochre: #8a6900;
+  --bone-line: #c4c3bf;
+  --bone-fill: #f2f2ef;
+  --fb-glass: rgba(255, 255, 255, .62);
+  --fb-grid: rgba(20, 20, 20, .045);
   --sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
   --serif: "Instrument Serif", "Iowan Old Style", "Times New Roman", Georgia, serif;
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
@@ -38,6 +54,20 @@
   --spring: cubic-bezier(.2, 1.4, .35, 1);
   --spring-soft: cubic-bezier(.2, 1.1, .3, 1);
   color-scheme: light;
+}
+:root[data-theme="dark"] {
+  --paper: #0f0f11; --ink: #f3f3f1; --body: #c8c7c2; --muted: #8e8d88; --hair: rgba(255, 255, 255, .1);
+  --red: #ff5a43; --blue: #6d8bff; --yellow: #ffcc1f; --ochre: #d9a72e;
+  --bone-line: #4b4b4e; --bone-fill: #1f1f22; --fb-glass: rgba(34, 34, 38, .6); --fb-grid: rgba(255, 255, 255, .05);
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0f0f11; --ink: #f3f3f1; --body: #c8c7c2; --muted: #8e8d88; --hair: rgba(255, 255, 255, .1);
+    --red: #ff5a43; --blue: #6d8bff; --yellow: #ffcc1f; --ochre: #d9a72e;
+    --bone-line: #4b4b4e; --bone-fill: #1f1f22; --fb-glass: rgba(34, 34, 38, .6); --fb-grid: rgba(255, 255, 255, .05);
+    color-scheme: dark;
+  }
 }
 @supports (transition-timing-function: linear(0, 1)) {
   :root {
@@ -55,17 +85,18 @@ h1, h2 { margin: 0; color: var(--ink); font-weight: 700; }
 p, ul { margin: 0; }
 ul { padding: 0; list-style: none; }
 .sr { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+html.nocur, html.nocur * { cursor: none !important; }
 
 #glass { position: fixed; inset: 0; width: 100%; height: 100%; display: block; z-index: 0; pointer-events: none; opacity: 0; transition: opacity .7s ease; }
+#ring { position: fixed; inset: 0; width: 100%; height: 100%; display: block; z-index: 50; pointer-events: none; }
 html.ready #glass { opacity: 1; }
 .page { position: relative; z-index: 1; }
-html:not(.gl) [data-glass] { background: rgba(255, 255, 255, .62); -webkit-backdrop-filter: blur(16px) saturate(1.5); backdrop-filter: blur(16px) saturate(1.5); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), 0 0 0 1px rgba(20, 20, 20, .07), 0 10px 30px rgba(20, 20, 20, .08); }
-html:not(.gl) body { background-image: linear-gradient(rgba(20, 20, 20, .045) 1px, transparent 1px), linear-gradient(90deg, rgba(20, 20, 20, .045) 1px, transparent 1px); background-size: 28px 28px; }
+html:not(.gl) [data-glass] { background: var(--fb-glass); -webkit-backdrop-filter: blur(16px) saturate(1.5); backdrop-filter: blur(16px) saturate(1.5); box-shadow: inset 0 0 0 1px var(--hair); }
+html:not(.gl) body { background-image: linear-gradient(var(--fb-grid) 1px, transparent 1px), linear-gradient(90deg, var(--fb-grid) 1px, transparent 1px); background-size: 28px 28px; }
 
-/* Split text: letters (ripple + DNA decode) and words (part around the gel cursor) */
+/* Split text: letters (ripple + DNA decode) and words (drift around the gel cursor) */
 .wd { display: inline-block; white-space: nowrap; }
 .ch, .gw { display: inline-block; }
-/* decode letters keep the heading's own font, weight and ink; they just sit lighter until they lock in */
 .nt { text-align: center; opacity: .32; }
 html.dna-pre [data-dna-load] { visibility: hidden; }
 
@@ -89,105 +120,98 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
   66% { border-radius: 44% 56% 60% 40% / 56% 48% 52% 44%; }
   100% { border-radius: 52% 48% 42% 58% / 46% 58% 42% 54%; }
 }
-.bar { position: absolute; right: 16%; bottom: 14%; display: grid; gap: 3px; justify-items: end; font: 600 10px/1 var(--sans); color: #fff; text-shadow: 0 1px 2px rgba(0, 0, 0, .5); }
-.bar::before { content: ""; width: 30px; height: 2.5px; border-radius: 2px; background: #fff; box-shadow: 0 1px 2px rgba(0, 0, 0, .35); }
 .kick { font-size: 12.5px; font-weight: 600; color: var(--muted); }
 .name { margin-top: 2px; font-size: clamp(38px, 1rem + 4vw, 88px); line-height: .98; letter-spacing: -0.035em; }
 .tagline { margin-top: 6px; font: italic 400 clamp(19px, .7rem + 1.3vw, 32px)/1.15 var(--serif); color: var(--ink); }
 .bio { margin-top: 10px; max-width: 64ch; font-size: clamp(13.5px, .78rem + .25vw, 15.5px); line-height: 1.55; color: var(--body); }
 .act { display: grid; gap: 8px; min-width: 150px; }
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 18px; border: 0; border-radius: 999px; background: transparent; font-size: 14px; font-weight: 500; color: var(--ink); cursor: pointer; white-space: nowrap; }
-.btn.solid { background: var(--ink); color: #fff; transition: transform .5s var(--spring); }
+.btn.solid { background: var(--ink); color: var(--paper); transition: transform .5s var(--spring); }
 .btn.solid:hover { transform: scale(1.04); }
 .btn.solid:active { transform: scale(.97); }
 
-/* Main: Figure 1 + acknowledgements */
+/* Main: research + recognition */
 .main { display: grid; grid-template-columns: minmax(0, 3fr) minmax(250px, 1.25fr); gap: clamp(12px, 1.4vw, 20px); min-height: 0; }
 .fig { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: auto minmax(0, 1fr); gap: 10px clamp(10px, 1.3vw, 18px); min-height: 0; }
-.cap { grid-column: 1 / -1; font-size: 12.5px; color: var(--muted); padding-left: 4px; }
-.cap b { color: var(--ink); font-weight: 700; }
-.panel { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; min-height: 0; padding: 14px 16px 14px; border-radius: 24px; -webkit-user-drag: none; user-select: none; -webkit-user-select: none; transition: opacity .5s var(--spring-soft); }
+.cap { grid-column: 1 / -1; font-size: 12.5px; font-weight: 700; color: var(--ink); padding-left: 4px; }
+.panel { display: grid; grid-template-rows: minmax(0, 1fr) auto; min-height: 0; padding: 16px 18px; border-radius: 24px; -webkit-user-drag: none; user-select: none; -webkit-user-select: none; transition: opacity .5s var(--spring-soft); }
 @media (hover: hover) { .fig:has(.panel:hover) .panel:not(:hover) { opacity: .6; } }
-.L { font: 700 clamp(17px, .9rem + .5vw, 22px)/1 var(--sans); color: var(--ink); }
 .art { position: relative; min-height: 0; min-width: 0; }
-.art > svg, .art > .photo { position: absolute; left: 0; top: 2px; width: 100%; height: calc(100% - 4px); display: block; overflow: visible; }
-.pt > b { display: block; font-size: 14.5px; font-weight: 600; color: var(--ink); line-height: 1.3; }
-.pt > span { display: block; font-size: 12px; color: var(--muted); line-height: 1.4; margin-top: 2px; }
+.art > svg { position: absolute; left: 0; top: 2px; width: 100%; height: calc(100% - 4px); display: block; overflow: visible; }
+.pt > b { display: block; font-size: 15px; font-weight: 600; color: var(--ink); line-height: 1.3; }
+.pt > span { display: block; font-size: 12.5px; color: var(--muted); line-height: 1.4; margin-top: 3px; }
 .pt > span.on { color: var(--ink); }
 
 .acks { display: grid; grid-template-rows: auto repeat(6, minmax(0, 1fr)); gap: 2px; padding: 14px 16px; border-radius: 24px; min-height: 0; }
 .acks h2 { font-size: 12.5px; font-weight: 700; color: var(--ink); padding-bottom: 4px; }
 .acks li { display: grid; grid-template-columns: 74px minmax(0, 1fr); align-items: center; gap: 12px; padding: 3px 8px; margin: 0 -8px; border-radius: 14px; min-height: 0; overflow: hidden; }
-.lg { height: clamp(26px, 4vh, 34px); display: grid; place-items: center; padding: 4px 7px; border-radius: 9px; background: #fff; box-shadow: 0 0 0 1px rgba(20, 20, 20, .07); }
+.lg { height: clamp(26px, 4vh, 34px); display: grid; place-items: center; padding: 4px 7px; border-radius: 9px; background: #fff; }
 .lg img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
 .acks b { display: block; font-size: 13.5px; font-weight: 600; color: var(--ink); line-height: 1.25; }
 .acks .org { display: block; font-size: 12px; color: var(--muted); line-height: 1.3; }
 .acks .short { display: none; }
 
-/* Wheel */
-.w-line { fill: none; stroke: var(--red); stroke-width: 1.2; stroke-opacity: .5; stroke-linejoin: round; }
-.w-n { stroke-width: 1.4; }
-.w-n.h { fill: var(--yellow); }
-.w-n.c { fill: var(--blue); }
-.w-n.o { fill: #fff; stroke: var(--ink); }
+/* Drawings */
+.w-dot.h { fill: var(--yellow); }
+.w-dot.c { fill: var(--blue); }
+.w-dot.o { fill: var(--paper); stroke: var(--ink); stroke-width: 1.4; }
+.w-line { fill: none; stroke: var(--red); stroke-width: 1.1; stroke-opacity: .4; stroke-linejoin: round; }
 .w-t { font: 600 15px var(--sans); fill: var(--ink); text-anchor: middle; dominant-baseline: central; pointer-events: none; }
 .w-t.c { fill: #fff; }
+.b-line { fill: none; stroke: var(--bone-line); stroke-width: 3; }
+.b-fill { fill: var(--bone-fill); }
+.b-model { fill: var(--blue); fill-opacity: .14; stroke: var(--blue); stroke-width: 2.2; stroke-linejoin: round; }
+.n-dna { fill: none; stroke: var(--ochre); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; stroke-opacity: .9; }
+.n-nuc { fill: var(--yellow); }
 
 /* Footer */
-.supp { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 24px; padding: 7px 18px 7px 12px; border-radius: 20px; font-size: 12.5px; color: var(--muted); }
-.supp .list { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 2px; }
+.supp { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 24px; padding: 7px 8px 7px 12px; border-radius: 20px; font-size: 12.5px; color: var(--muted); }
+.supp .list { display: flex; flex-wrap: wrap; align-items: center; gap: 2px; }
 .supp b { color: var(--ink); font-weight: 600; margin: 0 6px 0 8px; }
 .supp .list > span, .supp .list > a { padding: 4px 9px; border-radius: 999px; }
 .supp a { color: var(--ink); }
-.hint { color: var(--muted); font-size: 12px; white-space: nowrap; }
-.hint i { font-style: normal; color: var(--ink); font-weight: 500; }
+.supp .sl { display: none; }
+.theme { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px 5px 9px; border: 0; border-radius: 999px; background: none; font-size: 12.5px; font-weight: 500; color: var(--ink); cursor: pointer; }
+.theme svg { width: 16px; height: 16px; transition: transform .7s var(--spring); }
+:root[data-theme="dark"] .theme svg { transform: rotate(180deg); }
 
-/* ---------- Detail views, opened by #A–#C (works without JavaScript) ---------- */
+/* ---------- Detail views, opened by #A–#C (work without JavaScript) ---------- */
 .detail { display: none; grid-row: 1 / span 2; grid-column: 1; min-height: 0; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(20px, 4vw, 64px); }
 .detail:target { display: grid; }
 .page:has(.detail:target) :is(.intro, .main) { display: none; }
-.big { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; min-height: 0; padding: 16px 18px; border-radius: 28px; }
-.big .L { font-size: 24px; }
-.key { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 12px; color: var(--muted); }
-.key i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
-.key .say { color: var(--ink); font-weight: 500; }
+.big { display: grid; grid-template-rows: minmax(0, 1fr) auto; min-height: 0; padding: 18px 20px; border-radius: 28px; }
+.say { font-size: 12.5px; color: var(--muted); min-height: 1.5em; }
+.say.on { color: var(--ink); font-weight: 500; }
 .info { min-height: 0; overflow: auto; overscroll-behavior: contain; padding: 4px 6px 4px 4px; display: flex; flex-direction: column; }
 .detail:target .info > * { animation: rise .9s var(--spring-soft) backwards; }
 .detail:target .info > :nth-child(2) { animation-delay: .04s; }
 .detail:target .info > :nth-child(3) { animation-delay: .08s; }
 .detail:target .info > :nth-child(4) { animation-delay: .12s; }
-.detail:target .info > :nth-child(5) { animation-delay: .16s; }
-.detail:target .info > :nth-child(n+6) { animation-delay: .2s; }
+.detail:target .info > :nth-child(n+5) { animation-delay: .16s; }
 @keyframes rise { from { opacity: 0; transform: translateY(18px); } }
 .back { align-self: flex-start; font-size: 13.5px; font-weight: 500; color: var(--ink); padding: 6px 12px; margin: -6px -12px clamp(10px, 2.6vh, 30px); border-radius: 999px; }
 .info .k2 { font-size: 12.5px; font-weight: 600; }
 .detail h2 { margin-top: 6px; font-size: clamp(36px, 1.2rem + 3.4vw, 72px); line-height: 1; letter-spacing: -0.035em; }
 .lead { margin-top: 18px; font-size: clamp(15.5px, .9rem + .3vw, 18.5px); line-height: 1.55; color: var(--body); max-width: 44ch; }
 .rows { margin: 24px 0 0; display: grid; }
-.rows > div { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 12px; padding: 12px 0; border-top: 1px solid rgba(20, 20, 20, .09); }
+.rows > div { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 12px; padding: 12px 0; border-top: 1px solid var(--hair); }
 .rows dt { font-size: 12.5px; color: var(--muted); font-weight: 500; padding-top: 2px; }
 .rows dd { margin: 0; font-size: 15px; color: var(--ink); min-width: 0; overflow-wrap: anywhere; }
 .rows dd.seq { font: 500 15px var(--mono); letter-spacing: .06em; }
-.rows a { padding: 2px 6px; margin: -2px -6px; border-radius: 999px; }
-.st { display: inline-block; font-size: 13.5px; margin-right: 14px; }
-.st.yes::before { content: "✓ "; font-weight: 700; }
-.st.no { color: var(--muted); }
-.st.no::before { content: "○ "; }
-.pager { margin-top: auto; padding-top: 22px; display: flex; gap: 6px; font-size: 13px; }
-.pager a { color: var(--ink); font-weight: 500; padding: 6px 12px; border-radius: 999px; }
-.pager a:first-child { margin-left: -12px; }
+.rows a { padding: 2px 6px; margin: -2px -6px; border-radius: 999px; text-decoration: underline; text-decoration-color: var(--hair); text-underline-offset: 3px; }
+.next { margin-top: auto; padding-top: 22px; font-size: 13px; }
+.next a { color: var(--ink); font-weight: 500; padding: 6px 12px; margin-left: -12px; border-radius: 999px; }
 
 ::view-transition-group(art) { animation-duration: .7s; animation-timing-function: var(--spring-soft); }
 ::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
 
 /* ---------- Narrow windows ---------- */
-@media (max-width: 1320px) { .supp .x { display: none; } }
 @media (max-width: 1100px), (max-height: 820px) { .acks .org { display: none; } }
 @media (max-width: 1100px) {
   .intro { grid-template-columns: auto minmax(0, 1fr); }
   .act { grid-column: 1 / -1; display: flex; flex-wrap: wrap; min-width: 0; }
   .main { grid-template-columns: minmax(0, 2.2fr) minmax(230px, 1.3fr); }
-  .pt > span, .hint { display: none; }
+  .pt > span { display: none; }
   .acks b { font-size: 13px; }
 }
 /* ---------- Phones ---------- */
@@ -195,7 +219,6 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
   .page { row-gap: 12px; }
   .intro { grid-template-columns: auto minmax(0, 1fr); gap: 10px 14px; align-items: start; }
   .photo { width: 72px; }
-  .bar { display: none; }
   .kick { font-size: 11.5px; }
   .name { font-size: 34px; }
   .tagline { font-size: 18px; margin-top: 4px; }
@@ -205,9 +228,8 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
   .act .copy { display: none; }
   .main { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; gap: 12px; }
   .fig { gap: 8px; }
-  .panel { padding: 8px 10px 8px; border-radius: 18px; }
+  .panel { padding: 10px 10px 10px; border-radius: 18px; }
   .pt > b { font-size: 12px; }
-  .L { font-size: 15px; }
   .acks { grid-template-columns: 1fr 1fr; grid-template-rows: auto repeat(3, auto); gap: 6px 10px; padding: 10px 12px; border-radius: 20px; }
   .acks h2 { grid-column: 1 / -1; padding-bottom: 0; font-size: 11.5px; }
   .acks li { grid-template-columns: 46px minmax(0, 1fr); gap: 8px; padding: 2px 6px; margin: 0 -6px; border-radius: 10px; }
@@ -215,11 +237,14 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
   .acks b { font-size: 11.5px; font-weight: 600; line-height: 1.2; }
   .acks .org, .acks .full { display: none; }
   .acks .short { display: block; }
-  .supp { justify-content: center; padding: 6px 10px; }
-  .supp .s12, .supp b, .hint { display: none; }
+  .supp { justify-content: space-between; padding: 6px 6px 6px 10px; }
+  .supp .s12, .supp b, .supp .fl { display: none; }
+  .supp .sl { display: inline; }
+  .supp { flex-wrap: nowrap; }
+  .theme span { display: none; }
+  .theme { padding: 6px 8px; }
   .detail { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(150px, 34vh) minmax(0, 1fr); gap: 14px; }
   .big { padding: 10px 12px; border-radius: 22px; }
-  .key .sw { display: none; }
   .back { margin-bottom: 10px; }
   .rows > div { grid-template-columns: 92px minmax(0, 1fr); padding: 9px 0; }
   .fig, .intro, .big { touch-action: pinch-zoom; }
@@ -232,20 +257,20 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
 }
 @media (prefers-reduced-motion: reduce) {
   .frame, .detail:target .info > * { animation: none; }
-  .panel, .btn.solid, .frame img { transition: none; }
+  .panel, .btn.solid, .frame img, .theme svg { transition: none; }
   ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
 }
 </style>
-<script>document.documentElement.classList.add('dna-pre'); setTimeout(function () { document.documentElement.classList.remove('dna-pre'); }, 1500);</script>
 </head>
 <body>
 <canvas id="glass" aria-hidden="true"></canvas>
+<canvas id="ring" aria-hidden="true"></canvas>
 
 <div class="page">
   <header class="intro">
-    <div class="photo"><span class="frame"><img src="me.jpg" width="350" height="350" alt="Neil Panchal" decoding="async" draggable="false"></span><span class="bar">50 cm</span></div>
+    <div class="photo"><span class="frame"><img src="me.jpg" width="350" height="350" alt="Neil Panchal" decoding="async" draggable="false"></span></div>
     <div class="who">
-      <p class="kick" data-gel>Bioengineering · University of Maryland</p>
+      <p class="kick" data-gel>Bioengineering, University of Maryland</p>
       <h1 class="name" data-wave data-dna data-dna-load>Neil Panchal</h1>
       <p class="tagline" data-wave>I model biology in code, then test it at the bench.</p>
       <p class="bio" data-gel>First‑year bioengineering student. I’ve done research in labs at UMD, Johns Hopkins and George Mason, moving between protein language models, surgical imaging and cell mechanics.</p>
@@ -253,25 +278,25 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
     <nav class="act" aria-label="Contact">
       <a class="btn solid" href="mailto:neilpanchal08@gmail.com" id="email-text">Email me</a>
       <button class="btn copy" type="button" id="copy" data-glass>Copy email</button>
-      <a class="btn" href="Neil_Panchal_Resume.pdf" target="_blank" rel="noopener" data-glass>CV ↗</a>
-      <a class="btn" href="https://www.linkedin.com/in/neilpanch" target="_blank" rel="noopener" data-glass>LinkedIn ↗</a>
+      <a class="btn" href="Neil_Panchal_Resume.pdf" target="_blank" rel="noopener" data-glass>CV</a>
+      <a class="btn" href="https://www.linkedin.com/in/neilpanch" target="_blank" rel="noopener" data-glass>LinkedIn</a>
       <span class="sr" id="copy-live" aria-live="polite"></span>
     </nav>
   </header>
 
   <main class="main">
     <section class="fig" aria-labelledby="fig-h">
-      <p class="cap" id="fig-h"><b data-dna data-dna-load>Figure 1</b> · Research. Open a panel.</p>
-      <a class="panel" data-p="A" href="#A" draggable="false" data-glass aria-label="Panel A: NeKtar-1, a peptide designed in code and tested at the bench. Open details.">
-        <span class="L">A</span><span class="art" data-art="A"></span>
+      <h2 class="cap" id="fig-h" data-dna data-dna-load>Research</h2>
+      <a class="panel" data-p="A" href="#A" draggable="false" data-glass aria-label="NeKtar-1: a peptide designed in code and tested at the bench. Open details.">
+        <span class="art" data-art="A"></span>
         <span class="pt"><b data-dna data-dna-load>NeKtar‑1</b><span data-say="A peptide designed in code, tested at the bench">A peptide designed in code, tested at the bench</span></span>
       </a>
-      <a class="panel" data-p="B" href="#B" draggable="false" data-glass aria-label="Panel B: bone viability from surgical images. Open details.">
-        <span class="L">B</span><span class="art" data-art="B"></span>
+      <a class="panel" data-p="B" href="#B" draggable="false" data-glass aria-label="Bone viability from surgical images. Open details.">
+        <span class="art" data-art="B"></span>
         <span class="pt"><b data-dna data-dna-load>Bone viability</b><span data-gel>Reading surgical images, and knowing when not to trust the model</span></span>
       </a>
-      <a class="panel" data-p="C" href="#C" draggable="false" data-glass aria-label="Panel C: NET mechanics. Open details.">
-        <span class="L">C</span><span class="art" data-art="C"></span>
+      <a class="panel" data-p="C" href="#C" draggable="false" data-glass aria-label="NET mechanics. Open details.">
+        <span class="art" data-art="C"></span>
         <span class="pt"><b data-dna data-dna-load>NET mechanics</b><span data-gel>How force makes neutrophils cast DNA nets</span></span>
       </a>
     </section>
@@ -279,73 +304,71 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
     <section class="acks" data-glass aria-labelledby="ack-h">
       <h2 id="ack-h" data-dna data-dna-load>Recognized by</h2>
       <ul style="display:contents">
-        <li data-lens><span class="lg"><img src="logos/regeneron.png" alt="Regeneron" loading="eager"></span><span><b data-gel><span class="full">Biomedical Science Award</span><span class="short">Regeneron Biomedical</span></b><span class="org">Regeneron</span></span></li>
+        <li data-lens><span class="lg"><img src="logos/regeneron.png" alt="Regeneron"></span><span><b data-gel><span class="full">Biomedical Science Award</span><span class="short">Regeneron Biomedical</span></b><span class="org">Regeneron</span></span></li>
         <li data-lens><span class="lg"><img src="logos/astrazeneca.png" alt="AstraZeneca"></span><span><b data-gel><span class="full">Exceptional Project Award</span><span class="short">AstraZeneca Exceptional</span></b><span class="org">AstraZeneca</span></span></li>
-        <li data-lens><span class="lg"><img src="logos/mriglobal.png" alt="MRIGlobal"></span><span><b data-gel><span class="full">1st Place Project Award</span><span class="short">MRIGlobal · 1st</span></b><span class="org">MRIGlobal</span></span></li>
-        <li data-lens><span class="lg"><img src="logos/hosa.jpg" alt="HOSA-Future Health Professionals"></span><span><b data-gel><span class="full">2nd Place, State Biomedical Debate</span><span class="short">HOSA State · 2nd</span></b><span class="org">HOSA</span></span></li>
-        <li data-lens><span class="lg"><img src="logos/sciencemontgomery.jpg" alt="Science Montgomery"></span><span><b data-gel><span class="full">3rd Place</span><span class="short">Science Montgomery · 3rd</span></b><span class="org">Science Montgomery</span></span></li>
-        <li data-lens><span class="lg"><img src="logos/rotary.png" alt="Metro Bethesda Rotary"></span><span><b data-gel><span class="full">James Phang Aspiring Scientist Award</span><span class="short">Rotary · Phang Award</span></b><span class="org">Metro Bethesda Rotary</span></span></li>
+        <li data-lens><span class="lg"><img src="logos/mriglobal.png" alt="MRIGlobal"></span><span><b data-gel><span class="full">1st Place Project Award</span><span class="short">MRIGlobal, 1st</span></b><span class="org">MRIGlobal</span></span></li>
+        <li data-lens><span class="lg"><img src="logos/hosa.jpg" alt="HOSA-Future Health Professionals"></span><span><b data-gel><span class="full">2nd Place, State Biomedical Debate</span><span class="short">HOSA State, 2nd</span></b><span class="org">HOSA</span></span></li>
+        <li data-lens><span class="lg"><img src="logos/sciencemontgomery.jpg" alt="Science Montgomery"></span><span><b data-gel><span class="full">3rd Place</span><span class="short">Science Montgomery, 3rd</span></b><span class="org">Science Montgomery</span></span></li>
+        <li data-lens><span class="lg"><img src="logos/rotary.png" alt="Metro Bethesda Rotary"></span><span><b data-gel><span class="full">James Phang Aspiring Scientist Award</span><span class="short">Rotary Phang Award</span></b><span class="org">Metro Bethesda Rotary</span></span></li>
       </ul>
     </section>
   </main>
 
   <section class="detail" id="A" aria-labelledby="A-h">
-    <div class="big" data-glass><span class="L">A</span><span class="art" data-art="A"></span>
-      <p class="key"><span class="sw"><i style="background:var(--yellow)"></i>hydrophobic</span><span class="sw"><i style="background:var(--blue)"></i>cationic</span><span class="sw"><i style="border:1.4px solid var(--ink)"></i>glycine · serine</span><span class="say" data-say="Point at a residue to name it">Point at a residue to name it</span></p></div>
+    <div class="big" data-glass><span class="art" data-art="A" data-full></span>
+      <p class="say" data-say="Point at a residue to name it">Point at a residue to name it</p></div>
     <div class="info">
       <a class="back" href="#">← Back</a>
-      <p class="k2" style="color:var(--red)">Panel A · Protein design + wet lab</p>
+      <p class="k2" style="color:var(--red)">Protein design and wet lab</p>
       <h2 id="A-h" data-wave data-dna>NeKtar‑1</h2>
       <p class="lead" data-gel>A protein language model proposed it, and I tested it myself in a BSL‑2 lab. It was bactericidal against drug‑resistant <i>E. coli</i> and <i>P. aeruginosa</i>.</p>
       <dl class="rows">
         <div><dt>Sequence</dt><dd class="seq">GRWGFGWARIRGSVGFGKK</dd></div>
-        <div><dt>Lab</dt><dd data-gel>IBBR, University of Maryland · 2025–26</dd></div>
-        <div><dt>Role</dt><dd data-gel>Model design, BSL‑2 assays</dd></div>
-        <div><dt>Status</dt><dd><span class="st yes">Modeled</span><span class="st yes">Bench‑tested</span></dd></div>
-        <div><dt>Published</dt><dd><a href="https://nhsjs.com/2026/nektar-1-amp_031-a-computationally-designed-antimicrobial-peptide-with-selective-bactericidal-activity-against-gram-negative-bacterial-pathogens/" target="_blank" rel="noopener">National High School Journal of Science ↗</a></dd></div>
+        <div><dt>Lab</dt><dd data-gel>IBBR, University of Maryland, 2025–26</dd></div>
+        <div><dt>Role</dt><dd data-gel>Model design and BSL‑2 assays</dd></div>
+        <div><dt>Status</dt><dd data-gel>Modeled and bench‑tested</dd></div>
+        <div><dt>Published</dt><dd><a href="https://nhsjs.com/2026/nektar-1-amp_031-a-computationally-designed-antimicrobial-peptide-with-selective-bactericidal-activity-against-gram-negative-bacterial-pathogens/" target="_blank" rel="noopener">National High School Journal of Science</a></dd></div>
       </dl>
-      <p class="pager"><a href="#C">← C</a><a href="#B">B →</a></p>
+      <p class="next"><a href="#B">Next: Bone viability</a></p>
     </div>
   </section>
 
   <section class="detail" id="B" aria-labelledby="B-h">
-    <div class="big" data-glass><span class="L">B</span><span class="art" data-art="B"></span>
-      <p class="key"><span class="sw"><i style="background:var(--blue)"></i>model outline</span><span class="sw"><i style="border:1.4px dashed var(--ink)"></i>expert outline</span><span class="sw"><i style="border:1.4px dotted var(--ink)"></i>flagged region</span><span class="say">Point at it: the model settles onto the expert’s outline</span></p></div>
+    <div class="big" data-glass><span class="art" data-art="B"></span></div>
     <div class="info">
       <a class="back" href="#">← Back</a>
-      <p class="k2" style="color:var(--blue)">Panel B · Surgical imaging</p>
+      <p class="k2" style="color:var(--blue)">Surgical imaging</p>
       <h2 id="B-h" data-wave data-dna>Bone viability</h2>
       <p class="lead" data-gel>Surgeons often judge by eye whether bone still has blood flow. My models read white‑light and fluorescence images instead, and flag the cases they shouldn’t be trusted on.</p>
       <dl class="rows">
-        <div><dt>Lab</dt><dd data-gel>Gan Lab, UMD · with Dartmouth · 2026–now</dd></div>
+        <div><dt>Lab</dt><dd data-gel>Gan Lab, UMD, with Dartmouth, 2026–now</dd></div>
         <div><dt>Role</dt><dd data-gel>Segmentation and calibration models</dd></div>
-        <div><dt>Status</dt><dd><span class="st yes">Model built</span><span class="st no">Clinical testing</span></dd></div>
+        <div><dt>Status</dt><dd data-gel>Model built; clinical testing next</dd></div>
         <div><dt>Presented</dt><dd data-gel>Poster, Mickey Dale Organ Transplantation Symposium (Oct 2026); ISBI 2027 paper in preparation</dd></div>
       </dl>
-      <p class="pager"><a href="#A">← A</a><a href="#C">C →</a></p>
+      <p class="next"><a href="#C">Next: NET mechanics</a></p>
     </div>
   </section>
 
   <section class="detail" id="C" aria-labelledby="C-h">
-    <div class="big" data-glass><span class="L">C</span><span class="art" data-art="C"></span>
-      <p class="key"><span class="sw"><i style="background:var(--yellow)"></i>nucleus</span><span class="sw"><i style="background:var(--ochre)"></i>DNA strands</span><span class="sw"><i style="background:var(--muted)"></i>trapped bacteria</span><span class="say">Stir the strands</span></p></div>
+    <div class="big" data-glass><span class="art" data-art="C"></span></div>
     <div class="info">
       <a class="back" href="#">← Back</a>
-      <p class="k2" style="color:var(--ochre)">Panel C · Cell mechanics</p>
+      <p class="k2" style="color:var(--ochre)">Cell mechanics</p>
       <h2 id="C-h" data-wave data-dna>NET mechanics</h2>
       <p class="lead" data-gel>Neutrophils can burst and cast webs of DNA called NETs. Squeezing, sticking and flow all trigger it, but very few studies have modeled how. I proposed one framework that ties the triggers together.</p>
       <dl class="rows">
-        <div><dt>Lab</dt><dd data-gel>Aranda‑Espinoza Lab, UMD · 2026–now</dd></div>
+        <div><dt>Lab</dt><dd data-gel>Aranda‑Espinoza Lab, UMD, 2026–now</dd></div>
         <div><dt>Role</dt><dd data-gel>Modeling and literature review</dd></div>
-        <div><dt>Status</dt><dd><span class="st yes">Framework proposed</span><span class="st no">Bench tests next</span></dd></div>
+        <div><dt>Status</dt><dd data-gel>Framework proposed; bench tests next</dd></div>
       </dl>
-      <p class="pager"><a href="#B">← B</a><a href="#A">A →</a></p>
+      <p class="next"><a href="#A">Next: NeKtar‑1</a></p>
     </div>
   </section>
 
   <footer class="supp" data-glass>
-    <p class="list"><b>Supplementary</b><span class="s12" data-lens>S1 OrganoidEDF<span class="x"> · Johns Hopkins</span></span><span class="s12" data-lens>S2 Protein graph embeddings<span class="x"> · George Mason</span></span><a href="https://arxiv.org/abs/2510.09636" target="_blank" rel="noopener">S3 Bias‑aware advising chatbot ↗</a><a href="https://huggingface.co/spaces/armstrong8002/drought-wildfire-simulator" target="_blank" rel="noopener">S4 Wildfire simulator ↗</a></p>
-    <p class="hint" id="hint"><i>Drift</i> through the text</p>
+    <p class="list"><b>Supplementary</b><span class="s12" data-lens>OrganoidEDF</span><span class="s12" data-lens>Protein graph embeddings</span><a href="https://arxiv.org/abs/2510.09636" target="_blank" rel="noopener"><span class="fl">Bias‑aware advising chatbot</span><span class="sl">Chatbot paper</span></a><a href="https://huggingface.co/spaces/armstrong8002/drought-wildfire-simulator" target="_blank" rel="noopener"><span class="fl">Wildfire simulator</span><span class="sl">Wildfire sim</span></a></p>
+    <button class="theme" type="button" id="theme" aria-label="Switch to dark mode"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"/></svg><span id="theme-label">Dark</span></button>
   </footer>
 </div>
 
@@ -363,6 +386,7 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
   function mk(tag, at, parent) { var e = D.createElementNS(NS, tag); for (var k in at) e.setAttribute(k, at[k]); if (parent) parent.appendChild(e); return e; }
   // Damped spring on o[k] toward tgt; velocity lives in o[vk]
   function spring(o, k, tgt, vk, K, C, dt) { var a = -K * (o[k] - tgt) - C * o[vk]; o[vk] += a * dt; o[k] += o[vk] * dt; }
+  function isDark() { return root.getAttribute('data-theme') === 'dark'; }
 
   /* ---------- Pointer ---------- */
   var P = { x: -999, y: -999, px: -999, py: -999, dx: 0, dy: 0, inside: false, down: false, touchUp: -1e9 };
@@ -371,7 +395,7 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
   addEventListener('pointerdown', function (e) { ptr(e); P.down = true; }, { passive: true });
   addEventListener('pointerup', function (e) { P.down = false; if (e.pointerType !== 'mouse') P.touchUp = now(); }, { passive: true });
   addEventListener('pointercancel', function () { P.down = false; P.touchUp = now(); }, { passive: true });
-  D.addEventListener('mouseout', function (e) { if (!e.relatedTarget) P.inside = false; });
+  D.addEventListener('mouseout', function (e) { if (!e.relatedTarget) { P.inside = false; wake(); } });
   addEventListener('blur', function () { P.inside = false; });
 
   /* ---------- One animation loop ---------- */
@@ -449,14 +473,13 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
 
   /* What the cursor is over: links, buttons and [data-lens] rows get the lens; panels lift */
   var hov = null, hovRects = null;
-  // glass buttons and panels are already glass: they lift, and the droplet melts into them instead of stacking a second lens
-  function rectsOf(el) { return el && !el.hasAttribute('data-glass') ? Array.prototype.slice.call(el.getClientRects()) : null; }
+  function rectsOf(el) { return el && !el.classList.contains('panel') ? Array.prototype.slice.call(el.getClientRects()) : null; }
   D.addEventListener('pointerover', function (e) {
     var el = e.target.closest ? e.target.closest('a[href], button, [data-lens]') : null;
-    if (el && el.classList.contains('solid')) el = null;
     if (el !== hov) { hov = el; hovRects = rectsOf(el); }
   });
   measurers.push(function () { hovRects = rectsOf(hov); });
+  function isGlassBtn(el) { return el && el.hasAttribute('data-glass') && !el.classList.contains('panel'); }
   function liftTarget(el) {
     if (now() < el._go) return -5;
     if (!hov) return 0;
@@ -464,19 +487,19 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
     return 0;
   }
 
-  /* ---------- Gel text: words part around the droplet and spring back ---------- */
+  /* ---------- Gel text: words drift around the droplet and settle back ---------- */
   var gel = [];
-  $$('[data-gel]').forEach(function (el) { split(el, 'gw').forEach(function (w) { gel.push({ el: w, cx: 0, cy: 0, hw: 0, hh: 0, vis: false, ox: 0, oy: 0, vx: 0, vy: 0, s: 1, vs: 0, act: false }); }); });
+  $$('[data-gel]').forEach(function (el) { split(el, 'gw').forEach(function (w) { gel.push({ el: w, cx: 0, cy: 0, vis: false, ox: 0, oy: 0, vx: 0, vy: 0, s: 1, vs: 0, act: false }); }); });
   measurers.push(function () {
     gel.forEach(function (u) {
       var r = u.el.getBoundingClientRect(); u.vis = r.width > 0 && r.bottom > 0 && r.top < innerHeight;
-      u.cx = r.left + r.width / 2 - u.ox; u.cy = r.top + r.height / 2 - u.oy; u.hw = r.width / 2 / u.s; u.hh = r.height / 2 / u.s;
+      u.cx = r.left + r.width / 2 - u.ox; u.cy = r.top + r.height / 2 - u.oy;
     });
   });
 
-  /* ---------- The glass droplet: a soft ring of 24 points, like a bead of hydrogel ---------- */
+  /* ---------- The glass droplet: a soft ring of points, like a bead of hydrogel ---------- */
   var NR = 40;
-  var drop = { x: -300, y: -300, vx: 0, vy: 0, w: 2, h: 2, r: 2, vw: 0, vh: 0, vr: 0, a: 0, k: 0, pts: [], mode: 0 };
+  var drop = { x: -300, y: -300, vx: 0, vy: 0, svx: 0, svy: 0, w: 2, h: 2, r: 2, vw: 0, vh: 0, vr: 0, a: 0, u: 1, k: 0, pts: [], mode: 0 };
   for (var di = 0; di < NR; di++) drop.pts.push({ x: -300, y: -300, vx: 0, vy: 0 });
   // point at fraction u along a rounded rectangle's outline (starting at the right, going round)
   function rrPoint(u, hw, hh, r) {
@@ -500,7 +523,7 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
     }
   }
 
-  /* ---------- WebGL: soft colour, graph paper, glass slabs, and the droplet ---------- */
+  /* ---------- WebGL: faint colour, graph paper, glass slabs, and the droplet ---------- */
   var cv = $('#glass'), G = null;
   try { G = Glass(cv); } catch (e) { G = null; if (window.console) console.warn('Liquid glass off:', e && e.message); }
   if (G) root.classList.add('gl');
@@ -514,7 +537,7 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
       'precision highp float;',
       '#define MAXB 14',
       '#define NR 40',
-      'uniform vec2 uRes,uPtr;uniform float uPx,uT;',
+      'uniform vec2 uRes,uPtr;uniform float uPx,uT,uDark;',
       'uniform vec4 uBox[MAXB];uniform vec2 uRL[MAXB];uniform int uN;',
       'uniform vec2 uPoly[NR];uniform vec4 uBB;uniform vec2 uDC;uniform float uDK,uDA,uDE;',
       'out vec4 o;',
@@ -523,39 +546,43 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
       'float sceneD(vec2 p){float l;return scene(p,l);}',
       'float sdPoly(vec2 p){vec2 v0=uPoly[0];float d=dot(p-v0,p-v0);float s=1.;for(int i=0,j=NR-1;i<NR;j=i,i++){vec2 vi=uPoly[i],vj=uPoly[j];vec2 e=vj-vi;vec2 w=p-vi;vec2 b=w-e*clamp(dot(w,e)/(dot(e,e)+1e-6),0.,1.);d=min(d,dot(b,b));bvec3 c=bvec3(p.y>=vi.y,p.y<vj.y,e.x*w.y>e.y*w.x);if(all(c)||all(not(c)))s*=-1.;}return s*sqrt(d);}',
       'float drop(vec2 p){return sdPoly(p)-uDK;}',
-      /* soft, slow colour fields (the same dyes as the panels), leaning gently toward the pointer */
+      /* very faint, slow colour (the panels' hues), leaning a touch toward the pointer */
       'const vec3 RED=vec3(.05,1.55,2.17),BLU=vec3(1.96,1.12,.02),YEL=vec3(0.,.26,2.6);',
-      'vec3 field(vec2 p){vec2 q=p/uRes.y;float ar=uRes.x/uRes.y,t=uT;vec2 m=uPtr/uRes.y;vec3 a=vec3(0.);vec2 c;',
-      ' c=vec2(ar*(.10+.04*sin(t*.11)),.80+.05*cos(t*.09));c+=(m-c)*.05;a+=RED*exp(-dot(q-c,q-c)/.16)*.055;',
-      ' c=vec2(ar*(.47+.06*sin(t*.07+1.)),.26+.06*cos(t*.08+2.));c+=(m-c)*.05;a+=BLU*exp(-dot(q-c,q-c)/.2)*.04;',
-      ' c=vec2(ar*(.90+.03*sin(t*.09+3.)),.50+.07*cos(t*.06));c+=(m-c)*.05;a+=YEL*exp(-dot(q-c,q-c)/.16)*.055;',
-      ' return exp(-a);}',
-      'vec3 paper(vec2 p,float w){float s=28.*uPx;vec2 g=abs(fract(p/s+.5)-.5)*s;float mi=1.-smoothstep(0.,w,min(g.x,g.y));float S=s*4.;vec2 G=abs(fract(p/S+.5)-.5)*S;float ma=1.-smoothstep(0.,w*1.25,min(G.x,G.y));return field(p)*(1.-max(mi*.05,ma*.085));}',
+      'const vec3 RC=vec3(.95,.21,.11),BC=vec3(.25,.4,1.),YC=vec3(1.,.77,0.);',
+      'vec3 field(vec2 p){vec2 q=p/uRes.y;float ar=uRes.x/uRes.y,t=uT;vec2 m=uPtr/uRes.y;vec2 c;float g1,g2,g3;',
+      ' c=vec2(ar*(.10+.04*sin(t*.11)),.80+.05*cos(t*.09));c+=(m-c)*.05;g1=exp(-dot(q-c,q-c)/.16);',
+      ' c=vec2(ar*(.47+.06*sin(t*.07+1.)),.26+.06*cos(t*.08+2.));c+=(m-c)*.05;g2=exp(-dot(q-c,q-c)/.2);',
+      ' c=vec2(ar*(.90+.03*sin(t*.09+3.)),.50+.07*cos(t*.06));c+=(m-c)*.05;g3=exp(-dot(q-c,q-c)/.16);',
+      ' vec3 light=exp(-(RED*g1*.055+BLU*g2*.04+YEL*g3*.055));',
+      ' vec3 dark=vec3(.059,.059,.067)+RC*g1*.035+BC*g2*.04+YC*g3*.025;',
+      ' return mix(light,dark,uDark);}',
+      'vec3 paper(vec2 p,float w){float s=28.*uPx;vec2 g=abs(fract(p/s+.5)-.5)*s;float mi=1.-smoothstep(0.,w,min(g.x,g.y));float S=s*4.;vec2 G=abs(fract(p/S+.5)-.5)*S;float ma=1.-smoothstep(0.,w*1.25,min(G.x,G.y));float L=max(mi*.05,ma*.085);vec3 f=field(p);return mix(f*(1.-L),f+vec3(L*.7),uDark);}',
       'const vec2 LIT=vec2(-.5547,.8321);',
+      /* glass slab: bends the paper near its rim, catches light, and has a crisp hairline so the edge reads clearly */
       'vec3 base(vec2 p){float px=uPx;float lift;float d=scene(p,lift);',
       ' vec3 outC=paper(p,px);',
-      ' if(d>px)return outC;',
+      ' float ol=(1.-smoothstep(.35*px,1.4*px,abs(d)))*mix(.17,.22,uDark);vec3 lc=vec3(uDark);',
+      ' if(d>px)return mix(outC,lc,ol);',
       ' vec2 e=vec2(px,0.);vec2 n=normalize(vec2(sceneD(p+e.xy)-sceneD(p-e.xy),sceneD(p+e.yx)-sceneD(p-e.yx))+1e-5);',
       ' float depth=-d;float edge=(20.+6.*lift)*px;float t=clamp(1.-depth/edge,0.,1.);float bend=t*t;',
       ' vec2 off=-n*bend*(26.+10.*lift)*px;',
       ' vec3 c=vec3(paper(p+off*1.1,2.4*px).r,paper(p+off,2.4*px).g,paper(p+off*.9,2.4*px).b);',
-      ' c=mix(c,vec3(1.),.24+.05*lift);',
+      ' c=mix(c,vec3(1.),mix(.24+.05*lift,.055+.03*lift,uDark));',
       ' float band=smoothstep(2.6*px,0.,depth);float band2=smoothstep(edge*.9,0.,depth);',
       ' float spec=pow(max(dot(n,LIT),0.),1.6)*band*(.85+.15*lift)+pow(max(dot(n,LIT),0.),3.)*band2*.10;',
       ' float back=pow(max(dot(n,-LIT),0.),2.)*band*.55;',
-      ' float shade=pow(max(dot(n,-LIT),0.),1.5)*smoothstep(1.4*px,0.,depth)*.10;',
-      ' c=c+spec+back*.45-shade;',
-      ' float a=smoothstep(.8*px,-.8*px,d);return mix(outC,clamp(c,0.,1.),a);}',
-      'void main(){vec2 p=gl_FragCoord.xy;float px=uPx;float m=40.*px;',
+      ' c=c+(spec+back*.45)*mix(1.,.55,uDark);',
+      ' float a=smoothstep(.8*px,-.8*px,d);return mix(mix(outC,clamp(c,0.,1.),a),lc,ol);}',
+      /* the droplet: a free lens that magnifies whatever is under it, glass included */
+      'void main(){vec2 p=gl_FragCoord.xy;float px=uPx;float m=4.*px;',
       ' float dd=1e5;if(uDA>.01&&p.x>uBB.x-m&&p.x<uBB.z+m&&p.y>uBB.y-m&&p.y<uBB.w+m)dd=drop(p);',
       ' if(dd>px){o=vec4(base(p),1.);return;}',
       ' vec2 e=vec2(px,0.);vec2 n=normalize(vec2(drop(p+e.xy)-drop(p-e.xy),drop(p+e.yx)-drop(p-e.yx))+1e-5);',
       ' float depth=-dd;float edge=max(uDE,4.*px);float t=clamp(1.-depth/edge,0.,1.);float bend=t*t;',
       ' vec2 off=-n*bend*12.*px+(uDC-p)*.16;',
-      ' vec3 c=base(p+off);c=mix(c,vec3(1.),.10);',
+      ' vec3 c=base(p+off);c=mix(c,vec3(1.),mix(.10,.04,uDark));',
       ' float band=smoothstep(2.4*px,0.,depth);',
-      ' c+=pow(max(dot(n,LIT),0.),1.6)*band*.9+pow(max(dot(n,-LIT),0.),2.)*band*.3;',
-      ' c-=pow(max(dot(n,-LIT),0.),1.5)*smoothstep(1.4*px,0.,depth)*.08;',
+      ' c+=(pow(max(dot(n,LIT),0.),1.6)*band*.9+pow(max(dot(n,-LIT),0.),2.)*band*.3)*mix(1.,.6,uDark);',
       ' float a=smoothstep(.8*px,-.8*px,dd)*uDA;',
       ' vec3 outC=a<.999?base(p):c;o=vec4(mix(outC,clamp(c,0.,1.),a),1.);}'
     ].join('\n');
@@ -577,7 +604,8 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
     }
     size(); measurers.unshift(size);
     var BOX = new Float32Array(56), RL = new Float32Array(28), POLY = new Float32Array(NR * 2);
-    function render(t) {
+    var api = { dark: isDark() ? 1 : 0 };
+    api.render = function (t) {
       var s = Q.scale, n = Math.min(glass.length, 14), i;
       for (i = 0; i < n; i++) {
         var g = glass[i], L = g.el._lift, grow = L * 3;
@@ -589,27 +617,69 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
         var px = drop.pts[i].x * s, py = (H - drop.pts[i].y) * s; POLY[i * 2] = px; POLY[i * 2 + 1] = py;
         if (px < x0) x0 = px; if (px > x1) x1 = px; if (py < y0) y0 = py; if (py > y1) y1 = py;
       }
-      gl.uniform2f(u.uRes, CW, CH); gl.uniform1f(u.uPx, s); gl.uniform1f(u.uT, t);
+      gl.uniform2f(u.uRes, CW, CH); gl.uniform1f(u.uPx, s); gl.uniform1f(u.uT, t); gl.uniform1f(u.uDark, api.dark);
       gl.uniform2f(u.uPtr, (P.inside ? P.x : W / 2) * s, (H - (P.inside ? P.y : H / 2)) * s);
       gl.uniform4fv(u.uBox, BOX); gl.uniform2fv(u.uRL, RL); gl.uniform1i(u.uN, n);
-      gl.uniform2fv(u.uPoly, POLY); gl.uniform4f(u.uBB, x0, y0, x1, y1);
-      gl.uniform2f(u.uDC, drop.x * s, (H - drop.y) * s); gl.uniform1f(u.uDK, drop.k * s); gl.uniform1f(u.uDA, drop.a); gl.uniform1f(u.uDE, Math.min(drop.w, drop.h) * s);
+      gl.uniform2fv(u.uPoly, POLY); gl.uniform4f(u.uBB, x0 - drop.k * s, y0 - drop.k * s, x1 + drop.k * s, y1 + drop.k * s);
+      gl.uniform2f(u.uDC, drop.x * s, (H - drop.y) * s); gl.uniform1f(u.uDK, drop.k * s); gl.uniform1f(u.uDA, drop.a * drop.u); gl.uniform1f(u.uDE, Math.min(drop.w, drop.h) * s);
       gl.viewport(0, 0, CW, CH);
       gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
-    }
+    };
     // If frames slip, drop resolution a notch (a phone held at 30 fps in Low Power Mode is steady, not struggling)
     var fr = { n: 0, sum: 0, min: 1, level: 0 };
-    function perf(dt) {
+    api.perf = function (dt) {
       fr.n++; if (fr.n < 40) return; fr.sum += dt; fr.min = Math.min(fr.min, dt);
       if (fr.n === 160) {
         if (fr.sum / 121 > Math.max(0.0215, fr.min * 1.35) && fr.level < 2) { fr.level++; Q.scale = fr.level === 1 ? Math.max(1, dpr * 0.7) : 0.85; size(); }
         fr.n = 0; fr.sum = 0; fr.min = 1;
       }
-    }
-    return { render: render, perf: perf };
+    };
+    return api;
   }
 
-  /* Gel words: part around the droplet, get dragged a little with it, spring back */
+  /* ---------- The ring: the droplet's outline drawn on top of everything, so the cursor never disappears ---------- */
+  var ring = $('#ring'), rc = null, rdpr = 1, rbb = null;
+  if (G && fine && !reduce) { rc = ring.getContext('2d'); root.classList.add('nocur'); }
+  else ring.style.display = 'none';
+  measurers.push(function () {
+    if (!rc) return;
+    rdpr = Math.min(devicePixelRatio || 1, 2);
+    ring.width = Math.round(innerWidth * rdpr); ring.height = Math.round(innerHeight * rdpr);
+    rc.setTransform(rdpr, 0, 0, rdpr, 0, 0); rbb = null;
+  });
+  function drawRing() {
+    if (!rc) return;
+    if (rbb) rc.clearRect(rbb[0], rbb[1], rbb[2], rbb[3]);
+    rbb = null;
+    if (drop.a < 0.02 || drop.w < 3) return;
+    var Q = [], x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9, i, k = drop.k;
+    for (i = 0; i < NR; i++) {
+      var p = drop.pts[i], dx = p.x - drop.x, dy = p.y - drop.y, L = Math.hypot(dx, dy) || 1, qx = p.x + dx / L * k, qy = p.y + dy / L * k;
+      Q.push([qx, qy]); if (qx < x0) x0 = qx; if (qx > x1) x1 = qx; if (qy < y0) y0 = qy; if (qy > y1) y1 = qy;
+    }
+    function path(sc) {
+      rc.beginPath();
+      for (var j = 0; j <= NR; j++) {
+        var a = Q[j % NR], b = Q[(j + 1) % NR];
+        var ax = drop.x + (a[0] - drop.x) * sc, ay = drop.y + (a[1] - drop.y) * sc, mx = drop.x + ((a[0] + b[0]) / 2 - drop.x) * sc, my = drop.y + ((a[1] + b[1]) / 2 - drop.y) * sc;
+        if (j === 0) rc.moveTo(mx, my); else rc.quadraticCurveTo(ax, ay, mx, my);
+      }
+      rc.closePath();
+    }
+    var dark = isDark(), size = Math.max(x1 - x0, y1 - y0, 6);
+    rc.globalAlpha = drop.a;
+    path(1);
+    rc.fillStyle = dark ? 'rgba(255,255,255,.035)' : 'rgba(255,255,255,.08)'; rc.fill();
+    rc.lineWidth = 1.2; rc.strokeStyle = dark ? 'rgba(255,255,255,.55)' : 'rgba(20,20,20,.42)'; rc.stroke();
+    path(1 - 3 / size);
+    var g = rc.createLinearGradient(x0, y0, x1, y1);
+    g.addColorStop(0, dark ? 'rgba(255,255,255,.55)' : 'rgba(255,255,255,.95)'); g.addColorStop(0.6, 'rgba(255,255,255,0)');
+    rc.lineWidth = 1.2; rc.strokeStyle = g; rc.stroke();
+    rc.globalAlpha = 1;
+    rbb = [x0 - 4, y0 - 4, x1 - x0 + 8, y1 - y0 + 8];
+  }
+
+  /* Gel words: drift aside around the droplet, then settle back */
   parts.push(function (dt) {
     if (reduce || !gel.length) return false;
     var on = drop.a > 0.3, R = Math.max(drop.w, drop.h) + 16, str = drop.mode ? 0.25 : 1, any = false;
@@ -621,11 +691,10 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
         var dx = u.cx - drop.x, dy = u.cy - drop.y, d = Math.hypot(dx, dy);
         if (d < R * 2.6) {
           var f = Math.exp(-(d * d) / (R * R)) * str, nx = d > 0.01 ? dx / d : 0, ny = d > 0.01 ? dy / d : 0;
-          tx = nx * f * 8 + clamp((drop.svx || 0) * 0.006, -5, 5) * f; ty = ny * f * 3.2 + clamp((drop.svy || 0) * 0.005, -2.5, 2.5) * f; ts = 1 + 0.05 * f;
+          tx = nx * f * 8 + clamp(drop.svx * 0.006, -5, 5) * f; ty = ny * f * 3.2 + clamp(drop.svy * 0.005, -2.5, 2.5) * f; ts = 1 + 0.05 * f;
         }
       }
       if (!u.act && !tx && !ty) continue;
-      // critically damped: words drift aside and settle back without bouncing
       spring(u, 'ox', tx, 'vx', 110, 21, dt); spring(u, 'oy', ty, 'vy', 110, 21, dt); spring(u, 's', ts, 'vs', 110, 21, dt);
       u.act = Math.abs(u.ox) + Math.abs(u.oy) + Math.abs(u.vx) * 0.05 + Math.abs(u.vy) * 0.05 + Math.abs(u.s - 1) * 20 > 0.03 || !!tx || !!ty;
       u.el.style.transform = u.act ? 'translate3d(' + u.ox.toFixed(2) + 'px,' + u.oy.toFixed(2) + 'px,0) scale(' + u.s.toFixed(4) + ')' : '';
@@ -636,7 +705,7 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
 
   /* Droplet physics + glass render */
   if (G) parts.push(function (dt, t) {
-    var moving = false, i;
+    var moving = false, i, s;
     for (i = 0; i < glass.length; i++) {
       var el = glass[i].el, tg = liftTarget(el);
       if (reduce) { el._lift = tg > 0 ? 1 : 0; continue; }
@@ -650,48 +719,50 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
       if (hovRects.length > 1) { var best = 1e9; hovRects.forEach(function (r) { var dd = Math.abs(P.y - (r.top + r.bottom) / 2); if (dd < best) { best = dd; rect = r; } }); }
     }
     drop.mode = rect ? 1 : 0;
+    var gb = isGlassBtn(hov);
     if (rect) {
+      var pad = gb ? 5 : 0;
       tx = rect.left + rect.width / 2; ty = rect.top + rect.height / 2;
-      tw = rect.width / 2 + (rect.width > 60 ? 6 : 9); th = rect.height / 2 + 3; tr = th;
+      tw = rect.width / 2 + (rect.width > 60 ? 6 : 9) + pad; th = rect.height / 2 + 3 + pad; tr = th;
     } else {
-      var bs = hov && hov.classList.contains('panel') ? 19 : 14;
-      tw = th = tr = bs;
+      tw = th = tr = hov && hov.classList.contains('panel') ? 17 : 13;
     }
-    if (!show || (hov && hov.hasAttribute('data-glass') && !hov.classList.contains('panel'))) { tw = th = tr = 1.5; }
+    if (!show) { tw = th = tr = 1.5; }
     if (drop.a < 0.02 && show) { drop.x = tx; drop.y = ty; drop.vx = drop.vy = drop.svx = drop.svy = 0; drop.pts.forEach(function (p) { p.x = tx; p.y = ty; p.vx = p.vy = 0; }); }
-    drop.a += ((show ? 1 : 0) - drop.a) * (1 - Math.exp(-dt * 9));
+    drop.a += ((show ? 1 : 0) - drop.a) * (1 - Math.exp(-dt * 12));
+    drop.u += ((gb ? 0 : 1) - drop.u) * (1 - Math.exp(-dt * 12));   // over a glass button only the ring shows; the button itself lifts
     // Fixed small sub-steps: the gel behaves the same at 30, 60 or 120 fps and can't go unstable
-    var steps = Math.max(1, Math.ceil(dt / 0.008)), h = dt / steps, s;
-    var Kc = rect ? 170 : 230, Cc = 2 * Math.sqrt(Kc);            // critically damped centre: glides in, never overshoots
+    var steps = Math.max(1, Math.ceil(dt / 0.008)), h = dt / steps;
+    var Kc = rect ? 260 : 620, Cc = 2 * Math.sqrt(Kc);           // critically damped centre: tracks the pointer closely, never overshoots
     for (s = 0; s < steps; s++) {
       spring(drop, 'x', tx, 'vx', Kc, Cc, h); spring(drop, 'y', ty, 'vy', Kc, Cc, h);
-      spring(drop, 'w', tw, 'vw', 190, 23, h); spring(drop, 'h', th, 'vh', 190, 23, h); spring(drop, 'r', tr, 'vr', 190, 23, h);
+      spring(drop, 'w', tw, 'vw', 220, 25, h); spring(drop, 'h', th, 'vh', 220, 25, h); spring(drop, 'r', tr, 'vr', 220, 25, h);
     }
-    // smoothed velocity sets a gentle stretch along the direction of travel
     var sm = 1 - Math.exp(-dt * 7);
-    drop.svx = (drop.svx || 0) + (drop.vx - (drop.svx || 0)) * sm; drop.svy = (drop.svy || 0) + (drop.vy - (drop.svy || 0)) * sm;
-    var sp = Math.hypot(drop.svx, drop.svy), st = rect ? 0 : Math.min(sp / 2400, 0.3), ux = sp > 1 ? drop.svx / sp : 1, uy = sp > 1 ? drop.svy / sp : 0;
-    var k = Math.min(5, Math.max(drop.r, 0) * 0.45), br = reduce || rect ? 0 : Math.sin(t * 2.1) * 0.45;
+    drop.svx += (drop.vx - drop.svx) * sm; drop.svy += (drop.vy - drop.svy) * sm;
+    var sp = Math.hypot(drop.svx, drop.svy), st = rect ? 0 : Math.min(sp / 2600, 0.28), ux = sp > 1 ? drop.svx / sp : 1, uy = sp > 1 ? drop.svy / sp : 0;
+    var k = Math.min(5, Math.max(drop.r, 0) * 0.45), br = reduce || rect ? 0 : Math.sin(t * 2.1) * 0.4;
     var hw = Math.max(drop.w - k + br, 0.5), hh = Math.max(drop.h - k + br, 0.5), rr = Math.max(drop.r - k + br, 0.3);
     drop.k = k;
     var T = [];
     for (i = 0; i < NR; i++) {
       var q = rrPoint(i / NR, hw, hh, rr), al = q[0] * ux + q[1] * uy, pe = -q[0] * uy + q[1] * ux;
-      al *= 1 + st; pe *= 1 - st * 0.4;                            // longer along travel, a little slimmer across
+      al *= 1 + st; pe *= 1 - st * 0.4;
       T.push([drop.x + al * ux - pe * uy, drop.y + al * uy + pe * ux]);
     }
-    // The skin: each point springs to its place, is smoothed by its neighbours, and lags the centre just enough to wobble once
+    // the skin: each point springs to its place, smoothed by its neighbours, lagging the centre just enough to wobble once
     for (s = 0; s < steps; s++) {
       for (i = 0; i < NR; i++) {
         var p = drop.pts[i], a = T[i], pa = drop.pts[(i + NR - 1) % NR], pb = drop.pts[(i + 1) % NR], ta = T[(i + NR - 1) % NR], tb = T[(i + 1) % NR];
         var lx = (pa.x + pb.x) / 2 - p.x - ((ta[0] + tb[0]) / 2 - a[0]), ly = (pa.y + pb.y) / 2 - p.y - ((ta[1] + tb[1]) / 2 - a[1]);
-        var ax = 300 * (a[0] - p.x) + 90 * lx - 24 * (p.vx - drop.vx) - 3 * p.vx;
-        var ay = 300 * (a[1] - p.y) + 90 * ly - 24 * (p.vy - drop.vy) - 3 * p.vy;
+        var ax = 340 * (a[0] - p.x) + 90 * lx - 26 * (p.vx - drop.vx) - 3 * p.vx;
+        var ay = 340 * (a[1] - p.y) + 90 * ly - 26 * (p.vy - drop.vy) - 3 * p.vy;
         p.vx += ax * h; p.vy += ay * h; p.x += p.vx * h; p.y += p.vy * h;
       }
     }
     for (i = 0; i < NR; i++) { var pp = drop.pts[i]; if (Math.abs(pp.x - T[i][0]) > 120 || Math.abs(pp.y - T[i][1]) > 120) { pp.x = T[i][0]; pp.y = T[i][1]; pp.vx = drop.vx; pp.vy = drop.vy; } }
     G.render(t);
+    drawRing();
     G.perf(dt);
     if (!root.classList.contains('ready')) root.classList.add('ready');
     return !reduce || moving || drop.a > 0.01 || show;
@@ -712,16 +783,16 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
       if (!nr && !awake) return false;
       var n = L.length, energy = 0, i;
       for (i = 0; i < n; i++) {
-        var q = L[i], a = -70 * q.y - 6.5 * q.v;
+        var q = L[i], a = -70 * q.y - 7.5 * q.v;
         if (i > 0) a += 55 * (L[i - 1].y - q.y);
         if (i < n - 1) a += 55 * (L[i + 1].y - q.y);
-        if (nr) { var dx = P.x - q.cx, dy = P.y - q.cy; if (Math.abs(dy) < q.hh * 1.3) { var f = Math.exp(-dx * dx / 700); a += (clamp(P.dy, -40, 40) * 60 + Math.min(Math.abs(P.dx), 40) * 22) * f; } }
+        if (nr) { var dx = P.x - q.cx, dy = P.y - q.cy; if (Math.abs(dy) < q.hh * 1.3) { var f = Math.exp(-dx * dx / 700); a += (clamp(P.dy, -40, 40) * 45 + Math.min(Math.abs(P.dx), 40) * 16) * f; } }
         q.v += a * dt;
       }
-      for (i = 0; i < n; i++) { L[i].y = clamp(L[i].y + L[i].v * dt, -26, 26); energy += Math.abs(L[i].y) + Math.abs(L[i].v) * 0.05; }
+      for (i = 0; i < n; i++) { L[i].y = clamp(L[i].y + L[i].v * dt, -20, 20); energy += Math.abs(L[i].y) + Math.abs(L[i].v) * 0.05; }
       for (i = 0; i < n; i++) {
         var sl = ((i < n - 1 ? L[i + 1].y : L[i].y) - (i > 0 ? L[i - 1].y : L[i].y)) * 1.1;
-        L[i].el.style.transform = 'translate3d(0,' + L[i].y.toFixed(2) + 'px,0) rotate(' + clamp(sl, -14, 14).toFixed(2) + 'deg)';
+        L[i].el.style.transform = 'translate3d(0,' + L[i].y.toFixed(2) + 'px,0) rotate(' + clamp(sl, -12, 12).toFixed(2) + 'deg)';
       }
       awake = nr || energy > 0.01 * n;
       if (!awake) L.forEach(function (q) { q.y = q.v = 0; q.el.style.transform = ''; });
@@ -730,7 +801,7 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
   }
   $$('[data-wave]').forEach(Wave);
 
-  /* ---------- DNA / RNA decode: letters flicker through A C G U, then lock into place ---------- */
+  /* ---------- DNA / RNA decode: letters flicker through A C G U in the heading's own type, then lock in ---------- */
   var NT = 'ACGU', scr = [];
   function Decoder(el) {
     var L = letters(el).map(function (s) { return { el: s, c: s.textContent, on: false, s: 0, e: 0, last: 0, w: 0 }; });
@@ -766,33 +837,26 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
     var k = 0;
     decoders.forEach(function (d) { if (d.el.hasAttribute('data-dna-load')) d.go(true, 120 + (k++) * 110); });
   }
-  // hover re-decodes: the name, and each panel's title when you point at the panel
   $$('[data-dna]').forEach(function (el) {
     var host = el.closest('.panel') || el;
     host.addEventListener('pointerenter', function () { el._dna.go(false, 0); });
   });
-  // now and then, one heading quietly re-sequences itself
-  if (!reduce) setInterval(function () {
-    if (D.hidden) return;
-    var vis = decoders.filter(function (d) { return d.el.getClientRects().length && !d.run; });
-    if (vis.length) vis[(Math.random() * vis.length) | 0].go(false, 0);
-  }, 7000);
 
-  /* ---------- Panel A: NeKtar-1 helical wheel you can flick ---------- */
+  /* ---------- NeKtar-1 helical wheel: plain dots on the main screen, lettered in its own view ---------- */
   var SEQ = 'GRWGFGWARIRGSVGFGKK';
   var NAME = { G: 'glycine', R: 'arginine', W: 'tryptophan', F: 'phenylalanine', A: 'alanine', I: 'isoleucine', S: 'serine', V: 'valine', K: 'lysine' };
   function kind(a) { return 'AIVFWLM'.indexOf(a) >= 0 ? 'h' : 'RK'.indexOf(a) >= 0 ? 'c' : 'o'; }
   var KNAME = { h: 'hydrophobic', c: 'cationic', o: 'small, flexible' };
   var SPIN = { a: 0 };
-  parts.push(function (dt) { if (!reduce) SPIN.a += 8 * dt; return false; });   // a slow, steady turn
-  function Wheel(slot, say) {
-    var svg = mk('svg', { viewBox: '0 0 300 300', class: 'wheel', role: 'img', 'aria-label': 'Helical wheel of NeKtar-1, GRWGFGWARIRGSVGFGKK.' }, slot);
-    var path = mk('path', { class: 'w-line' }, svg), B = [];
+  parts.push(function (dt) { if (!reduce) SPIN.a += 7 * dt; return false; });
+  function Wheel(slot, say, full) {
+    var svg = mk('svg', { viewBox: '0 0 300 300', role: 'img', 'aria-label': 'Helical wheel of NeKtar-1, GRWGFGWARIRGSVGFGKK.' }, slot);
+    var path = full ? mk('path', { class: 'w-line' }, svg) : null, B = [], R0 = full ? 15 : 10;
     for (var i = 0; i < SEQ.length; i++) {
       var k = kind(SEQ[i]), g = mk('g', {}, svg);
-      mk('circle', { r: 15, class: 'w-n ' + k }, g);
-      var tx = mk('text', { class: 'w-t ' + k }, g); tx.textContent = SEQ[i];
-      B.push({ g: g, ox: 0, oy: 0, vx: 0, vy: 0, s: 1, vs: 0, x: 0, y: 0, rad: i < 18 ? 100 : 134 });
+      mk('circle', { r: R0, class: 'w-dot ' + k }, g);
+      if (full) { var tx = mk('text', { class: 'w-t ' + k }, g); tx.textContent = SEQ[i]; }
+      B.push({ g: g, ox: 0, oy: 0, vx: 0, vy: 0, s: 1, vs: 0, x: 0, y: 0, rad: i < 18 ? 100 : 128 });
     }
     var M = Mapper(svg), hovI = -2, defSay = say ? say.getAttribute('data-say') : '';
     parts.push(function (dt, t) {
@@ -800,51 +864,46 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
       var nr = M.near(40), lx = M.lx(), ly = M.ly(), pts = '', best = -1, bd = 18;
       for (var i = 0; i < B.length; i++) {
         var b = B[i], ang = (-90 + i * 100 + SPIN.a) * Math.PI / 180;
-        var bx = 150 + b.rad * Math.cos(ang), by = 150 + b.rad * Math.sin(ang) + (reduce ? 0 : Math.sin(t * 1.3 + i * 0.8) * 2.2);
-        var ax = -150 * b.ox - 13 * b.vx, ay = -150 * b.oy - 13 * b.vy;
+        var bx = 150 + b.rad * Math.cos(ang), by = 150 + b.rad * Math.sin(ang) + (reduce ? 0 : Math.sin(t * 1.2 + i * 0.8) * 1.6);
+        var ax = -150 * b.ox - 16 * b.vx, ay = -150 * b.oy - 16 * b.vy;
         if (nr) {
           var dx = bx + b.ox - lx, dy = by + b.oy - ly, d = Math.hypot(dx, dy);
           if (d < bd) { bd = d; best = i; }
-          if (d < 58 && d > 0.01) { var f = (58 - d) / 58; f = f * f * 5200; ax += dx / d * f; ay += dy / d * f; }
+          if (d < 54 && d > 0.01) { var f = (54 - d) / 54; f = f * f * 3600; ax += dx / d * f; ay += dy / d * f; }
         }
         b.vx += ax * dt; b.vy += ay * dt; b.ox += b.vx * dt; b.oy += b.vy * dt;
         b.x = bx + b.ox; b.y = by + b.oy;
-        spring(b, 's', i === best ? 1.32 : 1, 'vs', 300, 16, dt);
+        spring(b, 's', i === best ? 1.3 : 1, 'vs', 300, 18, dt);
         b.g.setAttribute('transform', 'translate(' + b.x.toFixed(1) + ' ' + b.y.toFixed(1) + ') scale(' + b.s.toFixed(3) + ')');
         pts += (i ? 'L' : 'M') + b.x.toFixed(1) + ' ' + b.y.toFixed(1);
       }
-      path.setAttribute('d', pts);
+      if (path) path.setAttribute('d', pts);
       if (best !== hovI) {
         hovI = best;
         if (best >= 0) svg.appendChild(B[best].g);
-        if (say) { say.textContent = best >= 0 ? SEQ[best] + (best + 1) + ' · ' + NAME[SEQ[best]] + ' · ' + KNAME[kind(SEQ[best])] : defSay; say.classList.toggle('on', best >= 0); }
+        if (say) { say.textContent = best >= 0 ? SEQ[best] + (best + 1) + ', ' + NAME[SEQ[best]] + ' (' + KNAME[kind(SEQ[best])] + ')' : defSay; say.classList.toggle('on', best >= 0); }
       }
       return !reduce;
     });
   }
 
-  /* ---------- Panel B: the model's outline wobbles, then settles onto the expert's when you point at it ---------- */
+  /* ---------- Bone: the model's outline wobbles, then settles when you point at it ---------- */
   function Bone(slot) {
-    var svg = mk('svg', { viewBox: '0 0 300 300', role: 'img', 'aria-label': "Drawing of a bone with the model's outline over an expert's outline" }, slot);
-    var gr = mk('g', { fill: 'none', stroke: '#bdbcb8', 'stroke-width': 3 }, svg), gf = mk('g', { fill: '#f4f4f1' }, svg);
+    var svg = mk('svg', { viewBox: '0 0 300 300', role: 'img', 'aria-label': 'A bone with the segmentation model’s outline over it' }, slot);
+    var gr = mk('g', { class: 'b-line' }, svg), gf = mk('g', { class: 'b-fill' }, svg);
     [gr, gf].forEach(function (g) { mk('rect', { x: 62, y: 134, width: 176, height: 32 }, g); [[62, 126], [62, 174], [238, 126], [238, 174]].forEach(function (c) { mk('circle', { cx: c[0], cy: c[1], r: 24 }, g); }); });
-    var scan = mk('rect', { x: 0, y: 112, width: 3, height: 76, rx: 1.5, fill: '#2453ff', opacity: 0 }, svg);
-    var model = mk('path', { fill: '#2453ff', 'fill-opacity': '.14', stroke: '#2453ff', 'stroke-width': 2.2, 'stroke-linejoin': 'round' }, svg);
-    mk('rect', { x: 47, y: 132, width: 124, height: 36, rx: 18, fill: 'none', stroke: '#141414', 'stroke-width': 1.4, 'stroke-dasharray': '4 3' }, svg);
-    var flag = mk('circle', { cx: 206, cy: 150, r: 10, fill: 'none', stroke: '#141414', 'stroke-width': 1.3, 'stroke-dasharray': '1.5 2.5' }, svg);
-    mk('line', { x1: 206, y1: 162, x2: 206, y2: 186, stroke: '#6b6a66', 'stroke-width': 1 }, svg);
-    var lab = mk('text', { x: 206, y: 198, 'font-family': 'Inter, Helvetica, Arial, sans-serif', 'font-size': 11, 'font-weight': 500, fill: '#6b6a66', 'text-anchor': 'middle' }, svg); lab.textContent = 'flagged';
+    var model = mk('path', { class: 'b-model' }, svg);
     var M = Mapper(svg), st = { m: 0, vm: 0 }, N = 44, pts = [];
     for (var z = 0; z < N; z++) pts.push([0, 0]);
     parts.push(function (dt, t) {
       if (!M.vis) return false;
-      spring(st, 'm', M.near(0) ? 1 : 0, 'vm', 60, 9, dt);
-      var m = clamp(st.m, -0.2, 1.2), amp = 5.5 * (1 - m) + 0.7;
+      spring(st, 'm', M.near(0) ? 1 : 0, 'vm', 60, 12, dt);
+      var m = clamp(st.m, -0.2, 1.2), amp = 5 * (1 - m) + 0.6;
       var cx = 104 + 5 * m, cy = 150, ax = 64 - 2 * m, by = 22 - 4 * m;
       for (var i = 0; i < N; i++) {
         var th = i / N * Math.PI * 2, c = Math.cos(th), s = Math.sin(th);
         var x = cx + ax * Math.sign(c) * Math.pow(Math.abs(c), 0.42), y = cy + by * Math.sign(s) * Math.pow(Math.abs(s), 0.42);
-        var nz = Math.sin(3 * th + t * 1.7) * 0.6 + Math.sin(5 * th - t * 1.1 + 1.3) * 0.4 + Math.sin(2 * th + t * 0.6) * 0.3;
+        var nz = Math.sin(3 * th + t * 1.5) * 0.6 + Math.sin(5 * th - t * 1.0 + 1.3) * 0.4 + Math.sin(2 * th + t * 0.6) * 0.3;
         pts[i][0] = x + c * amp * nz; pts[i][1] = y + s * amp * nz;
       }
       var d = '';
@@ -853,63 +912,50 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
         d += j === 0 ? 'M' + mx.toFixed(1) + ' ' + my.toFixed(1) : 'Q' + p[0].toFixed(1) + ' ' + p[1].toFixed(1) + ' ' + mx.toFixed(1) + ' ' + my.toFixed(1);
       }
       model.setAttribute('d', d + 'Z');
-      flag.setAttribute('r', (10 + Math.sin(t * 3) * 1.4).toFixed(2));
-      scan.setAttribute('x', (40 + ((t * 70) % 210)).toFixed(1));
-      scan.setAttribute('opacity', (clamp(m, 0, 1) * 0.55).toFixed(2));
       return !reduce;
     });
   }
 
-  /* ---------- Panel C: the NET sways as if in flow; stir it ---------- */
-  var NETD = 'M150,150 L163,148 L175,145 L188,143 L200,141 L213,138 L226,137 L239,138 L251,136 L264,137 L277,137 M150,150 L159,153 L167,157 L176,161 L185,163 L193,167 L202,171 L209,177 L217,183 L227,184 L235,188 M150,150 L159,158 L167,165 L175,174 L182,184 L190,192 L199,199 L205,209 L215,217 L226,222 L236,228 M150,150 L156,157 L162,165 L168,173 L172,181 L179,188 L187,195 L192,202 L198,210 L205,217 L213,222 M150,150 L153,158 L156,166 L158,174 L159,182 L161,190 L165,198 L168,206 L173,213 L176,221 L180,228 M150,150 L152,161 L155,171 L155,182 L157,193 L157,204 L157,214 L157,225 L158,236 L159,247 L158,258 M150,150 L147,160 L145,170 L142,179 L139,189 L138,199 L136,209 L131,218 L125,227 L126,238 L120,247 M150,150 L147,160 L146,170 L142,179 L140,190 L137,199 L137,210 L135,220 L132,229 L134,240 L127,249 M150,150 L140,158 L130,165 L119,172 L110,181 L102,191 L94,201 L87,212 L82,225 L73,233 L67,245 M150,150 L141,155 L131,160 L122,164 L113,170 L104,176 L93,178 L85,186 L76,191 L69,201 L58,202 M150,150 L138,154 L125,156 L113,161 L100,162 L88,164 L75,166 L63,171 L51,177 L40,184 L27,187 M150,150 L138,151 L126,152 L114,153 L102,157 L91,161 L79,160 L67,165 L55,165 L42,162 L31,170 M150,150 L139,144 L128,138 L118,131 L107,125 L95,120 L85,112 L76,103 L65,97 L53,93 L41,88 M150,150 L141,143 L133,136 L125,129 L116,122 L109,114 L100,107 L90,102 L80,97 L75,86 L71,74 M150,150 L143,140 L135,130 L127,120 L118,111 L110,101 L103,91 L97,80 L93,67 L86,57 L75,49 M150,150 L146,142 L143,134 L139,125 L136,117 L133,109 L129,101 L127,92 L120,85 L115,78 L111,69 M150,150 L147,139 L143,127 L141,116 L137,105 L131,94 L130,82 L129,70 L130,58 L133,45 L133,33 M150,150 L153,142 L155,134 L158,127 L163,120 L164,111 L165,103 L164,94 L164,86 L162,77 L159,68 M150,150 L155,138 L160,126 L163,114 L169,102 L172,89 L176,77 L185,66 L189,54 L196,43 L204,33 M150,150 L156,142 L162,133 L168,125 L176,118 L181,109 L190,103 L196,95 L200,85 L204,75 L211,68 M150,150 L157,145 L163,139 L170,134 L177,129 L185,125 L190,118 L196,113 L202,106 L206,98 L209,88 M150,150 L158,147 L166,145 L175,143 L183,142 L192,140 L200,140 L209,141 L218,142 L227,143 L235,142';
+  /* ---------- NET: a neutrophil's DNA strands sway as if in flow; stir them ---------- */
+  var NETD = 'M150,150 L163,148 L175,145 L188,143 L200,141 L213,138 L226,137 L239,138 L251,136 L264,137 L277,137 M150,150 L159,158 L167,165 L175,174 L182,184 L190,192 L199,199 L205,209 L215,217 L226,222 L236,228 M150,150 L153,158 L156,166 L158,174 L159,182 L161,190 L165,198 L168,206 L173,213 L176,221 L180,228 M150,150 L147,160 L145,170 L142,179 L139,189 L138,199 L136,209 L131,218 L125,227 L126,238 L120,247 M150,150 L140,158 L130,165 L119,172 L110,181 L102,191 L94,201 L87,212 L82,225 L73,233 L67,245 M150,150 L138,154 L125,156 L113,161 L100,162 L88,164 L75,166 L63,171 L51,177 L40,184 L27,187 M150,150 L139,144 L128,138 L118,131 L107,125 L95,120 L85,112 L76,103 L65,97 L53,93 L41,88 M150,150 L143,140 L135,130 L127,120 L118,111 L110,101 L103,91 L97,80 L93,67 L86,57 L75,49 M150,150 L147,139 L143,127 L141,116 L137,105 L131,94 L130,82 L129,70 L130,58 L133,45 L133,33 M150,150 L155,138 L160,126 L163,114 L169,102 L172,89 L176,77 L185,66 L189,54 L196,43 L204,33 M150,150 L157,145 L163,139 L170,134 L177,129 L185,125 L190,118 L196,113 L202,106 L206,98 L209,88';
   var STRANDS = NETD.split('M').filter(Boolean).map(function (s) { return s.trim().split(/\s*L\s*/).map(function (p) { return p.split(',').map(Number); }); });
-  var BACT = [[102, 218, 89], [58, 153, 130], [101, 67, 131], [231, 78, 178], [69, 183, 172], [229, 137, 14], [89, 242, 128], [141, 36, 142], [170, 221, 144]];
   function Net(slot) {
-    var svg = mk('svg', { viewBox: '0 0 300 300', role: 'img', 'aria-label': 'Drawing of a neutrophil releasing strands of DNA that trap bacteria' }, slot);
-    var path = mk('path', { fill: 'none', stroke: '#8a6900', 'stroke-width': 1.6, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-opacity': '.9' }, svg);
-    var bgp = mk('g', { fill: '#6b6a66' }, svg);
-    var nuc = mk('circle', { cx: 150, cy: 150, r: 21, fill: '#ffc400' }, svg);
+    var svg = mk('svg', { viewBox: '0 0 300 300', role: 'img', 'aria-label': 'A neutrophil casting strands of DNA' }, slot);
+    var path = mk('path', { class: 'n-dna' }, svg);
+    var nuc = mk('circle', { cx: 150, cy: 150, r: 21, class: 'n-nuc' }, svg);
     var pts = [];
     STRANDS.forEach(function (s, si) {
       var a = s[0], z = s[s.length - 1], L = Math.hypot(z[0] - a[0], z[1] - a[1]) || 1, nx = -(z[1] - a[1]) / L, ny = (z[0] - a[0]) / L;
       s.forEach(function (p, j) { pts.push({ bx: p[0], by: p[1], j: j, k: j / (s.length - 1), si: si, nx: nx, ny: ny, ox: 0, oy: 0, vx: 0, vy: 0, x: p[0], y: p[1] }); });
     });
-    var bact = BACT.map(function (b, i) { var r = mk('rect', { x: -6, y: -3, width: 12, height: 6, rx: 3 }, bgp); return { el: r, bx: b[0], by: b[1], rot: b[2], ox: 0, oy: 0, vx: 0, vy: 0, i: i }; });
     var M = Mapper(svg), st = { e: 0, ve: 0 };
     parts.push(function (dt, t) {
       if (!M.vis) return false;
       var nr = M.near(10), lx = M.lx(), ly = M.ly(), pdx = P.dx / M.s, pdy = P.dy / M.s;
-      spring(st, 'e', nr ? 1 : 0, 've', 40, 8, dt);
+      spring(st, 'e', nr ? 1 : 0, 've', 40, 10, dt);
       var e = st.e, d = '';
       for (var i = 0; i < pts.length; i++) {
         var p = pts[i];
         if (p.j === 0) { d += 'M150 150'; continue; }
-        var w = reduce ? 0 : Math.sin(t * 1.5 + p.j * 0.55 + p.si * 1.9) * (1.8 + 4.5 * e) * p.k;
-        var ax = -55 * p.ox - 7 * p.vx, ay = -55 * p.oy - 7 * p.vy;
+        var w = reduce ? 0 : Math.sin(t * 1.3 + p.j * 0.55 + p.si * 1.9) * (1.6 + 3.6 * e) * p.k;
+        var ax = -55 * p.ox - 9 * p.vx, ay = -55 * p.oy - 9 * p.vy;
         if (nr) {
           var dx = p.x - lx, dy = p.y - ly, dd = Math.hypot(dx, dy);
-          if (dd < 46 && dd > 0.01) { var f = (46 - dd) / 46; f = f * f * p.k; ax += (dx / dd * 2600 + pdx * 260) * f; ay += (dy / dd * 2600 + pdy * 260) * f; }
+          if (dd < 46 && dd > 0.01) { var f = (46 - dd) / 46; f = f * f * p.k; ax += (dx / dd * 2200 + pdx * 200) * f; ay += (dy / dd * 2200 + pdy * 200) * f; }
         }
         p.vx += ax * dt; p.vy += ay * dt; p.ox += p.vx * dt; p.oy += p.vy * dt;
         p.x = p.bx + p.nx * w + p.ox; p.y = p.by + p.ny * w + p.oy;
         d += 'L' + p.x.toFixed(1) + ' ' + p.y.toFixed(1);
       }
       path.setAttribute('d', d);
-      for (var b = 0; b < bact.length; b++) {
-        var q = bact[b], qx = q.bx + Math.sin(t * 0.9 + q.i * 2.1) * 3, qy = q.by + Math.cos(t * 0.8 + q.i * 1.3) * 3;
-        var bx2 = -40 * q.ox - 6 * q.vx, by2 = -40 * q.oy - 6 * q.vy;
-        if (nr) { var ex = qx + q.ox - lx, ey = qy + q.oy - ly, ed = Math.hypot(ex, ey); if (ed < 40 && ed > 0.01) { var g = (40 - ed) / 40; g = g * g * 3000; bx2 += ex / ed * g; by2 += ey / ed * g; } }
-        q.vx += bx2 * dt; q.vy += by2 * dt; q.ox += q.vx * dt; q.oy += q.vy * dt;
-        q.el.setAttribute('transform', 'translate(' + (qx + q.ox).toFixed(1) + ' ' + (qy + q.oy).toFixed(1) + ') rotate(' + (q.rot + Math.sin(t * 1.2 + q.i) * 12 + q.vx * 0.3).toFixed(1) + ')');
-      }
-      nuc.setAttribute('r', (21 + Math.sin(t * 2.1) * 1.1 + e * 2).toFixed(2));
+      nuc.setAttribute('r', (21 + Math.sin(t * 1.8) * 1 + e * 2).toFixed(2));
       return !reduce;
     });
   }
 
   $$('[data-art]').forEach(function (slot) {
     var k = slot.getAttribute('data-art'), host = slot.closest('.panel, .big');
-    if (k === 'A') Wheel(slot, host && $('[data-say]', host));
+    if (k === 'A') Wheel(slot, host && $('[data-say]', host), slot.hasAttribute('data-full'));
     else if (k === 'B') Bone(slot);
     else if (k === 'C') Net(slot);
   });
@@ -918,6 +964,10 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
   var LETTERS = ['A', 'B', 'C'];
   var canVT = !!D.startViewTransition && !reduce;
   var EASE = (getComputedStyle(root).getPropertyValue('--spring-soft') || '').trim() || 'ease-out';
+  function reveal(ox, oy, ms) {
+    var R = Math.hypot(Math.max(ox, innerWidth - ox), Math.max(oy, innerHeight - oy));
+    try { root.animate({ clipPath: ['circle(0px at ' + ox + 'px ' + oy + 'px)', 'circle(' + R + 'px at ' + ox + 'px ' + oy + 'px)'] }, { duration: ms, easing: EASE, pseudoElement: '::view-transition-new(root)' }); } catch (e) {}
+  }
   function current() { var h = location.hash.slice(1); return LETTERS.indexOf(h) >= 0 ? h : ''; }
   function artOf(letter, inDetail) { var scope = inDetail ? D.getElementById(letter) : $('.panel[data-p="' + letter + '"]'); return scope && $('.art', scope); }
   function setHash(to) {
@@ -943,10 +993,7 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
       if (dst) dst.style.viewTransitionName = 'art';
       opened(to);
     });
-    tr.ready.then(function () {
-      var R = Math.hypot(Math.max(ox, innerWidth - ox), Math.max(oy, innerHeight - oy));
-      try { root.animate({ clipPath: ['circle(0px at ' + ox + 'px ' + oy + 'px)', 'circle(' + R + 'px at ' + ox + 'px ' + oy + 'px)'] }, { duration: 760, easing: EASE, pseudoElement: '::view-transition-new(root)' }); } catch (e) {}
-    }, function () {});
+    tr.ready.then(function () { reveal(ox, oy, 760); }, function () {});
     function clear() { if (dst) dst.style.viewTransitionName = ''; measureAll(); }
     tr.finished.then(clear, clear);
   }
@@ -969,6 +1016,30 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
     else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); go(LETTERS[(LETTERS.indexOf(c) + (e.key === 'ArrowRight' ? 1 : 2)) % 3], e.key === 'ArrowRight' ? innerWidth - 40 : 40, cy); }
   });
   $$('.info').forEach(function (el) { el.addEventListener('scroll', soon, { passive: true }); });
+
+  /* ---------- Light / dark: follows the system until you choose; the new theme pours out from the button ---------- */
+  var themeBtn = $('#theme'), themeLabel = $('#theme-label'), tc = $('#tc'), saved = null;
+  try { saved = localStorage.getItem('theme'); } catch (e) {}
+  function applyTheme(t) {
+    root.setAttribute('data-theme', t);
+    if (tc) tc.setAttribute('content', t === 'dark' ? '#0f0f11' : '#ffffff');
+    themeLabel.textContent = t === 'dark' ? 'Light' : 'Dark';
+    themeBtn.setAttribute('aria-label', t === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+    if (G) { G.dark = t === 'dark' ? 1 : 0; G.render(now() / 1000); }
+    drawRing(); wake();
+  }
+  applyTheme(root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
+  var mqd = matchMedia('(prefers-color-scheme: dark)');
+  function sysChange(e) { if (saved !== 'light' && saved !== 'dark') applyTheme(e.matches ? 'dark' : 'light'); }
+  if (mqd.addEventListener) mqd.addEventListener('change', sysChange); else if (mqd.addListener) mqd.addListener(sysChange);
+  themeBtn.addEventListener('click', function (e) {
+    var next = isDark() ? 'light' : 'dark';
+    saved = next; try { localStorage.setItem('theme', next); } catch (x) {}
+    var r = themeBtn.getBoundingClientRect(), ox = e.clientX || r.left + r.width / 2, oy = e.clientY || r.top + r.height / 2;
+    if (!canVT) { applyTheme(next); return; }
+    var tr = D.startViewTransition(function () { applyTheme(next); });
+    tr.ready.then(function () { reveal(ox, oy, 700); }, function () {});
+  });
 
   /* ---------- Copy email ---------- */
   var copyBtn = $('#copy'), liveMsg = $('#copy-live'), tmr;
