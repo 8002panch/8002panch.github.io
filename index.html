@@ -4,23 +4,23 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Neil Panchal · Bioengineering, UMD</title>
-<meta name="description" content="Figure 1. Neil Panchal models biology in code, then tests it at the bench: a designed antimicrobial peptide, surgical bone imaging, and the mechanics of NET formation. Bioengineering at the University of Maryland.">
+<meta name="description" content="Neil Panchal, bioengineering at the University of Maryland. I model biology in code, then test it at the bench: a designed antimicrobial peptide, surgical bone imaging, and the mechanics of NET formation.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Neil Panchal · Bioengineering, UMD">
-<meta property="og:description" content="Figure 1. I model biology in code, then test it at the bench.">
+<meta property="og:description" content="I model biology in code, then test it at the bench.">
 <meta property="og:image" content="https://8002panch.github.io/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Neil Panchal: I model biology in code, then test it at the bench.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#ffffff">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23fff'/%3E%3Ctext x='4' y='25' font-family='Arial' font-weight='700' font-size='24' fill='%23141414'%3EA%3C/text%3E%3Ccircle cx='24' cy='9' r='5' fill='%23f2361d'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23fff'/%3E%3Ctext x='4' y='25' font-family='Arial' font-weight='700' font-size='24' fill='%23141414'%3EN%3C/text%3E%3Ccircle cx='25' cy='9' r='5' fill='%23f2361d'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&family=Inter:wght@400;500;600;700&display=swap">
 <style>
-/* The page is one journal figure, drawn as liquid glass floating on moving ink.
-   The ink and the glass are both drawn by the GPU on one canvas behind the page (see the script). */
+/* One screen: who I am first, then the research (Figure 1) and the acknowledgements, all visible at once.
+   Glass surfaces and the soft colour behind them are drawn by the GPU on one canvas (see the script). */
 :root {
   --paper: #ffffff;
   --ink: #141414;
@@ -52,70 +52,79 @@ a { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transpar
 button { font: inherit; color: inherit; -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
 h1, h2 { margin: 0; color: var(--ink); font-weight: 700; }
-p { margin: 0; }
+p, ul { margin: 0; }
+ul { padding: 0; list-style: none; }
 .sr { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-#ink { position: fixed; inset: 0; width: 100%; height: 100%; display: block; z-index: 0; pointer-events: none; opacity: 0; transition: opacity .7s ease; }
-html.ready #ink { opacity: 1; }
+#glass { position: fixed; inset: 0; width: 100%; height: 100%; display: block; z-index: 0; pointer-events: none; opacity: 0; transition: opacity .7s ease; }
+html.ready #glass { opacity: 1; }
 .page { position: relative; z-index: 1; }
-
-/* Glass surfaces. With WebGL the canvas draws them; without it, CSS frosted glass stands in. */
 html:not(.gl) [data-glass] { background: rgba(255, 255, 255, .62); -webkit-backdrop-filter: blur(16px) saturate(1.5); backdrop-filter: blur(16px) saturate(1.5); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), 0 0 0 1px rgba(20, 20, 20, .07), 0 10px 30px rgba(20, 20, 20, .08); }
 html:not(.gl) body { background-image: linear-gradient(rgba(20, 20, 20, .045) 1px, transparent 1px), linear-gradient(90deg, rgba(20, 20, 20, .045) 1px, transparent 1px); background-size: 28px 28px; }
+
+/* Split text: letters (ripple + DNA decode) and words (part around the gel cursor) */
+.wd { display: inline-block; white-space: nowrap; }
+.ch, .gw { display: inline-block; }
+.nt { font-family: var(--mono); font-style: normal; font-weight: 600; font-size: .8em; text-align: center; letter-spacing: 0; }
+.nA { color: var(--red); } .nC { color: var(--blue); } .nG { color: var(--ochre); } .nU { color: var(--muted); }
+html.dna-pre [data-dna-load] { visibility: hidden; }
 
 /* ---------- One screen ---------- */
 .page {
   height: 100vh; height: 100dvh;
   display: grid; grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: auto auto minmax(0, 1fr) auto auto;
-  row-gap: clamp(12px, 2.2vh, 22px);
-  padding: max(clamp(12px, 2.2vh, 22px), env(safe-area-inset-top, 0px)) var(--gr) max(clamp(12px, 2vh, 20px), env(safe-area-inset-bottom, 0px)) var(--gl);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  row-gap: clamp(12px, 2.4vh, 26px);
+  padding: max(clamp(14px, 2.6vh, 30px), env(safe-area-inset-top, 0px)) var(--gr) max(clamp(12px, 2vh, 20px), env(safe-area-inset-bottom, 0px)) var(--gl);
 }
-.head { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 8px 8px 8px 20px; border-radius: 999px; min-width: 0; }
-.who { display: flex; align-items: baseline; gap: 10px; min-width: 0; white-space: nowrap; }
-.who b { color: var(--ink); font-weight: 600; font-size: 15px; }
-.who > span { font-size: 13.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
-.links { display: flex; align-items: center; gap: 2px; font-size: 13.5px; white-space: nowrap; }
-.links a { color: var(--ink); font-weight: 500; padding: 6px 12px; border-radius: 999px; }
-.links .addr { font-weight: 400; color: var(--body); }
-.links .m { display: none; }
 
-.title { font-size: clamp(26px, 1rem + 2.3vw, 54px); line-height: 1.06; letter-spacing: -0.02em; text-wrap: balance; padding: 0 4px; }
-.title em { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: -0.01em; font-size: 1.1em; }
-.wd { display: inline-block; white-space: nowrap; }
-.ch { display: inline-block; }
-
-/* ---------- Figure panels: glass slabs ---------- */
-.fig { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(10px, 1.3vw, 18px); min-height: 0; }
-.panel { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; min-height: 0; padding: 14px 16px 12px; border-radius: 24px; -webkit-user-drag: none; user-select: none; -webkit-user-select: none; transition: opacity .5s var(--spring-soft); }
-.L { font: 700 clamp(17px, .9rem + .5vw, 22px)/1 var(--sans); color: var(--ink); }
-.art { position: relative; min-height: 0; min-width: 0; }
-.art > svg, .art > .photo { position: absolute; left: 0; top: 4px; width: 100%; height: calc(100% - 8px); display: block; overflow: visible; }
-.tag { font-size: 11.5px; color: var(--muted); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color .3s; }
-.tag.on { color: var(--ink); }
-@media (hover: hover) {
-  .fig:has(.panel:hover) .panel:not(:hover) { opacity: .55; }
-}
-.page:has(.leg a:hover) .panel { opacity: .55; }
-.page:has(.leg a[data-p="A"]:hover) .panel[data-p="A"], .page:has(.leg a[data-p="B"]:hover) .panel[data-p="B"],
-.page:has(.leg a[data-p="C"]:hover) .panel[data-p="C"], .page:has(.leg a[data-p="D"]:hover) .panel[data-p="D"] { opacity: 1; }
-
-/* Portrait: a slowly breathing droplet */
-.photo { display: grid; place-items: center; }
-.photo .frame { position: relative; display: block; aspect-ratio: 1; height: 100%; max-width: 100%; max-height: 100%; overflow: hidden; border-radius: 46% 54% 52% 48% / 50% 44% 56% 50%; animation: blob 11s ease-in-out infinite alternate; transform: translateZ(0); }
-.panel .photo .frame { height: min(62%, 74cqi); }
-.panel .art { container-type: inline-size; }
-.photo img { display: block; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(.92) brightness(1.06); transition: filter .8s ease, transform 1s var(--spring-soft); }
-.panel:hover .photo img, .big .photo:hover img { filter: grayscale(.15) contrast(.98) brightness(1.03); transform: scale(1.06); }
+/* Intro: me, first */
+.intro { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: clamp(16px, 2.6vw, 40px); }
+.photo { position: relative; width: clamp(88px, 16vh, 168px); aspect-ratio: 1; }
+.frame { position: absolute; inset: 0; overflow: hidden; border-radius: 46% 54% 52% 48% / 50% 44% 56% 50%; animation: blob 11s ease-in-out infinite alternate; transform: translateZ(0); }
+.frame img { display: block; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(.92) brightness(1.06); transition: filter .8s ease, transform 1s var(--spring-soft); }
+.photo:hover img { filter: grayscale(.1) contrast(.98) brightness(1.03); transform: scale(1.07); }
 @keyframes blob {
   33% { border-radius: 58% 42% 46% 54% / 44% 56% 46% 56%; }
   66% { border-radius: 44% 56% 60% 40% / 56% 48% 52% 44%; }
   100% { border-radius: 52% 48% 42% 58% / 46% 58% 42% 54%; }
 }
-.photo .bar { position: absolute; right: 15%; bottom: 13%; display: grid; gap: 4px; justify-items: end; font: 600 11px/1 var(--sans); color: #fff; text-shadow: 0 1px 2px rgba(0, 0, 0, .5); }
-.photo .bar::before { content: ""; width: 40px; height: 3px; border-radius: 2px; background: #fff; box-shadow: 0 1px 2px rgba(0, 0, 0, .35); }
+.bar { position: absolute; right: 16%; bottom: 14%; display: grid; gap: 3px; justify-items: end; font: 600 10px/1 var(--sans); color: #fff; text-shadow: 0 1px 2px rgba(0, 0, 0, .5); }
+.bar::before { content: ""; width: 30px; height: 2.5px; border-radius: 2px; background: #fff; box-shadow: 0 1px 2px rgba(0, 0, 0, .35); }
+.kick { font-size: 12.5px; font-weight: 600; color: var(--muted); }
+.name { margin-top: 2px; font-size: clamp(38px, 1rem + 4vw, 88px); line-height: .98; letter-spacing: -0.035em; }
+.tagline { margin-top: 6px; font: italic 400 clamp(19px, .7rem + 1.3vw, 32px)/1.15 var(--serif); color: var(--ink); }
+.bio { margin-top: 10px; max-width: 64ch; font-size: clamp(13.5px, .78rem + .25vw, 15.5px); line-height: 1.55; color: var(--body); }
+.act { display: grid; gap: 8px; min-width: 150px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 18px; border: 0; border-radius: 999px; background: transparent; font-size: 14px; font-weight: 500; color: var(--ink); cursor: pointer; white-space: nowrap; }
+.btn.solid { background: var(--ink); color: #fff; transition: transform .5s var(--spring); }
+.btn.solid:hover { transform: scale(1.04); }
+.btn.solid:active { transform: scale(.97); }
 
-/* Helical wheel */
+/* Main: Figure 1 + acknowledgements */
+.main { display: grid; grid-template-columns: minmax(0, 3fr) minmax(250px, 1.25fr); gap: clamp(12px, 1.4vw, 20px); min-height: 0; }
+.fig { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: auto minmax(0, 1fr); gap: 10px clamp(10px, 1.3vw, 18px); min-height: 0; }
+.cap { grid-column: 1 / -1; font-size: 12.5px; color: var(--muted); padding-left: 4px; }
+.cap b { color: var(--ink); font-weight: 700; }
+.panel { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; min-height: 0; padding: 14px 16px 14px; border-radius: 24px; -webkit-user-drag: none; user-select: none; -webkit-user-select: none; transition: opacity .5s var(--spring-soft); }
+@media (hover: hover) { .fig:has(.panel:hover) .panel:not(:hover) { opacity: .6; } }
+.L { font: 700 clamp(17px, .9rem + .5vw, 22px)/1 var(--sans); color: var(--ink); }
+.art { position: relative; min-height: 0; min-width: 0; }
+.art > svg, .art > .photo { position: absolute; left: 0; top: 2px; width: 100%; height: calc(100% - 4px); display: block; overflow: visible; }
+.pt > b { display: block; font-size: 14.5px; font-weight: 600; color: var(--ink); line-height: 1.3; }
+.pt > span { display: block; font-size: 12px; color: var(--muted); line-height: 1.4; margin-top: 2px; }
+.pt > span.on { color: var(--ink); }
+
+.acks { display: grid; grid-template-rows: auto repeat(6, minmax(0, 1fr)); gap: 2px; padding: 14px 16px; border-radius: 24px; min-height: 0; }
+.acks h2 { font-size: 12.5px; font-weight: 600; color: var(--muted); padding-bottom: 4px; }
+.acks li { display: grid; grid-template-columns: 74px minmax(0, 1fr); align-items: center; gap: 12px; padding: 3px 8px; margin: 0 -8px; border-radius: 14px; min-height: 0; overflow: hidden; }
+.lg { height: clamp(26px, 4vh, 34px); display: grid; place-items: center; padding: 4px 7px; border-radius: 9px; background: #fff; box-shadow: 0 0 0 1px rgba(20, 20, 20, .07); }
+.lg img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
+.acks b { display: block; font-size: 13.5px; font-weight: 600; color: var(--ink); line-height: 1.25; }
+.acks .org { display: block; font-size: 12px; color: var(--muted); line-height: 1.3; }
+.acks .short { display: none; }
+
+/* Wheel */
 .wheel { cursor: grab; touch-action: none; }
 .wheel.drag { cursor: grabbing; }
 .w-line { fill: none; stroke: var(--red); stroke-width: 1.2; stroke-opacity: .5; stroke-linejoin: round; }
@@ -126,48 +135,36 @@ html:not(.gl) body { background-image: linear-gradient(rgba(20, 20, 20, .045) 1p
 .w-t { font: 600 15px var(--sans); fill: var(--ink); text-anchor: middle; dominant-baseline: central; pointer-events: none; }
 .w-t.c { fill: #fff; }
 
-/* ---------- Legend: the menu ---------- */
-.leg { font-size: clamp(13.5px, .78rem + .3vw, 15.5px); line-height: 1.6; color: var(--body); text-wrap: pretty; padding: 0 4px; }
-.leg b { color: var(--ink); }
-.leg a { transition: color .2s; }
-.leg a:hover { color: var(--ink); }
-.leg .r { font-weight: 700; }
-.leg a[data-p="A"] .r { color: var(--red); }
-.leg a[data-p="B"] .r { color: var(--blue); }
-.leg a[data-p="C"] .r { color: var(--ochre); }
-.leg a[data-p="D"] .r { color: var(--ink); }
-.leg-short { display: none; }
-
-.supp { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 24px; padding: 8px 18px 8px 14px; border-radius: 20px; font-size: 12.5px; color: var(--muted); }
-.supp .list { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 4px; }
-.supp b { color: var(--ink); font-weight: 600; margin: 0 4px 0 6px; }
-.supp .list > span, .supp .list > a { padding: 4px 8px; border-radius: 999px; }
+/* Footer */
+.supp { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 24px; padding: 7px 18px 7px 12px; border-radius: 20px; font-size: 12.5px; color: var(--muted); }
+.supp .list { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 2px; }
+.supp b { color: var(--ink); font-weight: 600; margin: 0 6px 0 8px; }
+.supp .list > span, .supp .list > a { padding: 4px 9px; border-radius: 999px; }
 .supp a { color: var(--ink); }
 .hint { color: var(--muted); font-size: 12px; white-space: nowrap; }
 .hint i { font-style: normal; color: var(--ink); font-weight: 500; }
 
-/* ---------- Detail views, opened by #A–#D (works without JavaScript) ---------- */
-.detail { display: none; grid-row: 3 / span 2; grid-column: 1; min-height: 0; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(20px, 4vw, 64px); }
+/* ---------- Detail views, opened by #A–#C (works without JavaScript) ---------- */
+.detail { display: none; grid-row: 1 / span 2; grid-column: 1; min-height: 0; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(20px, 4vw, 64px); }
 .detail:target { display: grid; }
-.page:has(.detail:target) :is(.fig, .leg) { display: none; }
+.page:has(.detail:target) :is(.intro, .main) { display: none; }
 .big { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; min-height: 0; padding: 16px 18px; border-radius: 28px; }
 .big .L { font-size: 24px; }
 .key { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 12px; color: var(--muted); }
 .key i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
 .key .say { color: var(--ink); font-weight: 500; }
 .info { min-height: 0; overflow: auto; overscroll-behavior: contain; padding: 4px 6px 4px 4px; display: flex; flex-direction: column; }
-.detail:target .info > * { animation: rise .9s var(--spring-soft) both; }
+.detail:target .info > * { animation: rise .9s var(--spring-soft) backwards; }
 .detail:target .info > :nth-child(2) { animation-delay: .04s; }
 .detail:target .info > :nth-child(3) { animation-delay: .08s; }
 .detail:target .info > :nth-child(4) { animation-delay: .12s; }
 .detail:target .info > :nth-child(5) { animation-delay: .16s; }
-.detail:target .info > :nth-child(6) { animation-delay: .2s; }
-.detail:target .info > :nth-child(n+7) { animation-delay: .24s; }
+.detail:target .info > :nth-child(n+6) { animation-delay: .2s; }
 @keyframes rise { from { opacity: 0; transform: translateY(18px); } }
 .back { align-self: flex-start; font-size: 13.5px; font-weight: 500; color: var(--ink); padding: 6px 12px; margin: -6px -12px clamp(10px, 2.6vh, 30px); border-radius: 999px; }
-.kick { font-size: 12.5px; font-weight: 600; }
+.info .k2 { font-size: 12.5px; font-weight: 600; }
 .detail h2 { margin-top: 6px; font-size: clamp(36px, 1.2rem + 3.4vw, 72px); line-height: 1; letter-spacing: -0.035em; }
-.lead { margin-top: 18px; font-size: clamp(15.5px, .9rem + .3vw, 18.5px); line-height: 1.55; color: var(--body); max-width: 44ch; text-wrap: pretty; }
+.lead { margin-top: 18px; font-size: clamp(15.5px, .9rem + .3vw, 18.5px); line-height: 1.55; color: var(--body); max-width: 44ch; }
 .rows { margin: 24px 0 0; display: grid; }
 .rows > div { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 12px; padding: 12px 0; border-top: 1px solid rgba(20, 20, 20, .09); }
 .rows dt { font-size: 12.5px; color: var(--muted); font-weight: 500; padding-top: 2px; }
@@ -181,131 +178,135 @@ html:not(.gl) body { background-image: linear-gradient(rgba(20, 20, 20, .045) 1p
 .pager { margin-top: auto; padding-top: 22px; display: flex; gap: 6px; font-size: 13px; }
 .pager a { color: var(--ink); font-weight: 500; padding: 6px 12px; border-radius: 999px; }
 .pager a:first-child { margin-left: -12px; }
-.btns { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 8px; }
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 18px; border: 0; border-radius: 999px; background: transparent; font-size: 14px; font-weight: 500; color: var(--ink); cursor: pointer; }
-.btn.solid { background: var(--ink); color: #fff; transition: transform .5s var(--spring); }
-.btn.solid:hover { transform: scale(1.04); }
-.btn.solid:active { transform: scale(.97); }
-.btn.copy { min-width: 128px; }
-.sub { margin-top: 30px; font-size: 12.5px; font-weight: 600; color: var(--muted); }
-.awards { position: relative; margin-top: 8px; }
-.award { display: block; width: calc(100% + 20px); padding: 7px 10px; margin: 0 -10px; border: 0; border-radius: 12px; background: none; text-align: left; font-size: 14.5px; color: var(--body); cursor: pointer; transition: padding .5s var(--spring); }
-.award:hover, .award[aria-expanded="true"] { padding-left: 16px; }
-.award span { display: inline-grid; }
-.award span::after { content: attr(data-t); font-weight: 600; visibility: hidden; height: 0; overflow: hidden; }
-.award:hover span, .award[aria-expanded="true"] span { font-weight: 600; color: var(--ink); }
-.card { position: absolute; z-index: 5; left: 0; width: min(300px, 100%); display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px 8px; padding: 12px; border-radius: 20px; background: rgba(255, 255, 255, .78); -webkit-backdrop-filter: blur(18px) saturate(1.6); backdrop-filter: blur(18px) saturate(1.6); box-shadow: inset 0 1px 0 #fff, 0 0 0 1px rgba(20, 20, 20, .08), 0 18px 40px rgba(20, 20, 20, .14); animation: card-in .6s var(--spring) both; transform-origin: 30% 0; }
-@keyframes card-in { from { opacity: 0; transform: scale(.9) translateY(-6px); } }
-.card .logo { height: 64px; display: grid; place-items: center; border-radius: 12px; padding: 10px 14px; background: #fff; }
-.card .logo img { max-width: 100%; max-height: 44px; width: auto; height: auto; }
-.card .x { width: 28px; height: 28px; border: 0; border-radius: 50%; background: none; cursor: pointer; font-size: 18px; line-height: 1; color: var(--muted); }
-.card .x:hover { color: var(--ink); background: rgba(20, 20, 20, .06); }
-.card .nm { grid-column: 1 / -1; font-size: 14.5px; font-weight: 600; color: var(--ink); }
-.card .og { grid-column: 1 / -1; margin-top: -6px; font-size: 12.5px; color: var(--muted); }
-.slist { margin-top: 8px; display: grid; }
-.slist div { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 2px 12px; padding: 8px 0; border-top: 1px solid rgba(20, 20, 20, .09); font-size: 14px; }
-.slist b { color: var(--ink); font-weight: 600; }
-.slist span { color: var(--muted); font-size: 12.5px; }
-.slist a { color: var(--ink); font-weight: 500; padding: 2px 8px; margin: -2px -8px; border-radius: 999px; }
 
-/* Panel ⇄ detail: the drawing morphs; the new view pours in from where you clicked (see go()) */
 ::view-transition-group(art) { animation-duration: .7s; animation-timing-function: var(--spring-soft); }
 ::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
 
-/* ---------- Phones and narrow windows ---------- */
+/* ---------- Narrow windows ---------- */
+@media (max-width: 1320px) { .supp .x { display: none; } }
+@media (max-width: 1100px), (max-height: 820px) { .acks .org { display: none; } }
+@media (max-width: 1100px) {
+  .intro { grid-template-columns: auto minmax(0, 1fr); }
+  .act { grid-column: 1 / -1; display: flex; flex-wrap: wrap; min-width: 0; }
+  .main { grid-template-columns: minmax(0, 2.2fr) minmax(230px, 1.3fr); }
+  .pt > span, .hint { display: none; }
+  .acks b { font-size: 13px; }
+}
+/* ---------- Phones ---------- */
 @media (max-width: 760px) {
-  .who > span, .links .d, .supp .list { display: none; }
-  .links .m { display: inline; }
-  .head { padding: 5px 5px 5px 16px; }
-  .fig { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: 10px; }
-  .panel { padding: 10px 12px; border-radius: 20px; }
-  .panel .tag { display: none; }
-  .leg-full { display: none; }
-  .leg-short { display: grid; }
-  .leg-short a { display: flex; gap: 8px; padding: 5px 8px; margin: 0 -8px; font-size: 14px; line-height: 1.35; border-radius: 10px; }
-  .supp { justify-content: center; padding: 8px 14px; }
-  .detail { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(150px, 32vh) minmax(0, 1fr); gap: 14px; }
+  .page { row-gap: 12px; }
+  .intro { grid-template-columns: auto minmax(0, 1fr); gap: 10px 14px; align-items: start; }
+  .photo { width: 72px; }
+  .bar { display: none; }
+  .kick { font-size: 11.5px; }
+  .name { font-size: 34px; }
+  .tagline { font-size: 18px; margin-top: 4px; }
+  .bio { display: none; }
+  .act { grid-column: 1 / -1; display: flex; gap: 6px; }
+  .act .btn { padding: 9px 14px; font-size: 13.5px; }
+  .act .copy { display: none; }
+  .main { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; gap: 12px; }
+  .fig { gap: 8px; }
+  .panel { padding: 8px 10px 8px; border-radius: 18px; }
+  .pt > b { font-size: 12px; }
+  .L { font-size: 15px; }
+  .acks { grid-template-columns: 1fr 1fr; grid-template-rows: auto repeat(3, auto); gap: 6px 10px; padding: 10px 12px; border-radius: 20px; }
+  .acks h2 { grid-column: 1 / -1; padding-bottom: 0; font-size: 11.5px; }
+  .acks li { grid-template-columns: 46px minmax(0, 1fr); gap: 8px; padding: 2px 6px; margin: 0 -6px; border-radius: 10px; }
+  .lg { height: 22px; padding: 2px 4px; border-radius: 6px; }
+  .acks b { font-size: 11.5px; font-weight: 600; line-height: 1.2; }
+  .acks .org, .acks .full { display: none; }
+  .acks .short { display: block; }
+  .supp { justify-content: center; padding: 6px 10px; }
+  .supp .s12, .supp b, .hint { display: none; }
+  .detail { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(150px, 34vh) minmax(0, 1fr); gap: 14px; }
   .big { padding: 10px 12px; border-radius: 22px; }
   .key .sw { display: none; }
   .back { margin-bottom: 10px; }
   .rows > div { grid-template-columns: 92px minmax(0, 1fr); padding: 9px 0; }
-  .fig, .title, .head, .leg, .big { touch-action: pinch-zoom; }
+  .fig, .intro, .big { touch-action: pinch-zoom; }
 }
-@media (max-height: 540px), (max-width: 760px) and (max-height: 580px) {
+@media (max-height: 560px), (max-width: 760px) and (max-height: 540px) {
   body { overflow: auto; }
   .page { height: auto; min-height: 100vh; }
-  .fig { height: 72vh; }
+  .main { min-height: 520px; }
   .detail { height: 92vh; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .photo .frame, .card, .detail:target .info > * { animation: none; }
-  .panel, .award, .btn.solid, .photo img { transition: none; }
+  .frame, .detail:target .info > * { animation: none; }
+  .panel, .btn.solid, .frame img { transition: none; }
   ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
 }
 </style>
+<script>document.documentElement.classList.add('dna-pre'); setTimeout(function () { document.documentElement.classList.remove('dna-pre'); }, 1500);</script>
 </head>
 <body>
-<canvas id="ink" aria-hidden="true"></canvas>
+<canvas id="glass" aria-hidden="true"></canvas>
 
 <div class="page">
-  <header class="head" data-glass>
-    <p class="who"><b data-wave>Neil Panchal</b><span>Bioengineering · University of Maryland</span></p>
-    <nav class="links" aria-label="Contact">
-      <a class="addr d" href="mailto:neilpanchal08@gmail.com">✉ neilpanchal08@gmail.com</a>
-      <a class="m" href="mailto:neilpanchal08@gmail.com">Email</a>
-      <a class="d" href="https://www.linkedin.com/in/neilpanch" target="_blank" rel="noopener">LinkedIn ↗</a>
-      <a href="Neil_Panchal_Resume.pdf" target="_blank" rel="noopener">CV ↗</a>
+  <header class="intro">
+    <div class="photo"><span class="frame"><img src="me.jpg" width="350" height="350" alt="Neil Panchal" decoding="async" draggable="false"></span><span class="bar">50 cm</span></div>
+    <div class="who">
+      <p class="kick" data-gel>Bioengineering · University of Maryland</p>
+      <h1 class="name" data-wave data-dna data-dna-load>Neil Panchal</h1>
+      <p class="tagline" data-wave>I model biology in code, then test it at the bench.</p>
+      <p class="bio" data-gel>First‑year bioengineering student. I’ve done research in labs at UMD, Johns Hopkins and George Mason, moving between protein language models, surgical imaging and cell mechanics.</p>
+    </div>
+    <nav class="act" aria-label="Contact">
+      <a class="btn solid" href="mailto:neilpanchal08@gmail.com" id="email-text">Email me</a>
+      <button class="btn copy" type="button" id="copy" data-glass>Copy email</button>
+      <a class="btn" href="Neil_Panchal_Resume.pdf" target="_blank" rel="noopener" data-glass>CV ↗</a>
+      <a class="btn" href="https://www.linkedin.com/in/neilpanch" target="_blank" rel="noopener" data-glass>LinkedIn ↗</a>
+      <span class="sr" id="copy-live" aria-live="polite"></span>
     </nav>
   </header>
 
-  <h1 class="title" data-wave>Figure 1. <em>I model biology in code, then test it at the bench.</em></h1>
+  <main class="main">
+    <section class="fig" aria-labelledby="fig-h">
+      <p class="cap" id="fig-h"><b data-dna data-dna-load>Figure 1</b> · Research. Open a panel.</p>
+      <a class="panel" data-p="A" href="#A" draggable="false" data-glass aria-label="Panel A: NeKtar-1, a peptide designed in code and tested at the bench. Open details.">
+        <span class="L">A</span><span class="art" data-art="A"></span>
+        <span class="pt"><b data-dna data-dna-load>NeKtar‑1</b><span data-say="A peptide designed in code, tested at the bench">A peptide designed in code, tested at the bench</span></span>
+      </a>
+      <a class="panel" data-p="B" href="#B" draggable="false" data-glass aria-label="Panel B: bone viability from surgical images. Open details.">
+        <span class="L">B</span><span class="art" data-art="B"></span>
+        <span class="pt"><b data-dna data-dna-load>Bone viability</b><span data-gel>Reading surgical images, and knowing when not to trust the model</span></span>
+      </a>
+      <a class="panel" data-p="C" href="#C" draggable="false" data-glass aria-label="Panel C: NET mechanics. Open details.">
+        <span class="L">C</span><span class="art" data-art="C"></span>
+        <span class="pt"><b data-dna data-dna-load>NET mechanics</b><span data-gel>How force makes neutrophils cast DNA nets</span></span>
+      </a>
+    </section>
 
-  <div class="fig">
-    <a class="panel" data-p="A" href="#A" draggable="false" data-glass aria-label="Panel A: helical wheel of NeKtar-1. Open details.">
-      <span class="L">A</span><span class="art" data-art="A"></span><span class="tag" data-say="NeKtar‑1 · helical wheel">NeKtar‑1 · helical wheel</span>
-    </a>
-    <a class="panel" data-p="B" href="#B" draggable="false" data-glass aria-label="Panel B: bone viability segmentation. Open details.">
-      <span class="L">B</span><span class="art" data-art="B"></span><span class="tag">Bone viability · segmentation</span>
-    </a>
-    <a class="panel" data-p="C" href="#C" draggable="false" data-glass aria-label="Panel C: NET mechanics. Open details.">
-      <span class="L">C</span><span class="art" data-art="C"></span><span class="tag">NET mechanics · DNA traps</span>
-    </a>
-    <a class="panel" data-p="D" href="#D" draggable="false" data-glass aria-label="Panel D: the author. Open details.">
-      <span class="L">D</span><span class="art"><span class="photo"><span class="frame"><img src="me.jpg" width="350" height="350" alt="" decoding="async" draggable="false"><span class="bar">50 cm</span></span></span></span><span class="tag">The author</span>
-    </a>
-  </div>
-
-  <div class="leg">
-    <p class="leg-full"><b>Figure 1 |</b> I model biology in code, then test it at the bench.
-      <a href="#A" data-p="A"><span class="r">(A)</span> NeKtar‑1, an antimicrobial peptide I designed with a protein language model and tested myself in a BSL‑2 lab; helical wheel of its 19 residues (flick it).</a>
-      <a href="#B" data-p="B"><span class="r">(B)</span> Bone viability: models that read white‑light and fluorescence images during surgery and flag the cases they shouldn’t be trusted on (Gan Lab, UMD; with Dartmouth).</a>
-      <a href="#C" data-p="C"><span class="r">(C)</span> NET mechanics: one framework for how squeezing, sticking and flow make neutrophils cast DNA nets (Aranda‑Espinoza Lab, UMD).</a>
-      <a href="#D" data-p="D"><span class="r">(D)</span> The author, a first‑year bioengineering student at the University of Maryland. Scale bar, 50 cm.</a>
-    </p>
-    <nav class="leg-short" aria-label="Panels">
-      <a href="#A" data-p="A"><span class="r">(A)</span><span>NeKtar‑1: a peptide designed in code, tested at the bench</span></a>
-      <a href="#B" data-p="B"><span class="r">(B)</span><span>Bone viability from surgical images</span></a>
-      <a href="#C" data-p="C"><span class="r">(C)</span><span>How force makes neutrophils cast DNA nets</span></a>
-      <a href="#D" data-p="D"><span class="r">(D)</span><span>The author: contact, CV, awards</span></a>
-    </nav>
-  </div>
+    <section class="acks" data-glass aria-labelledby="ack-h">
+      <h2 id="ack-h" data-dna data-dna-load>Acknowledgements</h2>
+      <ul style="display:contents">
+        <li data-lens><span class="lg"><img src="logos/regeneron.png" alt="Regeneron" loading="eager"></span><span><b data-gel><span class="full">Biomedical Science Award</span><span class="short">Regeneron Biomedical</span></b><span class="org">Regeneron</span></span></li>
+        <li data-lens><span class="lg"><img src="logos/astrazeneca.png" alt="AstraZeneca"></span><span><b data-gel><span class="full">Exceptional Project Award</span><span class="short">AstraZeneca Exceptional</span></b><span class="org">AstraZeneca</span></span></li>
+        <li data-lens><span class="lg"><img src="logos/mriglobal.png" alt="MRIGlobal"></span><span><b data-gel><span class="full">1st Place Project Award</span><span class="short">MRIGlobal · 1st</span></b><span class="org">MRIGlobal</span></span></li>
+        <li data-lens><span class="lg"><img src="logos/hosa.jpg" alt="HOSA-Future Health Professionals"></span><span><b data-gel><span class="full">2nd Place, State Biomedical Debate</span><span class="short">HOSA State · 2nd</span></b><span class="org">HOSA</span></span></li>
+        <li data-lens><span class="lg"><img src="logos/sciencemontgomery.jpg" alt="Science Montgomery"></span><span><b data-gel><span class="full">3rd Place</span><span class="short">Science Montgomery · 3rd</span></b><span class="org">Science Montgomery</span></span></li>
+        <li data-lens><span class="lg"><img src="logos/rotary.png" alt="Metro Bethesda Rotary"></span><span><b data-gel><span class="full">James Phang Aspiring Scientist Award</span><span class="short">Rotary · Phang Award</span></b><span class="org">Metro Bethesda Rotary</span></span></li>
+      </ul>
+    </section>
+  </main>
 
   <section class="detail" id="A" aria-labelledby="A-h">
     <div class="big" data-glass><span class="L">A</span><span class="art" data-art="A"></span>
       <p class="key"><span class="sw"><i style="background:var(--yellow)"></i>hydrophobic</span><span class="sw"><i style="background:var(--blue)"></i>cationic</span><span class="sw"><i style="border:1.4px solid var(--ink)"></i>glycine · serine</span><span class="say" data-say="Drag to spin · point at a residue">Drag to spin · point at a residue</span></p></div>
     <div class="info">
-      <a class="back" href="#">← Figure 1</a>
-      <p class="kick" style="color:var(--red)">Panel A · Protein design + wet lab</p>
-      <h2 id="A-h" data-wave>NeKtar‑1</h2>
-      <p class="lead">A protein language model proposed it, and I tested it myself in a BSL‑2 lab. It was bactericidal against drug‑resistant <i>E. coli</i> and <i>P. aeruginosa</i>.</p>
+      <a class="back" href="#">← Back</a>
+      <p class="k2" style="color:var(--red)">Panel A · Protein design + wet lab</p>
+      <h2 id="A-h" data-wave data-dna>NeKtar‑1</h2>
+      <p class="lead" data-gel>A protein language model proposed it, and I tested it myself in a BSL‑2 lab. It was bactericidal against drug‑resistant <i>E. coli</i> and <i>P. aeruginosa</i>.</p>
       <dl class="rows">
         <div><dt>Sequence</dt><dd class="seq">GRWGFGWARIRGSVGFGKK</dd></div>
-        <div><dt>Lab</dt><dd>IBBR, University of Maryland · 2025–26</dd></div>
-        <div><dt>Role</dt><dd>Model design, BSL‑2 assays</dd></div>
+        <div><dt>Lab</dt><dd data-gel>IBBR, University of Maryland · 2025–26</dd></div>
+        <div><dt>Role</dt><dd data-gel>Model design, BSL‑2 assays</dd></div>
         <div><dt>Status</dt><dd><span class="st yes">Modeled</span><span class="st yes">Bench‑tested</span></dd></div>
         <div><dt>Published</dt><dd><a href="https://nhsjs.com/2026/nektar-1-amp_031-a-computationally-designed-antimicrobial-peptide-with-selective-bactericidal-activity-against-gram-negative-bacterial-pathogens/" target="_blank" rel="noopener">National High School Journal of Science ↗</a></dd></div>
       </dl>
-      <p class="pager"><a href="#D">← D</a><a href="#B">B →</a></p>
+      <p class="pager"><a href="#C">← C</a><a href="#B">B →</a></p>
     </div>
   </section>
 
@@ -313,15 +314,15 @@ html:not(.gl) body { background-image: linear-gradient(rgba(20, 20, 20, .045) 1p
     <div class="big" data-glass><span class="L">B</span><span class="art" data-art="B"></span>
       <p class="key"><span class="sw"><i style="background:var(--blue)"></i>model outline</span><span class="sw"><i style="border:1.4px dashed var(--ink)"></i>expert outline</span><span class="sw"><i style="border:1.4px dotted var(--ink)"></i>flagged region</span><span class="say">Point at it: the model settles onto the expert’s outline</span></p></div>
     <div class="info">
-      <a class="back" href="#">← Figure 1</a>
-      <p class="kick" style="color:var(--blue)">Panel B · Surgical imaging</p>
-      <h2 id="B-h" data-wave>Bone viability</h2>
-      <p class="lead">Surgeons often judge by eye whether bone still has blood flow. My models read white‑light and fluorescence images instead, and flag the cases they shouldn’t be trusted on.</p>
+      <a class="back" href="#">← Back</a>
+      <p class="k2" style="color:var(--blue)">Panel B · Surgical imaging</p>
+      <h2 id="B-h" data-wave data-dna>Bone viability</h2>
+      <p class="lead" data-gel>Surgeons often judge by eye whether bone still has blood flow. My models read white‑light and fluorescence images instead, and flag the cases they shouldn’t be trusted on.</p>
       <dl class="rows">
-        <div><dt>Lab</dt><dd>Gan Lab, UMD · with Dartmouth · 2026–now</dd></div>
-        <div><dt>Role</dt><dd>Segmentation and calibration models</dd></div>
+        <div><dt>Lab</dt><dd data-gel>Gan Lab, UMD · with Dartmouth · 2026–now</dd></div>
+        <div><dt>Role</dt><dd data-gel>Segmentation and calibration models</dd></div>
         <div><dt>Status</dt><dd><span class="st yes">Model built</span><span class="st no">Clinical testing</span></dd></div>
-        <div><dt>Presented</dt><dd>Poster, Mickey Dale Organ Transplantation Symposium (Oct 2026); ISBI 2027 paper in preparation</dd></div>
+        <div><dt>Presented</dt><dd data-gel>Poster, Mickey Dale Organ Transplantation Symposium (Oct 2026); ISBI 2027 paper in preparation</dd></div>
       </dl>
       <p class="pager"><a href="#A">← A</a><a href="#C">C →</a></p>
     </div>
@@ -331,58 +332,22 @@ html:not(.gl) body { background-image: linear-gradient(rgba(20, 20, 20, .045) 1p
     <div class="big" data-glass><span class="L">C</span><span class="art" data-art="C"></span>
       <p class="key"><span class="sw"><i style="background:var(--yellow)"></i>nucleus</span><span class="sw"><i style="background:var(--ochre)"></i>DNA strands</span><span class="sw"><i style="background:var(--muted)"></i>trapped bacteria</span><span class="say">Stir the strands</span></p></div>
     <div class="info">
-      <a class="back" href="#">← Figure 1</a>
-      <p class="kick" style="color:var(--ochre)">Panel C · Cell mechanics</p>
-      <h2 id="C-h" data-wave>NET mechanics</h2>
-      <p class="lead">Neutrophils can burst and cast webs of DNA called NETs. Squeezing, sticking and flow all trigger it, but very few studies have modeled how. I proposed one framework that ties the triggers together.</p>
+      <a class="back" href="#">← Back</a>
+      <p class="k2" style="color:var(--ochre)">Panel C · Cell mechanics</p>
+      <h2 id="C-h" data-wave data-dna>NET mechanics</h2>
+      <p class="lead" data-gel>Neutrophils can burst and cast webs of DNA called NETs. Squeezing, sticking and flow all trigger it, but very few studies have modeled how. I proposed one framework that ties the triggers together.</p>
       <dl class="rows">
-        <div><dt>Lab</dt><dd>Aranda‑Espinoza Lab, UMD · 2026–now</dd></div>
-        <div><dt>Role</dt><dd>Modeling and literature review</dd></div>
+        <div><dt>Lab</dt><dd data-gel>Aranda‑Espinoza Lab, UMD · 2026–now</dd></div>
+        <div><dt>Role</dt><dd data-gel>Modeling and literature review</dd></div>
         <div><dt>Status</dt><dd><span class="st yes">Framework proposed</span><span class="st no">Bench tests next</span></dd></div>
       </dl>
-      <p class="pager"><a href="#B">← B</a><a href="#D">D →</a></p>
-    </div>
-  </section>
-
-  <section class="detail" id="D" aria-labelledby="D-h">
-    <div class="big" data-glass><span class="L">D</span><span class="art"><span class="photo"><span class="frame"><img src="me.jpg" width="350" height="350" alt="Neil Panchal" decoding="async" loading="lazy" draggable="false"><span class="bar">50 cm</span></span></span></span>
-      <p class="key"><span>Photographed at my bone‑imaging poster, October 2026</span></p></div>
-    <div class="info">
-      <a class="back" href="#">← Figure 1</a>
-      <p class="kick">Panel D · The author</p>
-      <h2 id="D-h" data-wave>Neil Panchal</h2>
-      <p class="lead">First‑year bioengineering at the University of Maryland. I’ve done research in labs at UMD, Johns Hopkins, and George Mason, moving between protein language models, surgical imaging and cell mechanics. Email is the fastest way to reach me.</p>
-      <div class="btns">
-        <a class="btn solid" href="mailto:neilpanchal08@gmail.com" id="email-text">neilpanchal08@gmail.com</a>
-        <button class="btn copy" type="button" id="copy" data-glass>Copy email</button>
-        <a class="btn" href="Neil_Panchal_Resume.pdf" target="_blank" rel="noopener" data-glass>CV ↗</a>
-        <a class="btn" href="https://www.linkedin.com/in/neilpanch" target="_blank" rel="noopener" data-glass>LinkedIn ↗</a>
-        <span class="sr" id="copy-live" aria-live="polite"></span>
-      </div>
-      <p class="sub">Acknowledgements</p>
-      <div class="awards" id="awards">
-        <button class="award" type="button" data-i="0" aria-expanded="false"><span data-t="Regeneron Biomedical Science Award">Regeneron Biomedical Science Award</span></button>
-        <button class="award" type="button" data-i="1" aria-expanded="false"><span data-t="AstraZeneca Exceptional Project Award">AstraZeneca Exceptional Project Award</span></button>
-        <button class="award" type="button" data-i="2" aria-expanded="false"><span data-t="MRIGlobal 1st Place Project Award">MRIGlobal 1st Place Project Award</span></button>
-        <button class="award" type="button" data-i="3" aria-expanded="false"><span data-t="HOSA 2nd Place, State Biomedical Debate">HOSA 2nd Place, State Biomedical Debate</span></button>
-        <button class="award" type="button" data-i="4" aria-expanded="false"><span data-t="Science Montgomery 3rd Place">Science Montgomery 3rd Place</span></button>
-        <button class="award" type="button" data-i="5" aria-expanded="false"><span data-t="Metro Bethesda Rotary James Phang Aspiring Scientist Award">Metro Bethesda Rotary James Phang Aspiring Scientist Award</span></button>
-        <div class="card" id="card" hidden role="dialog" aria-labelledby="card-nm"><div class="logo"><img id="card-img" alt=""></div><button class="x" type="button" id="card-x" aria-label="Close">×</button><p class="nm" id="card-nm"></p><p class="og" id="card-og"></p></div>
-      </div>
-      <p class="sub">Supplementary</p>
-      <div class="slist">
-        <div><b>S1 OrganoidEDF</b><span>Open-source all-in-focus imaging · Johns Hopkins</span></div>
-        <div><b>S2 Protein graph embeddings</b><span>Protein language models + GNNs · George Mason</span></div>
-        <div><b>S3 Bias-aware advising chatbot</b><a href="https://arxiv.org/abs/2510.09636" target="_blank" rel="noopener">arXiv ↗</a></div>
-        <div><b>S4 Wildfire simulator</b><a href="https://huggingface.co/spaces/armstrong8002/drought-wildfire-simulator" target="_blank" rel="noopener">Hugging Face ↗</a></div>
-      </div>
-      <p class="pager"><a href="#C">← C</a><a href="#A">A →</a></p>
+      <p class="pager"><a href="#B">← B</a><a href="#A">A →</a></p>
     </div>
   </section>
 
   <footer class="supp" data-glass>
-    <p class="list"><b>Supplementary</b><span>S1 OrganoidEDF</span><span>S2 Protein graph embeddings</span><a href="https://arxiv.org/abs/2510.09636" target="_blank" rel="noopener">S3 Bias-aware chatbot ↗</a><a href="https://huggingface.co/spaces/armstrong8002/drought-wildfire-simulator" target="_blank" rel="noopener">S4 Wildfire simulator ↗</a></p>
-    <p class="hint" id="hint"><i>Move</i> to stir the ink · <i>flick</i> the wheel</p>
+    <p class="list"><b>Supplementary</b><span class="s12" data-lens>S1 OrganoidEDF<span class="x"> · Johns Hopkins</span></span><span class="s12" data-lens>S2 Protein graph embeddings<span class="x"> · George Mason</span></span><a href="https://arxiv.org/abs/2510.09636" target="_blank" rel="noopener">S3 Bias‑aware advising chatbot ↗</a><a href="https://huggingface.co/spaces/armstrong8002/drought-wildfire-simulator" target="_blank" rel="noopener">S4 Wildfire simulator ↗</a></p>
+    <p class="hint" id="hint"><i>Drift</i> through the text · <i>flick</i> the wheel</p>
   </footer>
 </div>
 
@@ -398,21 +363,20 @@ html:not(.gl) body { background-image: linear-gradient(rgba(20, 20, 20, .045) 1p
   function now() { return performance.now(); }
   var NS = 'http://www.w3.org/2000/svg';
   function mk(tag, at, parent) { var e = D.createElementNS(NS, tag); for (var k in at) e.setAttribute(k, at[k]); if (parent) parent.appendChild(e); return e; }
-  // Critically-ish damped spring on o[k] toward tgt, velocity kept in o[vk]
+  // Damped spring on o[k] toward tgt; velocity lives in o[vk]
   function spring(o, k, tgt, vk, K, C, dt) { var a = -K * (o[k] - tgt) - C * o[vk]; o[vk] += a * dt; o[k] += o[vk] * dt; }
-  if (!fine) { var hn = $('#hint'); if (hn) hn.innerHTML = '<i>Drag</i> to stir the ink · <i>flick</i> the wheel'; }
 
   /* ---------- Pointer ---------- */
   var P = { x: -999, y: -999, px: -999, py: -999, dx: 0, dy: 0, inside: false, down: false, touchUp: -1e9 };
   function ptr(e) { P.x = e.clientX; P.y = e.clientY; P.inside = true; wake(); }
   addEventListener('pointermove', ptr, { passive: true });
-  addEventListener('pointerdown', function (e) { ptr(e); P.down = true; burst(e.clientX, e.clientY); }, { passive: true });
+  addEventListener('pointerdown', function (e) { ptr(e); P.down = true; }, { passive: true });
   addEventListener('pointerup', function (e) { P.down = false; if (e.pointerType !== 'mouse') P.touchUp = now(); }, { passive: true });
   addEventListener('pointercancel', function () { P.down = false; P.touchUp = now(); }, { passive: true });
   D.addEventListener('mouseout', function (e) { if (!e.relatedTarget) P.inside = false; });
   addEventListener('blur', function () { P.inside = false; });
 
-  /* ---------- One animation loop for everything ---------- */
+  /* ---------- One animation loop ---------- */
   var parts = [], running = false, lastT = 0;
   function wake() { if (!running) { running = true; lastT = now(); requestAnimationFrame(frame); } }
   function frame(t) {
@@ -424,14 +388,13 @@ html:not(.gl) body { background-image: linear-gradient(rgba(20, 20, 20, .045) 1p
     if (busy) requestAnimationFrame(frame); else running = false;
   }
 
-  /* ---------- Layout cache: rects are read only when layout changes, never per frame ---------- */
+  /* ---------- Layout cache: rects are read when layout changes, not every frame ---------- */
   var measurers = [], rq = 0;
   function measureAll() { for (var i = 0; i < measurers.length; i++) measurers[i](); wake(); }
   function soon() { cancelAnimationFrame(rq); rq = requestAnimationFrame(measureAll); }
   addEventListener('resize', soon);
   addEventListener('scroll', soon, { passive: true });
 
-  /* Map page coords into a 300×300 drawing (SVG viewBox, preserveAspectRatio meet) */
   function Mapper(svg) {
     var m = { s: 1, ox: 0, oy: 0, vis: false, r: null };
     m.read = function () {
@@ -446,297 +409,10 @@ html:not(.gl) body { background-image: linear-gradient(rgba(20, 20, 20, .045) 1p
     return m;
   }
 
-  /* ---------- Ink colours, stored as absorbance so they mix like real dye (blue + yellow = green) ---------- */
-  var DYE = { A: [0.05, 1.55, 2.17], B: [1.96, 1.12, 0.02], C: [0.0, 0.26, 2.6], D: [0.55, 0.55, 0.6] };
-  var CYC = [DYE.A, DYE.B, DYE.C];
-  function dyeAt(x, y, t) {
-    for (var i = 0; i < glass.length; i++) { var g = glass[i]; if (g.p && Math.abs(x - g.x) < g.w && Math.abs(y - g.y) < g.h) return DYE[g.p]; }
-    var k = (t * 0.12) % 3, i0 = Math.floor(k), a = CYC[i0], b = CYC[(i0 + 1) % 3], f = k - i0;
-    return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, a[2] + (b[2] - a[2]) * f];
-  }
-
-  /* ---------- Glass shapes: every [data-glass] element ---------- */
-  var glass = [], glassEls = $$('[data-glass]');
-  glassEls.forEach(function (el) { el._lift = 0; el._lv = 0; el._p = el.classList.contains('panel') ? el.getAttribute('data-p') : (el.classList.contains('big') ? el.closest('.detail').id : ''); });
-  measurers.push(function () {
-    glass = [];
-    glassEls.forEach(function (el) {
-      if (!el.getClientRects().length) return;
-      var r = el.getBoundingClientRect(), l = r.left, t = r.top, rr = r.right, b = r.bottom;
-      var box = el.parentNode.closest && el.parentNode.closest('.info');   // glass inside a scrolling column is clipped to it
-      if (box) { var c = box.getBoundingClientRect(); l = Math.max(l, c.left); t = Math.max(t, c.top); rr = Math.min(rr, c.right); b = Math.min(b, c.bottom); }
-      if (rr - l < 4 || b - t < 0.6 * r.height || b < 0 || t > innerHeight) return;
-      var rad = parseFloat(getComputedStyle(el).borderTopLeftRadius) || 0;
-      glass.push({ el: el, x: (l + rr) / 2, y: (t + b) / 2, w: (rr - l) / 2, h: (b - t) / 2, r: rad, p: el._p });
-    });
-  });
-
-  /* What the cursor is over: links and buttons get a glass lens, panels lift */
-  var hov = null, hovRects = null;
-  function rectsOf(el) { return el && !el.classList.contains('panel') ? Array.prototype.slice.call(el.getClientRects()) : null; }
-  D.addEventListener('pointerover', function (e) {
-    var el = e.target.closest ? e.target.closest('a[href], button') : null;
-    if (el && el.classList.contains('solid')) el = null;
-    if (el !== hov) { hov = el; hovRects = rectsOf(el); }
-  });
-  measurers.push(function () { hovRects = rectsOf(hov); });
-  function liftTarget(el) {
-    if (!hov) return 0;
-    if (hov === el) return P.down ? -0.7 : 1;
-    if (el._p && !hov.classList.contains('panel') && hov.getAttribute('data-p') === el._p) return 0.8;
-    return 0;
-  }
-
-  /* ---------- WebGL: ink simulation + liquid glass, one canvas ---------- */
-  var cv = $('#ink'), ink = null;
-  try { ink = Ink(cv, reduce); } catch (e) { ink = null; if (window.console) console.warn('Liquid glass off:', e && e.message); }
-  if (ink) root.classList.add('gl');
-  function Ink(canvas, still) {
-    var gl = canvas.getContext('webgl2', { alpha: false, depth: false, stencil: false, antialias: false, premultipliedAlpha: false, preserveDrawingBuffer: false });
-    if (!gl) return null;
-    gl.getExtension('EXT_color_buffer_float'); gl.getExtension('EXT_color_buffer_half_float');
-    var VS = '#version 300 es\nin vec2 aPos;out vec2 vUv,vL,vR,vT,vB;uniform vec2 uTexel;void main(){vUv=aPos*.5+.5;vL=vUv-vec2(uTexel.x,0.);vR=vUv+vec2(uTexel.x,0.);vT=vUv+vec2(0.,uTexel.y);vB=vUv-vec2(0.,uTexel.y);gl_Position=vec4(aPos,0.,1.);}';
-    var HD = '#version 300 es\nprecision highp float;precision highp sampler2D;in vec2 vUv,vL,vR,vT,vB;out vec4 o;\n';
-    function sh(type, src) { var s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; }
-    var vs = sh(gl.VERTEX_SHADER, VS);
-    function prog(fs) {
-      var p = gl.createProgram(); gl.attachShader(p, vs); gl.attachShader(p, sh(gl.FRAGMENT_SHADER, HD + fs)); gl.bindAttribLocation(p, 0, 'aPos'); gl.linkProgram(p);
-      if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p));
-      var u = {}, n = gl.getProgramParameter(p, gl.ACTIVE_UNIFORMS);
-      for (var i = 0; i < n; i++) { var nm = gl.getActiveUniform(p, i).name; u[nm.replace(/\[0\]$/, '')] = gl.getUniformLocation(p, nm); }
-      return { p: p, u: u };
-    }
-    var S = {
-      splat: prog('uniform sampler2D uTarget;uniform float uAspect,uRadius;uniform vec2 uPoint;uniform vec3 uColor;void main(){vec2 p=vUv-uPoint;p.x*=uAspect;o=vec4(texture(uTarget,vUv).xyz+exp(-dot(p,p)/uRadius)*uColor,1.);}'),
-      adv: prog('uniform sampler2D uVel,uSrc;uniform vec2 uTexel;uniform float uDt,uDiss;void main(){vec2 c=vUv-uDt*texture(uVel,vUv).xy*uTexel;o=texture(uSrc,c)/(1.+uDiss*uDt);}'),
-      div: prog('uniform sampler2D uVel;void main(){float L=texture(uVel,vL).x,R=texture(uVel,vR).x,T=texture(uVel,vT).y,B=texture(uVel,vB).y;vec2 C=texture(uVel,vUv).xy;if(vL.x<0.)L=-C.x;if(vR.x>1.)R=-C.x;if(vT.y>1.)T=-C.y;if(vB.y<0.)B=-C.y;o=vec4(.5*(R-L+T-B),0.,0.,1.);}'),
-      curl: prog('uniform sampler2D uVel;void main(){float L=texture(uVel,vL).y,R=texture(uVel,vR).y,T=texture(uVel,vT).x,B=texture(uVel,vB).x;o=vec4(.5*(R-L-T+B),0.,0.,1.);}'),
-      vort: prog('uniform sampler2D uVel,uCurl;uniform float uK,uDt;void main(){float L=texture(uCurl,vL).x,R=texture(uCurl,vR).x,T=texture(uCurl,vT).x,B=texture(uCurl,vB).x,C=texture(uCurl,vUv).x;vec2 f=.5*vec2(abs(T)-abs(B),abs(R)-abs(L));f/=length(f)+1e-4;f*=uK*C;f.y*=-1.;vec2 v=texture(uVel,vUv).xy+f*uDt;o=vec4(clamp(v,-1000.,1000.),0.,1.);}'),
-      press: prog('uniform sampler2D uP,uDiv;void main(){float L=texture(uP,vL).x,R=texture(uP,vR).x,T=texture(uP,vT).x,B=texture(uP,vB).x;o=vec4((L+R+B+T-texture(uDiv,vUv).x)*.25,0.,0.,1.);}'),
-      grad: prog('uniform sampler2D uP,uVel;void main(){float L=texture(uP,vL).x,R=texture(uP,vR).x,T=texture(uP,vT).x,B=texture(uP,vB).x;o=vec4(texture(uVel,vUv).xy-vec2(R-L,T-B),0.,1.);}'),
-      scale: prog('uniform sampler2D uT;uniform float uV;void main(){o=uV*texture(uT,vUv);}'),
-      disp: prog([
-        '#define MAXB 12',
-        'uniform sampler2D uDye;uniform vec2 uRes;uniform float uPx;',
-        'uniform vec4 uBox[MAXB];uniform vec2 uRL[MAXB];uniform int uN;',
-        'uniform vec4 uDrop;uniform vec3 uDropX;uniform float uDropA;',
-        'float sdBox(vec2 p,vec2 b,float r){r=min(r,min(b.x,b.y));vec2 q=abs(p)-b+r;return length(max(q,0.))+min(max(q.x,q.y),0.)-r;}',
-        'float scene(vec2 p,out float lift){float d=1e5;lift=0.;for(int i=0;i<MAXB;i++){if(i>=uN)break;vec4 b=uBox[i];float e=sdBox(p-b.xy,b.zw,uRL[i].x);if(e<d){d=e;lift=uRL[i].y;}}return d;}',
-        'float sceneD(vec2 p){float l;return scene(p,l);}',
-        'float drop(vec2 p){vec2 q=p-uDrop.xy;q=vec2(q.x*uDropX.y+q.y*uDropX.z,-q.x*uDropX.z+q.y*uDropX.y);return sdBox(q,uDrop.zw,uDropX.x);}',
-        /* paper: white, a faint graph-paper grid, tinted by the ink */
-        'vec3 paper(vec2 p,float w){vec3 ink=exp(-max(texture(uDye,p/uRes).rgb,0.));float s=28.*uPx;vec2 g=abs(fract(p/s+.5)-.5)*s;float mi=1.-smoothstep(0.,w,min(g.x,g.y));float S=s*4.;vec2 G=abs(fract(p/S+.5)-.5)*S;float ma=1.-smoothstep(0.,w*1.25,min(G.x,G.y));return ink*(1.-max(mi*.05,ma*.085));}',
-        'const vec2 LIT=vec2(-.5547,.8321);',
-        /* base: paper + glass slabs. Near the rim the glass bends the paper inward, splits colour slightly and catches light. */
-        'vec3 base(vec2 p){float px=uPx;float lift;float d=scene(p,lift);',
-        ' float sh=0.;if(d<70.*px){float l2;float ds=scene(p+vec2(0.,(7.+9.*lift)*px),l2);sh=exp(-max(ds,0.)/((12.+12.*lift)*px))*(.075+.05*lift);}',
-        ' vec3 outC=paper(p,px)*(1.-sh);',
-        ' if(d>px)return outC;',
-        ' vec2 e=vec2(px,0.);vec2 n=normalize(vec2(sceneD(p+e.xy)-sceneD(p-e.xy),sceneD(p+e.yx)-sceneD(p-e.yx))+1e-5);',
-        ' float depth=-d;float edge=(20.+6.*lift)*px;float t=clamp(1.-depth/edge,0.,1.);float bend=t*t;',
-        ' vec2 off=-n*bend*(26.+10.*lift)*px;',
-        ' vec3 c=vec3(paper(p+off*1.1,2.4*px).r,paper(p+off,2.4*px).g,paper(p+off*.9,2.4*px).b);',
-        ' c=mix(c,vec3(1.),.24+.05*lift);',
-        ' float band=smoothstep(2.6*px,0.,depth);float band2=smoothstep(edge*.9,0.,depth);',
-        ' float spec=pow(max(dot(n,LIT),0.),1.6)*band*(.85+.15*lift)+pow(max(dot(n,LIT),0.),3.)*band2*.10;',
-        ' float back=pow(max(dot(n,-LIT),0.),2.)*band*.55;',
-        ' float shade=pow(max(dot(n,-LIT),0.),1.5)*smoothstep(1.4*px,0.,depth)*.10;',
-        ' c=c+spec+back*.45-shade;',
-        ' float a=smoothstep(.8*px,-.8*px,d);return mix(outC,clamp(c,0.,1.),a);}',
-        /* the droplet is a second, free-floating lens that magnifies whatever is under it, glass included */
-        'void main(){vec2 p=gl_FragCoord.xy;float px=uPx;',
-        ' float dd=uDropA>.01?drop(p):1e5;',
-        ' if(dd>px){vec3 c=base(p);if(uDropA>.01&&dd<50.*px){float ds=drop(p+vec2(0.,6.*px));c*=1.-exp(-max(ds,0.)/(9.*px))*.10*uDropA;}o=vec4(c,1.);return;}',
-        ' vec2 e=vec2(px,0.);vec2 n=normalize(vec2(drop(p+e.xy)-drop(p-e.xy),drop(p+e.yx)-drop(p-e.yx))+1e-5);',
-        ' float depth=-dd;float edge=max(min(uDrop.z,uDrop.w),4.*px);float t=clamp(1.-depth/edge,0.,1.);float bend=t*t;',
-        ' vec2 off=-n*bend*12.*px+(uDrop.xy-p)*.16;',
-        ' vec3 c=base(p+off);c=mix(c,vec3(1.),.10);',
-        ' float band=smoothstep(2.4*px,0.,depth);',
-        ' c+=pow(max(dot(n,LIT),0.),1.6)*band*.9+pow(max(dot(n,-LIT),0.),2.)*band*.3;',
-        ' c-=pow(max(dot(n,-LIT),0.),1.5)*smoothstep(1.4*px,0.,depth)*.08;',
-        ' float a=smoothstep(.8*px,-.8*px,dd)*uDropA;',
-        ' vec3 outC=a<.999?base(p):c;o=vec4(mix(outC,clamp(c,0.,1.),a),1.);}'
-      ].join('\n'))
-    };
-
-    var vb = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, vb); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, -1, 1, 1, 1, 1, -1]), gl.STATIC_DRAW);
-    var ib = gl.createBuffer(); gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ib); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array([0, 1, 2, 0, 2, 3]), gl.STATIC_DRAW);
-    gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0); gl.enableVertexAttribArray(0);
-    gl.disable(gl.BLEND);
-    function blit(tg) {
-      if (tg) { gl.viewport(0, 0, tg.w, tg.h); gl.bindFramebuffer(gl.FRAMEBUFFER, tg.fb); }
-      else { gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight); gl.bindFramebuffer(gl.FRAMEBUFFER, null); }
-      gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
-    }
-    function fbo(w, h, f) {
-      var tex = gl.createTexture(); gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, tex);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-      gl.texImage2D(gl.TEXTURE_2D, 0, f[0], w, h, 0, f[1], gl.HALF_FLOAT, null);
-      var fb = gl.createFramebuffer(); gl.bindFramebuffer(gl.FRAMEBUFFER, fb); gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
-      var ok = gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE;
-      if (!ok) { gl.deleteTexture(tex); gl.deleteFramebuffer(fb); return null; }
-      gl.viewport(0, 0, w, h); gl.clearColor(0, 0, 0, 1); gl.clear(gl.COLOR_BUFFER_BIT);
-      return { tex: tex, fb: fb, w: w, h: h, bind: function (u) { gl.activeTexture(gl.TEXTURE0 + u); gl.bindTexture(gl.TEXTURE_2D, tex); return u; }, kill: function () { gl.deleteTexture(tex); gl.deleteFramebuffer(fb); } };
-    }
-    function dbl(w, h, f) {
-      var a = fbo(w, h, f), b = fbo(w, h, f); if (!a || !b) throw new Error('no float framebuffer');
-      return { w: w, h: h, tx: 1 / w, ty: 1 / h, read: a, write: b, swap: function () { var t = this.read; this.read = this.write; this.write = t; }, kill: function () { a.kill(); b.kill(); } };
-    }
-    var F = { rgba: [gl.RGBA16F, gl.RGBA], rg: [gl.RG16F, gl.RG], r: [gl.R16F, gl.RED] };
-    var probe = fbo(4, 4, F.rgba); if (!probe) return null; probe.kill();
-    probe = fbo(4, 4, F.rg); if (!probe) { F.rg = F.rgba; F.r = F.rgba; } else probe.kill();
-
-    var dpr = Math.min(devicePixelRatio || 1, 2);
-    var Q = { sim: 128, dye: 512, iter: 18, curl: 18, vd: 0.3, dd: 0.5, scale: dpr };
-    var W = 1, H = 1, CW = 1, CH = 1, vel, dye, dv, cu, pr, simAspect = 0;
-    function res(n) { var a = W / H; return a > 1 ? [Math.round(n * a), n] : [n, Math.round(n / a)]; }
-    function alloc() {
-      [vel, dye, dv, cu, pr].forEach(function (x) { if (x) x.kill(); });
-      var s = res(Q.sim), d = res(Q.dye);
-      vel = dbl(s[0], s[1], F.rg); dye = dbl(d[0], d[1], F.rgba); dv = fbo(s[0], s[1], F.r); cu = fbo(s[0], s[1], F.r); pr = dbl(s[0], s[1], F.r);
-      simAspect = W / H;
-    }
-    function size() {
-      var r = canvas.getBoundingClientRect(); W = Math.max(1, r.width); H = Math.max(1, r.height);
-      CW = Math.round(W * Q.scale); CH = Math.round(H * Q.scale);
-      if (canvas.width !== CW || canvas.height !== CH) { canvas.width = CW; canvas.height = CH; }
-      if (!vel || !simAspect || Math.abs(W / H - simAspect) / simAspect > 0.15) alloc();
-    }
-    size();
-    measurers.unshift(size);
-
-    function use(s) { gl.useProgram(s.p); return s.u; }
-    function step(dt) {
-      var u = use(S.curl); gl.uniform2f(u.uTexel, vel.tx, vel.ty); gl.uniform1i(u.uVel, vel.read.bind(0)); blit(cu);
-      u = use(S.vort); gl.uniform2f(u.uTexel, vel.tx, vel.ty); gl.uniform1i(u.uVel, vel.read.bind(0)); gl.uniform1i(u.uCurl, cu.bind(1)); gl.uniform1f(u.uK, Q.curl); gl.uniform1f(u.uDt, dt); blit(vel.write); vel.swap();
-      u = use(S.div); gl.uniform2f(u.uTexel, vel.tx, vel.ty); gl.uniform1i(u.uVel, vel.read.bind(0)); blit(dv);
-      u = use(S.scale); gl.uniform1i(u.uT, pr.read.bind(0)); gl.uniform1f(u.uV, 0.8); blit(pr.write); pr.swap();
-      u = use(S.press); gl.uniform2f(u.uTexel, vel.tx, vel.ty); gl.uniform1i(u.uDiv, dv.bind(1));
-      for (var i = 0; i < Q.iter; i++) { gl.uniform1i(u.uP, pr.read.bind(0)); blit(pr.write); pr.swap(); }
-      u = use(S.grad); gl.uniform2f(u.uTexel, vel.tx, vel.ty); gl.uniform1i(u.uP, pr.read.bind(0)); gl.uniform1i(u.uVel, vel.read.bind(1)); blit(vel.write); vel.swap();
-      u = use(S.adv); gl.uniform2f(u.uTexel, vel.tx, vel.ty); gl.uniform1f(u.uDt, dt);
-      gl.uniform1i(u.uVel, vel.read.bind(0)); gl.uniform1i(u.uSrc, 0); gl.uniform1f(u.uDiss, Q.vd); blit(vel.write); vel.swap();
-      gl.uniform1i(u.uVel, vel.read.bind(0)); gl.uniform1i(u.uSrc, dye.read.bind(1)); gl.uniform1f(u.uDiss, Q.dd); blit(dye.write); dye.swap();
-    }
-    // x, y in CSS px; vx, vy in CSS px per second; col = absorbance; rad in CSS px
-    function splat(x, y, vx, vy, col, amt, rad) {
-      var u = use(S.splat), r = (rad / H) * (rad / H);
-      gl.uniform1f(u.uAspect, W / H); gl.uniform2f(u.uPoint, x / W, 1 - y / H); gl.uniform1f(u.uRadius, r);
-      gl.uniform1i(u.uTarget, vel.read.bind(0)); gl.uniform3f(u.uColor, vx * vel.w / W, -vy * vel.h / H, 0); blit(vel.write); vel.swap();
-      if (amt > 0) { gl.uniform1i(u.uTarget, dye.read.bind(0)); gl.uniform3f(u.uColor, col[0] * amt, col[1] * amt, col[2] * amt); blit(dye.write); dye.swap(); }
-    }
-    var BOX = new Float32Array(48), RL = new Float32Array(24);
-    function render(drop) {
-      var u = use(S.disp), s = Q.scale, n = Math.min(glass.length, 12);
-      for (var i = 0; i < n; i++) {
-        var g = glass[i], L = g.el._lift, grow = L * 3;
-        BOX[i * 4] = g.x * s; BOX[i * 4 + 1] = (H - g.y) * s; BOX[i * 4 + 2] = Math.max(1, g.w + grow) * s; BOX[i * 4 + 3] = Math.max(1, g.h + grow) * s;
-        RL[i * 2] = Math.max(0, g.r + grow) * s; RL[i * 2 + 1] = L;
-      }
-      gl.uniform2f(u.uRes, CW, CH); gl.uniform1f(u.uPx, s);
-      gl.uniform4fv(u.uBox, BOX); gl.uniform2fv(u.uRL, RL); gl.uniform1i(u.uN, n);
-      gl.uniform4f(u.uDrop, drop.x * s, (H - drop.y) * s, Math.max(drop.w, 0.5) * s, Math.max(drop.h, 0.5) * s);
-      gl.uniform3f(u.uDropX, Math.max(drop.r, 0.5) * s, Math.cos(-drop.ang), Math.sin(-drop.ang)); gl.uniform1f(u.uDropA, drop.a);
-      gl.uniform1i(u.uDye, dye.read.bind(0));
-      blit(null);
-    }
-    // If the device struggles, quietly lower resolution so motion never stutters
-    // (a phone capped at 30 fps in Low Power Mode is steady, not struggling, so compare against the fastest frame seen)
-    var fr = { n: 0, sum: 0, min: 1, level: 0 };
-    function perf(dt) {
-      fr.n++; if (fr.n < 40) return; fr.sum += dt; fr.min = Math.min(fr.min, dt);
-      if (fr.n === 160) {
-        var avg = fr.sum / 121;
-        if (avg > Math.max(0.0215, fr.min * 1.35) && fr.level < 3) {
-          fr.level++;
-          if (fr.level === 1) { Q.scale = Math.max(1, dpr * 0.7); Q.iter = 12; }
-          if (fr.level === 2) { Q.scale = 1; Q.dye = 384; Q.sim = 96; Q.iter = 10; simAspect = 0; }
-          if (fr.level === 3) { Q.scale = 0.75; Q.dye = 256; Q.iter = 8; simAspect = 0; }
-          size();
-        }
-        fr.n = 0; fr.sum = 0; fr.min = 1;
-      }
-    }
-    return { step: step, splat: splat, render: render, perf: perf, still: !!still, q: Q, fr: fr };
-  }
-
-  /* ---------- Ink input ---------- */
-  function burst(x, y) {
-    if (!ink || ink.still) return;
-    var col = dyeAt(x, y, now() / 1000);
-    ink.splat(x, y, 0, 0, col, 0.35, 32);
-    for (var i = 0; i < 6; i++) { var a = i / 6 * Math.PI * 2; ink.splat(x + Math.cos(a) * 16, y + Math.sin(a) * 16, Math.cos(a) * 520, Math.sin(a) * 520, col, 0, 18); }
-  }
-
-  /* ---------- The glass droplet: follows the cursor, stretches when it moves fast, melts into what you point at ---------- */
-  var drop = { x: -200, y: -200, vx: 0, vy: 0, w: 2, h: 2, r: 2, vw: 0, vh: 0, vr: 0, ang: 0, va: 0, a: 0 };
-  var amb = 0.8, introDone = false, readyDone = false;
-  if (ink) parts.push(function (dt, t) {
-    if (!ink.still) {
-      if (P.inside && (P.dx || P.dy) && (fine || P.down)) {
-        var sp = Math.hypot(P.dx, P.dy) / dt;
-        ink.splat(P.x, P.y, P.dx / dt * 0.9, P.dy / dt * 0.9, dyeAt(P.x, P.y, t), clamp(sp / 4000, 0.01, 0.09), 26);
-      }
-      // the specimens keep bleeding a little colour into the page
-      amb -= dt;
-      if (amb <= 0 && glass.length) {
-        amb = 0.9 + Math.random() * 0.8;
-        var cand = glass.filter(function (g) { return g.p; });
-        if (cand.length) {
-          var g = cand[Math.floor(Math.random() * cand.length)], below = Math.random() < 0.55;
-          var ax = g.x + (Math.random() - 0.5) * g.w * 1.6, ay = below ? g.y + g.h - 6 : g.y - g.h + 6;
-          ink.splat(ax, ay, (Math.random() - 0.5) * 260, below ? 240 + Math.random() * 160 : -(200 + Math.random() * 160), DYE[g.p], 0.26, 46);
-        }
-      }
-      if (!introDone && glass.length) {
-        introDone = true;
-        glass.filter(function (g) { return g.p; }).forEach(function (g, i) {
-          setTimeout(function () { ink.splat(g.x, g.y - g.h * 0.2, 0, 520, DYE[g.p], 0.6, 56); ink.splat(g.x, g.y + g.h, 0, 380, DYE[g.p], 0.25, 36); }, 160 * i + 150);
-        });
-      }
-      ink.step(dt);
-      ink.perf(dt);
-    }
-    // glass lift: panels rise when pointed at, sink when pressed
-    var moving = false;
-    for (var i = 0; i < glass.length; i++) {
-      var el = glass[i].el, tg = liftTarget(el);
-      if (reduce) { el._lift = tg > 0 ? 1 : 0; continue; }
-      spring(el, '_lift', tg, '_lv', 170, 14, dt);
-      if (Math.abs(el._lift - tg) > 0.002 || Math.abs(el._lv) > 0.01) moving = true;
-    }
-    // droplet target
-    var show = P.inside && !reduce && (fine || P.down || now() - P.touchUp < 450);
-    var tx = P.x, ty = P.y, tw, th, tr, ta = drop.ang, rect = null;
-    if (hovRects && hovRects.length) {
-      rect = hovRects[0];
-      if (hovRects.length > 1) { var best = 1e9; hovRects.forEach(function (r) { var dd = Math.abs(P.y - (r.top + r.bottom) / 2); if (dd < best) { best = dd; rect = r; } }); }
-    }
-    if (rect) {
-      tx = rect.left + rect.width / 2; ty = rect.top + rect.height / 2;
-      tw = rect.width / 2 + (rect.width > 60 ? 6 : 9); th = rect.height / 2 + 3; tr = Math.min(th, hov.classList.contains('award') ? 12 : 18); ta = 0;
-    } else {
-      var speed = Math.hypot(drop.vx, drop.vy), st = Math.min(speed / 1700, 0.85), bs = hov && hov.classList.contains('panel') ? 19 : 13;
-      tw = bs * (1 + st * 0.9); th = bs * (1 - st * 0.35); tr = th;
-      if (speed > 40) ta = Math.atan2(drop.vy, drop.vx);
-    }
-    if (drop.a < 0.02 && show) { drop.x = tx; drop.y = ty; drop.vx = drop.vy = 0; }
-    var Kp = rect ? 230 : 420, Cp = rect ? 22 : 30;
-    spring(drop, 'x', tx, 'vx', Kp, Cp, dt); spring(drop, 'y', ty, 'vy', Kp, Cp, dt);
-    spring(drop, 'w', show ? tw : 2, 'vw', 260, 18, dt); spring(drop, 'h', show ? th : 2, 'vh', 260, 18, dt); spring(drop, 'r', show ? tr : 2, 'vr', 260, 18, dt);
-    var dA = ta - drop.ang; dA = Math.atan2(Math.sin(2 * dA), Math.cos(2 * dA)) / 2;
-    drop.va += (260 * dA - 24 * drop.va) * dt; drop.ang += drop.va * dt;
-    drop.a += ((show ? 1 : 0) - drop.a) * (1 - Math.exp(-dt * 10));
-    ink.render(drop);
-    if (!readyDone) { readyDone = true; root.classList.add('ready'); }
-    return !ink.still || moving || drop.a > 0.01 || show;
-  });
-
-  /* ---------- Letters ripple like a water surface when you move through them ---------- */
-  function Wave(el) {
-    var letters = [];
-    var sr = D.createElement('span'); sr.className = 'sr'; sr.textContent = el.textContent;
+  /* ---------- Split text into letters or words (screen readers get the plain text) ---------- */
+  function split(el, unit) {
+    var out = [];
+    var sr = D.createElement('span'); sr.className = 'sr'; sr.textContent = el.textContent.replace(/\s+/g, ' ').trim();
     var vis = D.createElement('span'); vis.setAttribute('aria-hidden', 'true');
     (function walk(src, dst) {
       Array.prototype.slice.call(src.childNodes).forEach(function (n) {
@@ -744,47 +420,356 @@ html:not(.gl) body { background-image: linear-gradient(rgba(20, 20, 20, .045) 1p
           n.textContent.split(/(\s+)/).forEach(function (part) {
             if (!part) return;
             if (/^\s+$/.test(part)) { dst.appendChild(D.createTextNode(' ')); return; }
-            var w = D.createElement('span'); w.className = 'wd';
-            Array.from(part).forEach(function (c) { var s = D.createElement('span'); s.className = 'ch'; s.textContent = c; w.appendChild(s); letters.push({ el: s, y: 0, v: 0, cx: 0, cy: 0, hh: 10 }); });
+            var w = D.createElement('span');
+            if (unit === 'ch') { w.className = 'wd'; Array.from(part).forEach(function (c) { var s = D.createElement('span'); s.className = 'ch'; s.textContent = c; w.appendChild(s); out.push(s); }); }
+            else { w.className = 'gw'; w.textContent = part; out.push(w); }
             dst.appendChild(w);
           });
         } else if (n.nodeType === 1) { var c = n.cloneNode(false); dst.appendChild(c); walk(n, c); }
       });
     })(el, vis);
     el.textContent = ''; el.appendChild(sr); el.appendChild(vis);
-    var box = null, awake = false;
+    return out;
+  }
+  function letters(el) { return el._ch || (el._ch = split(el, 'ch')); }
+
+  /* ---------- Glass shapes: every visible [data-glass] element ---------- */
+  var glass = [], glassEls = $$('[data-glass]');
+  glassEls.forEach(function (el, i) { el._lift = reduce ? 0 : -5; el._lv = 0; el._go = now() + 120 + i * 70; });
+  measurers.push(function () {
+    glass = [];
+    glassEls.forEach(function (el) {
+      if (!el.getClientRects().length) return;
+      var r = el.getBoundingClientRect(), l = r.left, t = r.top, rr = r.right, b = r.bottom;
+      var box = el.parentNode.closest && el.parentNode.closest('.info');
+      if (box) { var c = box.getBoundingClientRect(); l = Math.max(l, c.left); t = Math.max(t, c.top); rr = Math.min(rr, c.right); b = Math.min(b, c.bottom); }
+      if (rr - l < 4 || b - t < 0.6 * r.height || b < 0 || t > innerHeight) return;
+      var rad = parseFloat(getComputedStyle(el).borderTopLeftRadius) || 0;
+      glass.push({ el: el, x: (l + rr) / 2, y: (t + b) / 2, w: (rr - l) / 2, h: (b - t) / 2, r: rad });
+    });
+  });
+
+  /* What the cursor is over: links, buttons and [data-lens] rows get the lens; panels lift */
+  var hov = null, hovRects = null;
+  function rectsOf(el) { return el && !el.classList.contains('panel') ? Array.prototype.slice.call(el.getClientRects()) : null; }
+  D.addEventListener('pointerover', function (e) {
+    var el = e.target.closest ? e.target.closest('a[href], button, [data-lens]') : null;
+    if (el && el.classList.contains('solid')) el = null;
+    if (el !== hov) { hov = el; hovRects = rectsOf(el); }
+  });
+  measurers.push(function () { hovRects = rectsOf(hov); });
+  function liftTarget(el) {
+    if (now() < el._go) return -5;
+    if (!hov) return 0;
+    if (hov === el) return P.down ? -0.7 : 1;
+    return 0;
+  }
+
+  /* ---------- Gel text: words part around the droplet and spring back ---------- */
+  var gel = [];
+  $$('[data-gel]').forEach(function (el) { split(el, 'gw').forEach(function (w) { gel.push({ el: w, cx: 0, cy: 0, hw: 0, hh: 0, vis: false, ox: 0, oy: 0, vx: 0, vy: 0, s: 1, vs: 0, act: false }); }); });
+  measurers.push(function () {
+    gel.forEach(function (u) {
+      var r = u.el.getBoundingClientRect(); u.vis = r.width > 0 && r.bottom > 0 && r.top < innerHeight;
+      u.cx = r.left + r.width / 2 - u.ox; u.cy = r.top + r.height / 2 - u.oy; u.hw = r.width / 2 / u.s; u.hh = r.height / 2 / u.s;
+    });
+  });
+  var near = [];
+
+  /* ---------- The glass droplet: a soft ring of 24 points, like a bead of hydrogel ---------- */
+  var NR = 24;
+  var drop = { x: -300, y: -300, vx: 0, vy: 0, w: 2, h: 2, r: 2, vw: 0, vh: 0, vr: 0, a: 0, k: 0, pts: [], mode: 0 };
+  for (var di = 0; di < NR; di++) drop.pts.push({ x: -300, y: -300, vx: 0, vy: 0 });
+  // point at fraction u along a rounded rectangle's outline (starting at the right, going round)
+  function rrPoint(u, hw, hh, r) {
+    r = clamp(r, 0.01, Math.min(hw, hh));
+    var sx = 2 * (hw - r), sy = 2 * (hh - r), qa = Math.PI * r / 2;
+    var seg = [sy / 2, qa, sx, qa, sy, qa, sx, qa, sy / 2], tot = 0, k = 0, a;
+    for (var i = 0; i < 9; i++) tot += seg[i];
+    var s = u * tot;
+    while (k < 8 && s > seg[k]) { s -= seg[k]; k++; }
+    a = s / r;
+    switch (k) {
+      case 0: return [hw, -s];
+      case 1: return [hw - r + r * Math.cos(a), -(hh - r) - r * Math.sin(a)];
+      case 2: return [hw - r - s, -hh];
+      case 3: return [-(hw - r) - r * Math.sin(a), -(hh - r) - r * Math.cos(a)];
+      case 4: return [-hw, -(hh - r) + s];
+      case 5: return [-(hw - r) - r * Math.cos(a), (hh - r) + r * Math.sin(a)];
+      case 6: return [-(hw - r) + s, hh];
+      case 7: return [(hw - r) + r * Math.sin(a), (hh - r) + r * Math.cos(a)];
+      default: return [hw, (hh - r) - s];
+    }
+  }
+
+  /* ---------- WebGL: soft colour, graph paper, glass slabs, and the droplet ---------- */
+  var cv = $('#glass'), G = null;
+  try { G = Glass(cv); } catch (e) { G = null; if (window.console) console.warn('Liquid glass off:', e && e.message); }
+  if (G) root.classList.add('gl');
+
+  function Glass(canvas) {
+    var gl = canvas.getContext('webgl2', { alpha: false, depth: false, stencil: false, antialias: false, premultipliedAlpha: false, preserveDrawingBuffer: false });
+    if (!gl) return null;
+    var VS = '#version 300 es\nin vec2 aPos;void main(){gl_Position=vec4(aPos,0.,1.);}';
+    var FS = [
+      '#version 300 es',
+      'precision highp float;',
+      '#define MAXB 14',
+      '#define NR 24',
+      'uniform vec2 uRes,uPtr;uniform float uPx,uT;',
+      'uniform vec4 uBox[MAXB];uniform vec2 uRL[MAXB];uniform int uN;',
+      'uniform vec2 uPoly[NR];uniform vec4 uBB;uniform vec2 uDC;uniform float uDK,uDA,uDE;',
+      'out vec4 o;',
+      'float sdBox(vec2 p,vec2 b,float r){r=min(r,min(b.x,b.y));vec2 q=abs(p)-b+r;return length(max(q,0.))+min(max(q.x,q.y),0.)-r;}',
+      'float scene(vec2 p,out float lift){float d=1e5;lift=0.;for(int i=0;i<MAXB;i++){if(i>=uN)break;vec4 b=uBox[i];float e=sdBox(p-b.xy,b.zw,uRL[i].x);if(e<d){d=e;lift=uRL[i].y;}}return d;}',
+      'float sceneD(vec2 p){float l;return scene(p,l);}',
+      'float sdPoly(vec2 p){vec2 v0=uPoly[0];float d=dot(p-v0,p-v0);float s=1.;for(int i=0,j=NR-1;i<NR;j=i,i++){vec2 vi=uPoly[i],vj=uPoly[j];vec2 e=vj-vi;vec2 w=p-vi;vec2 b=w-e*clamp(dot(w,e)/(dot(e,e)+1e-6),0.,1.);d=min(d,dot(b,b));bvec3 c=bvec3(p.y>=vi.y,p.y<vj.y,e.x*w.y>e.y*w.x);if(all(c)||all(not(c)))s*=-1.;}return s*sqrt(d);}',
+      'float drop(vec2 p){return sdPoly(p)-uDK;}',
+      /* soft, slow colour fields (the same dyes as the panels), leaning gently toward the pointer */
+      'const vec3 RED=vec3(.05,1.55,2.17),BLU=vec3(1.96,1.12,.02),YEL=vec3(0.,.26,2.6);',
+      'vec3 field(vec2 p){vec2 q=p/uRes.y;float ar=uRes.x/uRes.y,t=uT;vec2 m=uPtr/uRes.y;vec3 a=vec3(0.);vec2 c;',
+      ' c=vec2(ar*(.10+.04*sin(t*.11)),.80+.05*cos(t*.09));c+=(m-c)*.05;a+=RED*exp(-dot(q-c,q-c)/.05)*.17;',
+      ' c=vec2(ar*(.47+.06*sin(t*.07+1.)),.26+.06*cos(t*.08+2.));c+=(m-c)*.05;a+=BLU*exp(-dot(q-c,q-c)/.07)*.13;',
+      ' c=vec2(ar*(.90+.03*sin(t*.09+3.)),.50+.07*cos(t*.06));c+=(m-c)*.05;a+=YEL*exp(-dot(q-c,q-c)/.06)*.17;',
+      ' return exp(-a);}',
+      'vec3 paper(vec2 p,float w){float s=28.*uPx;vec2 g=abs(fract(p/s+.5)-.5)*s;float mi=1.-smoothstep(0.,w,min(g.x,g.y));float S=s*4.;vec2 G=abs(fract(p/S+.5)-.5)*S;float ma=1.-smoothstep(0.,w*1.25,min(G.x,G.y));return field(p)*(1.-max(mi*.05,ma*.085));}',
+      'const vec2 LIT=vec2(-.5547,.8321);',
+      'vec3 base(vec2 p){float px=uPx;float lift;float d=scene(p,lift);',
+      ' float sh=0.;if(d<70.*px){float l2;float ds=scene(p+vec2(0.,(7.+9.*lift)*px),l2);sh=exp(-max(ds,0.)/((12.+12.*lift)*px))*(.075+.05*lift);}',
+      ' vec3 outC=paper(p,px)*(1.-sh);',
+      ' if(d>px)return outC;',
+      ' vec2 e=vec2(px,0.);vec2 n=normalize(vec2(sceneD(p+e.xy)-sceneD(p-e.xy),sceneD(p+e.yx)-sceneD(p-e.yx))+1e-5);',
+      ' float depth=-d;float edge=(20.+6.*lift)*px;float t=clamp(1.-depth/edge,0.,1.);float bend=t*t;',
+      ' vec2 off=-n*bend*(26.+10.*lift)*px;',
+      ' vec3 c=vec3(paper(p+off*1.1,2.4*px).r,paper(p+off,2.4*px).g,paper(p+off*.9,2.4*px).b);',
+      ' c=mix(c,vec3(1.),.24+.05*lift);',
+      ' float band=smoothstep(2.6*px,0.,depth);float band2=smoothstep(edge*.9,0.,depth);',
+      ' float spec=pow(max(dot(n,LIT),0.),1.6)*band*(.85+.15*lift)+pow(max(dot(n,LIT),0.),3.)*band2*.10;',
+      ' float back=pow(max(dot(n,-LIT),0.),2.)*band*.55;',
+      ' float shade=pow(max(dot(n,-LIT),0.),1.5)*smoothstep(1.4*px,0.,depth)*.10;',
+      ' c=c+spec+back*.45-shade;',
+      ' float a=smoothstep(.8*px,-.8*px,d);return mix(outC,clamp(c,0.,1.),a);}',
+      'void main(){vec2 p=gl_FragCoord.xy;float px=uPx;float m=40.*px;',
+      ' float dd=1e5;if(uDA>.01&&p.x>uBB.x-m&&p.x<uBB.z+m&&p.y>uBB.y-m&&p.y<uBB.w+m)dd=drop(p);',
+      ' if(dd>px){vec3 c=base(p);if(dd<40.*px){float ds=drop(p+vec2(0.,6.*px));c*=1.-exp(-max(ds,0.)/(9.*px))*.11*uDA;}o=vec4(c,1.);return;}',
+      ' vec2 e=vec2(px,0.);vec2 n=normalize(vec2(drop(p+e.xy)-drop(p-e.xy),drop(p+e.yx)-drop(p-e.yx))+1e-5);',
+      ' float depth=-dd;float edge=max(uDE,4.*px);float t=clamp(1.-depth/edge,0.,1.);float bend=t*t;',
+      ' vec2 off=-n*bend*12.*px+(uDC-p)*.16;',
+      ' vec3 c=base(p+off);c=mix(c,vec3(1.),.10);',
+      ' float band=smoothstep(2.4*px,0.,depth);',
+      ' c+=pow(max(dot(n,LIT),0.),1.6)*band*.9+pow(max(dot(n,-LIT),0.),2.)*band*.3;',
+      ' c-=pow(max(dot(n,-LIT),0.),1.5)*smoothstep(1.4*px,0.,depth)*.08;',
+      ' float a=smoothstep(.8*px,-.8*px,dd)*uDA;',
+      ' vec3 outC=a<.999?base(p):c;o=vec4(mix(outC,clamp(c,0.,1.),a),1.);}'
+    ].join('\n');
+    function sh(type, src) { var s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; }
+    var pg = gl.createProgram(); gl.attachShader(pg, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(pg, sh(gl.FRAGMENT_SHADER, FS)); gl.bindAttribLocation(pg, 0, 'aPos'); gl.linkProgram(pg);
+    if (!gl.getProgramParameter(pg, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(pg));
+    var u = {}, nu = gl.getProgramParameter(pg, gl.ACTIVE_UNIFORMS);
+    for (var i = 0; i < nu; i++) { var nm = gl.getActiveUniform(pg, i).name; u[nm.replace(/\[0\]$/, '')] = gl.getUniformLocation(pg, nm); }
+    gl.useProgram(pg);
+    var vb = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, vb); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, -1, 1, 1, 1, 1, -1]), gl.STATIC_DRAW);
+    var ib = gl.createBuffer(); gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ib); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array([0, 1, 2, 0, 2, 3]), gl.STATIC_DRAW);
+    gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0); gl.enableVertexAttribArray(0);
+
+    var dpr = Math.min(devicePixelRatio || 1, 2), Q = { scale: dpr }, W = 1, H = 1, CW = 1, CH = 1;
+    function size() {
+      var r = canvas.getBoundingClientRect(); W = Math.max(1, r.width); H = Math.max(1, r.height);
+      CW = Math.round(W * Q.scale); CH = Math.round(H * Q.scale);
+      if (canvas.width !== CW || canvas.height !== CH) { canvas.width = CW; canvas.height = CH; }
+    }
+    size(); measurers.unshift(size);
+    var BOX = new Float32Array(56), RL = new Float32Array(28), POLY = new Float32Array(NR * 2);
+    function render(t) {
+      var s = Q.scale, n = Math.min(glass.length, 14), i;
+      for (i = 0; i < n; i++) {
+        var g = glass[i], L = g.el._lift, grow = L * 3;
+        BOX[i * 4] = g.x * s; BOX[i * 4 + 1] = (H - g.y) * s; BOX[i * 4 + 2] = Math.max(1, g.w + grow) * s; BOX[i * 4 + 3] = Math.max(1, g.h + grow) * s;
+        RL[i * 2] = Math.max(0, g.r + grow) * s; RL[i * 2 + 1] = Math.max(L, -1);
+      }
+      var x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+      for (i = 0; i < NR; i++) {
+        var px = drop.pts[i].x * s, py = (H - drop.pts[i].y) * s; POLY[i * 2] = px; POLY[i * 2 + 1] = py;
+        if (px < x0) x0 = px; if (px > x1) x1 = px; if (py < y0) y0 = py; if (py > y1) y1 = py;
+      }
+      gl.uniform2f(u.uRes, CW, CH); gl.uniform1f(u.uPx, s); gl.uniform1f(u.uT, t);
+      gl.uniform2f(u.uPtr, (P.inside ? P.x : W / 2) * s, (H - (P.inside ? P.y : H / 2)) * s);
+      gl.uniform4fv(u.uBox, BOX); gl.uniform2fv(u.uRL, RL); gl.uniform1i(u.uN, n);
+      gl.uniform2fv(u.uPoly, POLY); gl.uniform4f(u.uBB, x0, y0, x1, y1);
+      gl.uniform2f(u.uDC, drop.x * s, (H - drop.y) * s); gl.uniform1f(u.uDK, drop.k * s); gl.uniform1f(u.uDA, drop.a); gl.uniform1f(u.uDE, Math.min(drop.w, drop.h) * s);
+      gl.viewport(0, 0, CW, CH);
+      gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
+    }
+    // If frames slip, drop resolution a notch (a phone held at 30 fps in Low Power Mode is steady, not struggling)
+    var fr = { n: 0, sum: 0, min: 1, level: 0 };
+    function perf(dt) {
+      fr.n++; if (fr.n < 40) return; fr.sum += dt; fr.min = Math.min(fr.min, dt);
+      if (fr.n === 160) {
+        if (fr.sum / 121 > Math.max(0.0215, fr.min * 1.35) && fr.level < 2) { fr.level++; Q.scale = fr.level === 1 ? Math.max(1, dpr * 0.7) : 0.85; size(); }
+        fr.n = 0; fr.sum = 0; fr.min = 1;
+      }
+    }
+    return { render: render, perf: perf };
+  }
+
+  /* Gel words: part around the droplet, get dragged a little with it, spring back */
+  parts.push(function (dt) {
+    if (reduce || !gel.length) return false;
+    var on = drop.a > 0.3, R = Math.max(drop.w, drop.h) + 16, str = drop.mode ? 0.25 : 1, any = false;
+    near.length = 0;
+    for (var i = 0; i < gel.length; i++) {
+      var u = gel[i];
+      if (!u.vis) continue;
+      var tx = 0, ty = 0, ts = 1;
+      if (on) {
+        var dx = u.cx - drop.x, dy = u.cy - drop.y, d = Math.hypot(dx, dy);
+        if (d < R * 2.6) {
+          var f = Math.exp(-(d * d) / (R * R)) * str, nx = d > 0.01 ? dx / d : 0, ny = d > 0.01 ? dy / d : 0;
+          tx = nx * f * 9 + clamp(drop.vx * 0.008, -6, 6) * f; ty = ny * f * 5 + clamp(drop.vy * 0.008, -4, 4) * f; ts = 1 + 0.06 * f;
+          if (d < R * 1.8) near.push(u);
+        }
+      }
+      if (!u.act && !tx && !ty) continue;
+      spring(u, 'ox', tx, 'vx', 170, 15, dt); spring(u, 'oy', ty, 'vy', 170, 15, dt); spring(u, 's', ts, 'vs', 170, 15, dt);
+      u.act = Math.abs(u.ox) + Math.abs(u.oy) + Math.abs(u.vx) * 0.05 + Math.abs(u.vy) * 0.05 + Math.abs(u.s - 1) * 20 > 0.03 || !!tx || !!ty;
+      u.el.style.transform = u.act ? 'translate3d(' + u.ox.toFixed(2) + 'px,' + u.oy.toFixed(2) + 'px,0) scale(' + u.s.toFixed(4) + ')' : '';
+      if (u.act) any = true;
+    }
+    return any;
+  });
+
+  /* Droplet physics + glass render */
+  if (G) parts.push(function (dt, t) {
+    var moving = false, i;
+    for (i = 0; i < glass.length; i++) {
+      var el = glass[i].el, tg = liftTarget(el);
+      if (reduce) { el._lift = tg > 0 ? 1 : 0; continue; }
+      spring(el, '_lift', tg, '_lv', 170, 14, dt);
+      if (Math.abs(el._lift - tg) > 0.002 || Math.abs(el._lv) > 0.01) moving = true;
+    }
+    var show = P.inside && !reduce && (fine || P.down || now() - P.touchUp < 450);
+    var tx = P.x, ty = P.y, tw, th, tr, rect = null;
+    if (hovRects && hovRects.length) {
+      rect = hovRects[0];
+      if (hovRects.length > 1) { var best = 1e9; hovRects.forEach(function (r) { var dd = Math.abs(P.y - (r.top + r.bottom) / 2); if (dd < best) { best = dd; rect = r; } }); }
+    }
+    drop.mode = rect ? 1 : 0;
+    if (rect) {
+      tx = rect.left + rect.width / 2; ty = rect.top + rect.height / 2;
+      tw = rect.width / 2 + (rect.width > 60 ? 6 : 9); th = rect.height / 2 + 3; tr = Math.min(th, 16);
+    } else {
+      var bs = hov && hov.classList.contains('panel') ? 19 : 14;
+      tw = th = tr = bs;
+    }
+    if (!show) { tw = th = tr = 1.5; }
+    if (drop.a < 0.02 && show) { drop.x = tx; drop.y = ty; drop.vx = drop.vy = 0; drop.pts.forEach(function (p) { p.x = tx; p.y = ty; p.vx = p.vy = 0; }); }
+    spring(drop, 'x', tx, 'vx', rect ? 240 : 360, rect ? 24 : 30, dt); spring(drop, 'y', ty, 'vy', rect ? 240 : 360, rect ? 24 : 30, dt);
+    spring(drop, 'w', tw, 'vw', 240, 20, dt); spring(drop, 'h', th, 'vh', 240, 20, dt); spring(drop, 'r', tr, 'vr', 240, 20, dt);
+    drop.a += ((show ? 1 : 0) - drop.a) * (1 - Math.exp(-dt * 10));
+    // the soft ring: each point springs to its place on the outline, smoothed by its neighbours, lagging the centre like jelly
+    var k = Math.min(5, Math.max(drop.r, 0) * 0.45), hw = Math.max(drop.w - k, 0.5), hh = Math.max(drop.h - k, 0.5), rr = Math.max(drop.r - k, 0.3);
+    drop.k = k;
+    var T = [];
+    for (i = 0; i < NR; i++) { var q = rrPoint(i / NR, hw, hh, rr); T.push([drop.x + q[0], drop.y + q[1]]); }
+    for (i = 0; i < NR; i++) {
+      var p = drop.pts[i], a = T[i], pa = drop.pts[(i + NR - 1) % NR], pb = drop.pts[(i + 1) % NR], ta = T[(i + NR - 1) % NR], tb = T[(i + 1) % NR];
+      var lx = (pa.x + pb.x) / 2 - p.x - ((ta[0] + tb[0]) / 2 - a[0]), ly = (pa.y + pb.y) / 2 - p.y - ((ta[1] + tb[1]) / 2 - a[1]);
+      var ax = 150 * (a[0] - p.x) + 55 * lx - 9 * (p.vx - drop.vx) - 2.5 * p.vx;
+      var ay = 150 * (a[1] - p.y) + 55 * ly - 9 * (p.vy - drop.vy) - 2.5 * p.vy;
+      // hydrogel: where the outline sits on a word it is nudged into the gap between lines, so the droplet threads through text
+      if (!drop.mode) for (var j = 0; j < near.length; j++) {
+        var w = near[j], ex = p.x - (w.cx + w.ox), ey = p.y - (w.cy + w.oy);
+        if (Math.abs(ex) < w.hw + 1 && Math.abs(ey) < w.hh * 0.75) { var pen = w.hh * 0.75 - Math.abs(ey); ay += (ey >= 0 ? 1 : -1) * Math.min(pen, 6) * 260; ax += (ex >= 0 ? 1 : -1) * Math.min(pen, 6) * 40; }
+      }
+      p.vx += ax * dt; p.vy += ay * dt; p.x += p.vx * dt; p.y += p.vy * dt;
+      if (Math.abs(p.x - a[0]) > 60 || Math.abs(p.y - a[1]) > 60) { p.x = a[0]; p.y = a[1]; }
+    }
+    G.render(t);
+    G.perf(dt);
+    if (!root.classList.contains('ready')) root.classList.add('ready');
+    return !reduce || moving || drop.a > 0.01 || show;
+  });
+
+  /* ---------- Letters ripple like a water surface ---------- */
+  function Wave(el) {
+    var L = letters(el).map(function (s) { return { el: s, y: 0, v: 0, cx: 0, cy: 0, hh: 10 }; }), box = null, awake = false;
     measurers.push(function () {
       var r = el.getBoundingClientRect(); box = r.width > 0 ? r : null;
       if (!box) return;
-      letters.forEach(function (L) { var q = L.el.getBoundingClientRect(); L.cx = q.left + q.width / 2; L.cy = q.top + q.height / 2 - L.y; L.hh = q.height / 2; });
+      L.forEach(function (q) { var b = q.el.getBoundingClientRect(); q.cx = b.left + b.width / 2; q.cy = b.top + b.height / 2 - q.y; q.hh = b.height / 2; });
     });
     if (reduce) return;
     parts.push(function (dt) {
       if (!box) return false;
-      var near = P.inside && P.x > box.left - 30 && P.x < box.right + 30 && P.y > box.top - 30 && P.y < box.bottom + 30;
-      if (!near && !awake) return false;
-      var n = letters.length, energy = 0, fx = P.dx, fy = P.dy;
-      for (var i = 0; i < n; i++) {
-        var L = letters[i], a = -70 * L.y - 6.5 * L.v;
-        if (i > 0) a += 55 * (letters[i - 1].y - L.y);
-        if (i < n - 1) a += 55 * (letters[i + 1].y - L.y);
-        if (near) {
-          var dx = P.x - L.cx, dy = P.y - L.cy;
-          if (Math.abs(dy) < L.hh * 1.3) { var f = Math.exp(-dx * dx / 700); a += (clamp(fy, -40, 40) * 60 + Math.min(Math.abs(fx), 40) * 22) * f; }
-        }
-        L.v += a * dt;
+      var nr = P.inside && P.x > box.left - 30 && P.x < box.right + 30 && P.y > box.top - 30 && P.y < box.bottom + 30;
+      if (!nr && !awake) return false;
+      var n = L.length, energy = 0, i;
+      for (i = 0; i < n; i++) {
+        var q = L[i], a = -70 * q.y - 6.5 * q.v;
+        if (i > 0) a += 55 * (L[i - 1].y - q.y);
+        if (i < n - 1) a += 55 * (L[i + 1].y - q.y);
+        if (nr) { var dx = P.x - q.cx, dy = P.y - q.cy; if (Math.abs(dy) < q.hh * 1.3) { var f = Math.exp(-dx * dx / 700); a += (clamp(P.dy, -40, 40) * 60 + Math.min(Math.abs(P.dx), 40) * 22) * f; } }
+        q.v += a * dt;
       }
-      for (var j = 0; j < n; j++) { var M = letters[j]; M.y = clamp(M.y + M.v * dt, -26, 26); energy += Math.abs(M.y) + Math.abs(M.v) * 0.05; }
-      for (var k = 0; k < n; k++) {
-        var Q = letters[k], sl = ((k < n - 1 ? letters[k + 1].y : Q.y) - (k > 0 ? letters[k - 1].y : Q.y)) * 1.1;
-        Q.el.style.transform = 'translate3d(0,' + Q.y.toFixed(2) + 'px,0) rotate(' + clamp(sl, -14, 14).toFixed(2) + 'deg)';
+      for (i = 0; i < n; i++) { L[i].y = clamp(L[i].y + L[i].v * dt, -26, 26); energy += Math.abs(L[i].y) + Math.abs(L[i].v) * 0.05; }
+      for (i = 0; i < n; i++) {
+        var sl = ((i < n - 1 ? L[i + 1].y : L[i].y) - (i > 0 ? L[i - 1].y : L[i].y)) * 1.1;
+        L[i].el.style.transform = 'translate3d(0,' + L[i].y.toFixed(2) + 'px,0) rotate(' + clamp(sl, -14, 14).toFixed(2) + 'deg)';
       }
-      awake = near || energy > 0.01 * n;
-      if (!awake) letters.forEach(function (Lr) { Lr.y = Lr.v = 0; Lr.el.style.transform = ''; });
+      awake = nr || energy > 0.01 * n;
+      if (!awake) L.forEach(function (q) { q.y = q.v = 0; q.el.style.transform = ''; });
       return awake;
     });
   }
   $$('[data-wave]').forEach(Wave);
+
+  /* ---------- DNA / RNA decode: letters flicker through A C G U, then lock into place ---------- */
+  var NT = 'ACGU', scr = [];
+  function Decoder(el) {
+    var L = letters(el).map(function (s) { return { el: s, c: s.textContent, on: false, s: 0, e: 0, last: 0, w: 0 }; });
+    var d = { el: el, run: false, t0: 0, noise: false };
+    function flip(x) { var n = NT[(Math.random() * 4) | 0]; x.el.textContent = n; x.el.className = 'ch nt n' + n; x.on = true; }
+    d.go = function (noise, delay) {
+      if (reduce || d.run || !el.getClientRects().length) return;
+      d.run = true; d.noise = noise; d.t0 = now() + (delay || 0);
+      L.forEach(function (x) { x.w = x.el.getBoundingClientRect().width; });
+      L.forEach(function (x, i) { x.el.style.width = x.w + 'px'; x.s = i * 24 + Math.random() * 60; x.e = x.s + (noise ? 340 : 220) + Math.random() * 160; x.last = 0; if (noise) flip(x); });
+      scr.push(d); wake();
+    };
+    d.step = function (tn) {
+      var e = tn - d.t0, done = true;
+      L.forEach(function (x) {
+        if (e < x.e) { done = false; if ((e >= x.s || d.noise) && tn - x.last > 60) { x.last = tn; flip(x); } }
+        else if (x.on) { x.el.textContent = x.c; x.el.className = 'ch'; x.el.style.width = ''; x.on = false; }
+      });
+      if (done) d.run = false;
+      return !done;
+    };
+    return d;
+  }
+  var decoders = $$('[data-dna]').map(function (el) { var d = Decoder(el); el._dna = d; return d; });
+  parts.push(function () {
+    if (!scr.length) return false;
+    var tn = now();
+    scr = scr.filter(function (d) { return d.step(tn); });
+    return scr.length > 0;
+  });
+  function decodeIntro() {
+    root.classList.remove('dna-pre');
+    var k = 0;
+    decoders.forEach(function (d) { if (d.el.hasAttribute('data-dna-load')) d.go(true, 120 + (k++) * 110); });
+  }
+  // hover re-decodes: the name, and each panel's title when you point at the panel
+  $$('[data-dna]').forEach(function (el) {
+    var host = el.closest('.panel') || el;
+    host.addEventListener('pointerenter', function () { el._dna.go(false, 0); });
+  });
+  // now and then, one heading quietly re-sequences itself
+  if (!reduce) setInterval(function () {
+    if (D.hidden) return;
+    var vis = decoders.filter(function (d) { return d.el.getClientRects().length && !d.run; });
+    if (vis.length) vis[(Math.random() * vis.length) | 0].go(false, 0);
+  }, 7000);
 
   /* ---------- Panel A: NeKtar-1 helical wheel you can flick ---------- */
   var SEQ = 'GRWGFGWARIRGSVGFGKK';
@@ -793,8 +778,7 @@ html:not(.gl) body { background-image: linear-gradient(rgba(20, 20, 20, .045) 1p
   var KNAME = { h: 'hydrophobic', c: 'cationic', o: 'small, flexible' };
   var SPIN = { a: 0, w: 10, drag: false }, suppressUntil = 0;
   parts.push(function (dt) {
-    if (reduce) return false;
-    if (!SPIN.drag) { SPIN.a += SPIN.w * dt; var tg = (SPIN.w >= 0 ? 1 : -1) * 10; SPIN.w += (tg - SPIN.w) * (1 - Math.exp(-0.7 * dt)); }
+    if (!reduce && !SPIN.drag) { SPIN.a += SPIN.w * dt; var tg = (SPIN.w >= 0 ? 1 : -1) * 10; SPIN.w += (tg - SPIN.w) * (1 - Math.exp(-0.7 * dt)); }
     return false;
   });
   function Wheel(slot, say) {
@@ -819,12 +803,12 @@ html:not(.gl) body { background-image: linear-gradient(rgba(20, 20, 20, .045) 1p
     svg.addEventListener('pointerup', end); svg.addEventListener('pointercancel', end); svg.addEventListener('lostpointercapture', end);
     parts.push(function (dt, t) {
       if (!M.vis) return false;
-      var near = M.near(40), lx = M.lx(), ly = M.ly(), pts = '', best = -1, bd = 18;
+      var nr = M.near(40), lx = M.lx(), ly = M.ly(), pts = '', best = -1, bd = 18;
       for (var i = 0; i < B.length; i++) {
         var b = B[i], ang = (-90 + i * 100 + SPIN.a) * Math.PI / 180;
         var bx = 150 + b.rad * Math.cos(ang), by = 150 + b.rad * Math.sin(ang) + (reduce ? 0 : Math.sin(t * 1.3 + i * 0.8) * 2.2);
         var ax = -150 * b.ox - 13 * b.vx, ay = -150 * b.oy - 13 * b.vy;
-        if (near && !drag) {
+        if (nr && !drag) {
           var dx = bx + b.ox - lx, dy = by + b.oy - ly, d = Math.hypot(dx, dy);
           if (d < bd) { bd = d; best = i; }
           if (d < 58 && d > 0.01) { var f = (58 - d) / 58; f = f * f * 5200; ax += dx / d * f; ay += dy / d * f; }
@@ -840,12 +824,6 @@ html:not(.gl) body { background-image: linear-gradient(rgba(20, 20, 20, .045) 1p
         hovI = best;
         if (best >= 0) svg.appendChild(B[best].g);
         if (say) { say.textContent = best >= 0 ? SEQ[best] + (best + 1) + ' · ' + NAME[SEQ[best]] + ' · ' + KNAME[kind(SEQ[best])] : defSay; say.classList.toggle('on', best >= 0); }
-      }
-      // a fast spin churns the ink around it
-      if (ink && !ink.still && Math.abs(SPIN.w) > 140) {
-        var j = Math.floor(Math.random() * B.length), bb = B[j], aa = (-90 + j * 100 + SPIN.a) * Math.PI / 180, kk = kind(SEQ[j]);
-        var tv = SPIN.w * Math.PI / 180 * bb.rad * M.s;
-        ink.splat(M.ox + bb.x * M.s, M.oy + bb.y * M.s, -Math.sin(aa) * tv * 0.8, Math.cos(aa) * tv * 0.8, kk === 'c' ? DYE.B : kk === 'h' ? DYE.C : DYE.A, 0.012, 20);
       }
       return !reduce;
     });
@@ -906,15 +884,15 @@ html:not(.gl) body { background-image: linear-gradient(rgba(20, 20, 20, .045) 1p
     var M = Mapper(svg), st = { e: 0, ve: 0 };
     parts.push(function (dt, t) {
       if (!M.vis) return false;
-      var near = M.near(10), lx = M.lx(), ly = M.ly(), pdx = P.dx / M.s, pdy = P.dy / M.s;
-      spring(st, 'e', near ? 1 : 0, 've', 40, 8, dt);
+      var nr = M.near(10), lx = M.lx(), ly = M.ly(), pdx = P.dx / M.s, pdy = P.dy / M.s;
+      spring(st, 'e', nr ? 1 : 0, 've', 40, 8, dt);
       var e = st.e, d = '';
       for (var i = 0; i < pts.length; i++) {
         var p = pts[i];
         if (p.j === 0) { d += 'M150 150'; continue; }
         var w = reduce ? 0 : Math.sin(t * 1.5 + p.j * 0.55 + p.si * 1.9) * (1.8 + 4.5 * e) * p.k;
         var ax = -55 * p.ox - 7 * p.vx, ay = -55 * p.oy - 7 * p.vy;
-        if (near) {
+        if (nr) {
           var dx = p.x - lx, dy = p.y - ly, dd = Math.hypot(dx, dy);
           if (dd < 46 && dd > 0.01) { var f = (46 - dd) / 46; f = f * f * p.k; ax += (dx / dd * 2600 + pdx * 260) * f; ay += (dy / dd * 2600 + pdy * 260) * f; }
         }
@@ -926,7 +904,7 @@ html:not(.gl) body { background-image: linear-gradient(rgba(20, 20, 20, .045) 1p
       for (var b = 0; b < bact.length; b++) {
         var q = bact[b], qx = q.bx + Math.sin(t * 0.9 + q.i * 2.1) * 3, qy = q.by + Math.cos(t * 0.8 + q.i * 1.3) * 3;
         var bx2 = -40 * q.ox - 6 * q.vx, by2 = -40 * q.oy - 6 * q.vy;
-        if (near) { var ex = qx + q.ox - lx, ey = qy + q.oy - ly, ed = Math.hypot(ex, ey); if (ed < 40 && ed > 0.01) { var g = (40 - ed) / 40; g = g * g * 3000; bx2 += ex / ed * g; by2 += ey / ed * g; } }
+        if (nr) { var ex = qx + q.ox - lx, ey = qy + q.oy - ly, ed = Math.hypot(ex, ey); if (ed < 40 && ed > 0.01) { var g = (40 - ed) / 40; g = g * g * 3000; bx2 += ex / ed * g; by2 += ey / ed * g; } }
         q.vx += bx2 * dt; q.vy += by2 * dt; q.ox += q.vx * dt; q.oy += q.vy * dt;
         q.el.setAttribute('transform', 'translate(' + (qx + q.ox).toFixed(1) + ' ' + (qy + q.oy).toFixed(1) + ') rotate(' + (q.rot + Math.sin(t * 1.2 + q.i) * 12 + q.vx * 0.3).toFixed(1) + ')');
       }
@@ -944,7 +922,7 @@ html:not(.gl) body { background-image: linear-gradient(rgba(20, 20, 20, .045) 1p
   D.addEventListener('click', function (e) { if (now() < suppressUntil) { e.preventDefault(); e.stopPropagation(); suppressUntil = 0; } }, true);
 
   /* ---------- Panel ⇄ detail: the drawing morphs, and the new view pours in from where you clicked ---------- */
-  var LETTERS = ['A', 'B', 'C', 'D'];
+  var LETTERS = ['A', 'B', 'C'];
   var canVT = !!D.startViewTransition && !reduce;
   var EASE = (getComputedStyle(root).getPropertyValue('--spring-soft') || '').trim() || 'ease-out';
   function current() { var h = location.hash.slice(1); return LETTERS.indexOf(h) >= 0 ? h : ''; }
@@ -954,11 +932,15 @@ html:not(.gl) body { background-image: linear-gradient(rgba(20, 20, 20, .045) 1p
     location.hash = '';
     try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
   }
+  function opened(to) {
+    measureAll();
+    var sec = to && D.getElementById(to);
+    if (sec) { var big = $('.big', sec); if (big && !reduce) { big._lift = -4; big._lv = 0; } var h = $('[data-dna]', sec); if (h && h._dna) h._dna.go(true, 150); }
+  }
   function go(to, ox, oy) {
     var from = current();
     if (to === from) return;
-    if (ink && !ink.still) ink.splat(ox, oy, 0, 0, DYE[to || from] || DYE.D, 0.55, 70);
-    if (!canVT) { setHash(to); measureAll(); return; }
+    if (!canVT) { setHash(to); opened(to); return; }
     var src = from ? artOf(from, true) : artOf(to, false), dst = null;
     if (src) src.style.viewTransitionName = 'art';
     var tr = D.startViewTransition(function () {
@@ -966,7 +948,7 @@ html:not(.gl) body { background-image: linear-gradient(rgba(20, 20, 20, .045) 1p
       setHash(to);
       dst = to ? artOf(to, true) : artOf(from, false);
       if (dst) dst.style.viewTransitionName = 'art';
-      measureAll();
+      opened(to);
     });
     tr.ready.then(function () {
       var R = Math.hypot(Math.max(ox, innerWidth - ox), Math.max(oy, innerHeight - oy));
@@ -990,50 +972,23 @@ html:not(.gl) body { background-image: linear-gradient(rgba(20, 20, 20, .045) 1p
     var c = current();
     if (!c) return;
     var cy = innerHeight / 2;
-    if (e.key === 'Escape') { if (!$('#card').hidden) return; e.preventDefault(); go('', innerWidth / 2, cy); }
-    else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); go(LETTERS[(LETTERS.indexOf(c) + (e.key === 'ArrowRight' ? 1 : 3)) % 4], e.key === 'ArrowRight' ? innerWidth - 40 : 40, cy); }
+    if (e.key === 'Escape') { e.preventDefault(); go('', innerWidth / 2, cy); }
+    else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); go(LETTERS[(LETTERS.indexOf(c) + (e.key === 'ArrowRight' ? 1 : 2)) % 3], e.key === 'ArrowRight' ? innerWidth - 40 : 40, cy); }
   });
-
-  /* ---------- Acknowledgements: hover bolds, click shows the logo card ---------- */
-  var AW = [
-    ['Regeneron Biomedical Science Award', 'Regeneron', 'logos/regeneron.png'],
-    ['AstraZeneca Exceptional Project Award', 'AstraZeneca', 'logos/astrazeneca.png'],
-    ['MRIGlobal 1st Place Project Award', 'MRIGlobal', 'logos/mriglobal.png'],
-    ['2nd Place, State Biomedical Debate', 'HOSA-Future Health Professionals', 'logos/hosa.jpg'],
-    ['3rd Place', 'Science Montgomery', 'logos/sciencemontgomery.jpg'],
-    ['James Phang Aspiring Scientist Award', 'Metro Bethesda Rotary', 'logos/rotary.png']
-  ];
-  var card = $('#card'), wrap = $('#awards'), openAw = null;
-  function hideCard() { card.hidden = true; if (openAw) { openAw.setAttribute('aria-expanded', 'false'); openAw = null; } }
-  function showCard(btn) {
-    var a = AW[+btn.getAttribute('data-i')];
-    $('#card-img').src = a[2]; $('#card-img').alt = a[1] + ' logo';
-    $('#card-nm').textContent = a[0]; $('#card-og').textContent = 'Presented by ' + a[1];
-    card.hidden = false;
-    var wr = wrap.getBoundingClientRect(), br = btn.getBoundingClientRect(), box = btn.closest('.info').getBoundingClientRect();
-    var below = br.bottom + card.offsetHeight + 8 <= box.bottom;
-    card.style.top = (below ? br.bottom - wr.top + 6 : br.top - wr.top - card.offsetHeight - 6) + 'px';
-    card.style.transformOrigin = below ? '30% 0' : '30% 100%';
-    if (openAw) openAw.setAttribute('aria-expanded', 'false');
-    btn.setAttribute('aria-expanded', 'true'); openAw = btn;
-  }
-  wrap.addEventListener('click', function (e) { var b = e.target.closest('.award'); if (!b) return; if (openAw === b) hideCard(); else showCard(b); });
-  $('#card-x').addEventListener('click', function () { var b = openAw; hideCard(); if (b) b.focus(); });
-  D.addEventListener('click', function (e) { if (openAw && !(e.target.closest && e.target.closest('#awards'))) hideCard(); });
-  D.addEventListener('keydown', function (e) { if (e.key === 'Escape' && openAw) { var b = openAw; hideCard(); b.focus(); } });
-  $$('.info').forEach(function (el) { el.addEventListener('scroll', function () { hideCard(); soon(); }, { passive: true }); });
-  addEventListener('hashchange', hideCard);
+  $$('.info').forEach(function (el) { el.addEventListener('scroll', soon, { passive: true }); });
 
   /* ---------- Copy email ---------- */
   var copyBtn = $('#copy'), liveMsg = $('#copy-live'), tmr;
   function said(m) { copyBtn.textContent = m; liveMsg.textContent = m; clearTimeout(tmr); tmr = setTimeout(function () { copyBtn.textContent = 'Copy email'; liveMsg.textContent = ''; }, 1800); }
   copyBtn.addEventListener('click', function () {
-    function sel() { var r = D.createRange(); r.selectNodeContents($('#email-text')); var s = getSelection(); s.removeAllRanges(); s.addRange(r); said('Address selected'); }
-    try { navigator.clipboard.writeText('neilpanchal08@gmail.com').then(function () { said('Email copied'); }, sel); } catch (e) { sel(); }
+    try { navigator.clipboard.writeText('neilpanchal08@gmail.com').then(function () { said('Email copied'); }, function () { said('neilpanchal08@gmail.com'); }); } catch (e) { said('neilpanchal08@gmail.com'); }
   });
+  if (!fine) { var hn = $('#hint'); if (hn) hn.innerHTML = '<i>Drag</i> through the text · <i>flick</i> the wheel'; }
 
   measureAll();
-  if (D.fonts && D.fonts.ready) D.fonts.ready.then(measureAll);
+  var started = false;
+  function start() { if (started) return; started = true; measureAll(); decodeIntro(); var c = current(); if (c) opened(c); }
+  if (D.fonts && D.fonts.ready) { D.fonts.ready.then(start); setTimeout(start, 900); } else start();
   addEventListener('load', measureAll);
   wake();
 })();
