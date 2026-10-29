@@ -151,18 +151,73 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
 .acks .org { display: block; font-size: 12px; color: var(--muted); line-height: 1.3; }
 .acks .short { display: none; }
 
-/* Drawings */
-.w-dot.h { fill: var(--yellow); }
-.w-dot.c { fill: var(--blue); }
-.w-dot.o { fill: var(--paper); stroke: var(--ink); stroke-width: 1.4; }
-.w-line { fill: none; stroke: var(--red); stroke-width: 1.1; stroke-opacity: .4; stroke-linejoin: round; }
-.w-t { font: 600 15px var(--sans); fill: var(--ink); text-anchor: middle; dominant-baseline: central; pointer-events: none; }
-.w-t.c { fill: #fff; }
+/* Panel marks: one shape, one primary colour each */
+.hx-front { fill: none; stroke: var(--red); stroke-width: 12; stroke-linecap: round; }
+.hx-back { fill: none; stroke: var(--red); stroke-opacity: .32; stroke-width: 8; stroke-linecap: round; }
 .b-line { fill: none; stroke: var(--bone-line); stroke-width: 3; }
 .b-fill { fill: var(--bone-fill); }
-.b-model { fill: var(--blue); fill-opacity: .14; stroke: var(--blue); stroke-width: 2.2; stroke-linejoin: round; }
-.n-dna { fill: none; stroke: var(--ochre); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; stroke-opacity: .9; }
+.bm-fill { fill: var(--blue); }
+.ry { fill: none; stroke: var(--yellow); stroke-width: 5; stroke-linecap: round; }
 .n-nuc { fill: var(--yellow); }
+
+/* Detail scenes: the picture changes with each step */
+.scene { overflow: visible; cursor: pointer; }
+.scene.still * { transition: none !important; }
+.w-dot.h { fill: var(--yellow); }
+.w-dot.c { fill: var(--blue); }
+.w-dot.o { fill: var(--paper); stroke: var(--ink); stroke-width: 1.3; }
+.w-t { font: 600 10.5px var(--sans); fill: var(--ink); text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+.w-t.c { fill: #fff; }
+.lbl { font: italic 400 15px var(--serif); fill: var(--muted); text-anchor: middle; }
+.lbl.up { font: 600 11px var(--sans); font-style: normal; letter-spacing: .02em; }
+.sA .bead { transition: transform 1.05s var(--spring-soft); }
+.sA .memb { opacity: 0; transition: opacity .6s; }
+.sA .memb circle { fill: var(--muted); opacity: .35; }
+.sA[data-step="1"] .memb { opacity: 1; }
+.halo { fill: var(--blue); opacity: 0; transition: opacity .6s .5s; }
+.sA[data-step="1"] .halo { opacity: .25; }
+.sA .bact { opacity: 0; transition: opacity .4s; }
+.sA[data-step="2"] .bact { opacity: 1; }
+.sA .bact rect { fill: var(--ink); opacity: .75; transform-box: fill-box; transform-origin: center; }
+.sA[data-step="2"] .bact rect { animation: kill 2.8s var(--spring-soft) both; }
+@keyframes kill { 0% { opacity: 0; transform: scale(.5); } 22% { opacity: .75; transform: scale(1); } 62% { opacity: .75; transform: scale(1); } 100% { opacity: .12; transform: scale(.6) rotate(30deg); } }
+
+.sB .tile { transform-box: view-box; transform-origin: 200px 150px; transition: transform 1.05s var(--spring-soft), opacity .6s; }
+.sB .frame { opacity: 0; transition: opacity .5s; }
+.sB .fl { fill: #f3efe7; }
+.sB .wl-line { fill: none; stroke: #cbbfa9; stroke-width: 3; opacity: 0; transition: opacity .5s; }
+.sB .wl-fill { fill: #e9dfcd; opacity: 0; transition: opacity .5s; }
+.sB[data-step="1"] :is(.wl-line, .wl-fill) { opacity: 1; }
+.sB .fr { fill: #070c24; }
+.sB .tr { opacity: 0; }
+.sB[data-step="1"] .tl { transform: translate(-100px, 0) scale(.5); }
+.sB[data-step="1"] .tr { transform: translate(100px, 0) scale(.5); opacity: 1; }
+.sB[data-step="1"] .frame { opacity: 1; }
+.sB .fb { fill: url(#fluo); }
+.sB .lab { opacity: 0; transition: opacity .4s; }
+.sB[data-step="1"] .lab { opacity: 1; transition-delay: .45s; }
+.seg { fill: var(--blue); fill-opacity: 0; stroke: var(--blue); stroke-width: 3; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1.2s ease .25s, fill-opacity .6s 1s; }
+.sB[data-step="2"] .seg { stroke-dashoffset: 0; fill-opacity: .16; }
+.flag { fill: none; stroke: var(--red); stroke-width: 2.4; stroke-dasharray: 4 5; opacity: 0; transform-box: fill-box; transform-origin: center; transform: scale(.5); transition: opacity .4s 1.3s, transform .8s var(--spring) 1.3s; }
+.sB .flag-l { opacity: 0; transition: opacity .4s 1.6s; fill: var(--red); }
+.sB[data-step="2"] .flag { opacity: 1; transform: scale(1); }
+.sB[data-step="2"] .flag-l { opacity: 1; }
+
+.sC .press, .sC .flow { opacity: 0; transition: opacity .5s; }
+.sC[data-step="1"] .press, .sC[data-step="1"] .flow { opacity: 1; }
+.sC .press path { fill: none; stroke: var(--ink); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.sC .flow line { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 6 12; animation: flowmove 1.1s linear infinite; }
+@keyframes flowmove { to { stroke-dashoffset: -18; } }
+.sC .cell { transform-box: view-box; transform-origin: 200px 150px; transition: transform 1s var(--spring); }
+.sC[data-step="1"] .cell { transform: scale(1.26, .78); }
+.sC .cm { fill: var(--yellow); fill-opacity: .18; stroke: var(--yellow); stroke-width: 2.6; transform-box: fill-box; transform-origin: center; transition: opacity .6s, transform .9s var(--spring-soft); }
+.sC[data-step="2"] .cm { opacity: 0; transform: scale(1.5); }
+.strand { fill: none; stroke: var(--yellow); stroke-width: 2.4; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0; transition: stroke-dashoffset 1.1s ease, opacity .15s; }
+.sC[data-step="2"] .strand { stroke-dashoffset: 0; opacity: 1; }
+.bug { transition: transform 1.3s var(--spring-soft); }
+.bug rect { fill: var(--blue); transform-box: fill-box; transform-origin: center; animation: bob 3.2s ease-in-out infinite alternate; }
+@keyframes bob { to { transform: translateY(5px) rotate(14deg); } }
+.sC[data-step="2"] .bug rect { animation-play-state: paused; }
 
 /* Footer */
 .supp { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 24px; padding: 7px 8px 7px 12px; border-radius: 20px; font-size: 12.5px; color: var(--muted); }
@@ -175,13 +230,13 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
 .theme svg { width: 16px; height: 16px; transition: transform .7s var(--spring); }
 :root[data-theme="dark"] .theme svg { transform: rotate(180deg); }
 
-/* ---------- Detail views, opened by #A–#C (work without JavaScript) ---------- */
-.detail { display: none; grid-row: 1 / span 2; grid-column: 1; min-height: 0; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(20px, 4vw, 64px); }
+/* ---------- Detail views, opened by #A–#C: full screen, a picture and three steps ---------- */
+.detail { display: none; grid-row: 1 / -1; grid-column: 1; min-height: 0; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: clamp(20px, 4vw, 64px); }
 .detail:target { display: grid; }
-.page:has(.detail:target) :is(.intro, .main) { display: none; }
-.big { display: grid; grid-template-rows: minmax(0, 1fr) auto; min-height: 0; padding: 18px 20px; border-radius: 28px; }
-.say { font-size: 12.5px; color: var(--muted); min-height: 1.5em; }
-.say.on { color: var(--ink); font-weight: 500; }
+.page:has(.detail:target) :is(.intro, .main, .supp) { display: none; }
+.big { display: grid; min-height: 0; padding: clamp(14px, 2.4vw, 32px); border-radius: 30px; }
+.big .art { min-height: 0; }
+.big .art > svg { top: 0; height: 100%; }
 .info { min-height: 0; overflow: auto; overscroll-behavior: contain; padding: 4px 6px 4px 4px; display: flex; flex-direction: column; }
 .detail:target .info > * { animation: rise .9s var(--spring-soft) backwards; }
 .detail:target .info > :nth-child(2) { animation-delay: .04s; }
@@ -189,17 +244,27 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
 .detail:target .info > :nth-child(4) { animation-delay: .12s; }
 .detail:target .info > :nth-child(n+5) { animation-delay: .16s; }
 @keyframes rise { from { opacity: 0; transform: translateY(18px); } }
-.back { align-self: flex-start; font-size: 13.5px; font-weight: 500; color: var(--ink); padding: 6px 12px; margin: -6px -12px clamp(10px, 2.6vh, 30px); border-radius: 999px; }
+.back { align-self: flex-start; font-size: 13.5px; font-weight: 500; color: var(--ink); padding: 6px 12px; margin: -6px -12px clamp(10px, 2.6vh, 28px); border-radius: 999px; }
 .info .k2 { font-size: 12.5px; font-weight: 600; }
-.detail h2 { margin-top: 6px; font-size: clamp(36px, 1.2rem + 3.4vw, 72px); line-height: 1; letter-spacing: -0.035em; }
-.lead { margin-top: 18px; font-size: clamp(15.5px, .9rem + .3vw, 18.5px); line-height: 1.55; color: var(--body); max-width: 44ch; }
-.rows { margin: 24px 0 0; display: grid; }
-.rows > div { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 12px; padding: 12px 0; border-top: 1px solid var(--hair); }
-.rows dt { font-size: 12.5px; color: var(--muted); font-weight: 500; padding-top: 2px; }
-.rows dd { margin: 0; font-size: 15px; color: var(--ink); min-width: 0; overflow-wrap: anywhere; }
-.rows dd.seq { font: 500 15px var(--mono); letter-spacing: .06em; }
-.rows a { padding: 2px 6px; margin: -2px -6px; border-radius: 999px; text-decoration: underline; text-decoration-color: var(--hair); text-underline-offset: 3px; }
-.next { margin-top: auto; padding-top: 22px; font-size: 13px; }
+.detail h2 { margin-top: 6px; font-size: clamp(34px, 1.1rem + 3vw, 64px); line-height: 1; letter-spacing: -0.035em; }
+.steps { list-style: none; margin: clamp(16px, 3vh, 30px) 0 0; padding: 0; display: grid; gap: 2px; }
+.step { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 8px; width: calc(100% + 24px); margin: 0 -12px; padding: 10px 12px; border: 0; border-radius: 16px; background: none; text-align: left; color: var(--muted); cursor: pointer; }
+.step .n { font: 600 13px/1.55 var(--sans); }
+.step b { display: block; font-size: clamp(15px, .85rem + .3vw, 17px); font-weight: 600; line-height: 1.4; color: inherit; transition: color .3s; }
+.step .d { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows .7s var(--spring-soft), opacity .45s; }
+.step .d > span { overflow: hidden; display: block; padding-top: 4px; max-width: 44ch; font-size: clamp(14.5px, .85rem + .2vw, 16.5px); line-height: 1.55; color: var(--body); }
+.step.on { color: var(--ink); }
+.step.on .d { grid-template-rows: 1fr; opacity: 1; }
+#A .step.on .n { color: var(--red); }
+#B .step.on .n { color: var(--blue); }
+#C .step.on .n { color: var(--ochre); }
+.facts { margin: auto 0 0; padding-top: 22px; display: grid; gap: 7px; font-size: 13px; }
+.facts div { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 10px; }
+.facts dt { color: var(--muted); }
+.facts dd { margin: 0; color: var(--ink); min-width: 0; overflow-wrap: anywhere; }
+.facts .seq { font: 500 13px var(--mono); letter-spacing: .05em; }
+.facts a { text-decoration: underline; text-decoration-color: var(--hair); text-underline-offset: 3px; }
+.next { padding-top: 14px; font-size: 13px; }
 .next a { color: var(--ink); font-weight: 500; padding: 6px 12px; margin-left: -12px; border-radius: 999px; }
 
 ::view-transition-group(art) { animation-duration: .7s; animation-timing-function: var(--spring-soft); }
@@ -289,7 +354,7 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
       <h2 class="cap" id="fig-h" data-dna data-dna-load>Research</h2>
       <a class="panel" data-p="A" href="#A" draggable="false" data-glass aria-label="NeKtar-1: a peptide designed in code and tested at the bench. Open details.">
         <span class="art" data-art="A"></span>
-        <span class="pt"><b data-dna data-dna-load>NeKtar‑1</b><span data-say="A peptide designed in code, tested at the bench">A peptide designed in code, tested at the bench</span></span>
+        <span class="pt"><b data-dna data-dna-load>NeKtar‑1</b><span data-gel>A peptide designed in code, tested at the bench</span></span>
       </a>
       <a class="panel" data-p="B" href="#B" draggable="false" data-glass aria-label="Bone viability from surgical images. Open details.">
         <span class="art" data-art="B"></span>
@@ -315,18 +380,19 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
   </main>
 
   <section class="detail" id="A" aria-labelledby="A-h">
-    <div class="big" data-glass><span class="art" data-art="A" data-full></span>
-      <p class="say" data-say="Point at a residue to name it">Point at a residue to name it</p></div>
+    <div class="big" data-glass><span class="art" data-scene="A"></span></div>
     <div class="info">
       <a class="back" href="#">← Back</a>
       <p class="k2" style="color:var(--red)">Protein design and wet lab</p>
       <h2 id="A-h" data-wave data-dna>NeKtar‑1</h2>
-      <p class="lead" data-gel>A protein language model proposed it, and I tested it myself in a BSL‑2 lab. It was bactericidal against drug‑resistant <i>E. coli</i> and <i>P. aeruginosa</i>.</p>
-      <dl class="rows">
+      <ol class="steps">
+        <li><button class="step on" type="button" aria-pressed="true"><span class="n">1</span><span><b>Designed in code</b><span class="d"><span>A protein language model proposed new peptide sequences. NeKtar‑1 is one of them: nineteen amino acids.</span></span></span></button></li>
+        <li><button class="step" type="button" aria-pressed="false"><span class="n">2</span><span><b>Built to find bacteria</b><span class="d"><span>Like many antimicrobial peptides, it pairs positive charges (blue), which are drawn to bacterial membranes, with greasy residues (yellow) that can slip into them.</span></span></span></button></li>
+        <li><button class="step" type="button" aria-pressed="false"><span class="n">3</span><span><b>Tested at the bench</b><span class="d"><span>I tested it myself in a BSL‑2 lab. It killed drug‑resistant <i>E. coli</i> and <i>P. aeruginosa</i>.</span></span></span></button></li>
+      </ol>
+      <dl class="facts">
         <div><dt>Sequence</dt><dd class="seq">GRWGFGWARIRGSVGFGKK</dd></div>
-        <div><dt>Lab</dt><dd data-gel>IBBR, University of Maryland, 2025–26</dd></div>
-        <div><dt>Role</dt><dd data-gel>Model design and BSL‑2 assays</dd></div>
-        <div><dt>Status</dt><dd data-gel>Modeled and bench‑tested</dd></div>
+        <div><dt>Lab</dt><dd>IBBR, University of Maryland, 2025–26</dd></div>
         <div><dt>Published</dt><dd><a href="https://nhsjs.com/2026/nektar-1-amp_031-a-computationally-designed-antimicrobial-peptide-with-selective-bactericidal-activity-against-gram-negative-bacterial-pathogens/" target="_blank" rel="noopener">National High School Journal of Science</a></dd></div>
       </dl>
       <p class="next"><a href="#B">Next: Bone viability</a></p>
@@ -334,33 +400,40 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
   </section>
 
   <section class="detail" id="B" aria-labelledby="B-h">
-    <div class="big" data-glass><span class="art" data-art="B"></span></div>
+    <div class="big" data-glass><span class="art" data-scene="B"></span></div>
     <div class="info">
       <a class="back" href="#">← Back</a>
       <p class="k2" style="color:var(--blue)">Surgical imaging</p>
       <h2 id="B-h" data-wave data-dna>Bone viability</h2>
-      <p class="lead" data-gel>Surgeons often judge by eye whether bone still has blood flow. My models read white‑light and fluorescence images instead, and flag the cases they shouldn’t be trusted on.</p>
-      <dl class="rows">
-        <div><dt>Lab</dt><dd data-gel>Gan Lab, UMD, with Dartmouth, 2026–now</dd></div>
-        <div><dt>Role</dt><dd data-gel>Segmentation and calibration models</dd></div>
-        <div><dt>Status</dt><dd data-gel>Model built; clinical testing next</dd></div>
-        <div><dt>Presented</dt><dd data-gel>Poster, Mickey Dale Organ Transplantation Symposium (Oct 2026); ISBI 2027 paper in preparation</dd></div>
+      <ol class="steps">
+        <li><button class="step on" type="button" aria-pressed="true"><span class="n">1</span><span><b>Is this bone alive?</b><span class="d"><span>During surgery, whether bone still has blood flow is often judged by eye.</span></span></span></button></li>
+        <li><button class="step" type="button" aria-pressed="false"><span class="n">2</span><span><b>Two ways of seeing</b><span class="d"><span>My models read white‑light and fluorescence images of the same bone.</span></span></span></button></li>
+        <li><button class="step" type="button" aria-pressed="false"><span class="n">3</span><span><b>A map, and a warning</b><span class="d"><span>They outline the viable bone, and flag the cases they shouldn’t be trusted on.</span></span></span></button></li>
+      </ol>
+      <dl class="facts">
+        <div><dt>Lab</dt><dd>Gan Lab, UMD, with Dartmouth, 2026–now</dd></div>
+        <div><dt>Role</dt><dd>Segmentation and calibration models</dd></div>
+        <div><dt>Presented</dt><dd>Mickey Dale Organ Transplantation Symposium poster (Oct 2026); ISBI 2027 paper in preparation</dd></div>
       </dl>
       <p class="next"><a href="#C">Next: NET mechanics</a></p>
     </div>
   </section>
 
   <section class="detail" id="C" aria-labelledby="C-h">
-    <div class="big" data-glass><span class="art" data-art="C"></span></div>
+    <div class="big" data-glass><span class="art" data-scene="C"></span></div>
     <div class="info">
       <a class="back" href="#">← Back</a>
       <p class="k2" style="color:var(--ochre)">Cell mechanics</p>
       <h2 id="C-h" data-wave data-dna>NET mechanics</h2>
-      <p class="lead" data-gel>Neutrophils can burst and cast webs of DNA called NETs. Squeezing, sticking and flow all trigger it, but very few studies have modeled how. I proposed one framework that ties the triggers together.</p>
-      <dl class="rows">
-        <div><dt>Lab</dt><dd data-gel>Aranda‑Espinoza Lab, UMD, 2026–now</dd></div>
-        <div><dt>Role</dt><dd data-gel>Modeling and literature review</dd></div>
-        <div><dt>Status</dt><dd data-gel>Framework proposed; bench tests next</dd></div>
+      <ol class="steps">
+        <li><button class="step on" type="button" aria-pressed="true"><span class="n">1</span><span><b>A first responder</b><span class="d"><span>Neutrophils are white blood cells that hunt down bacteria.</span></span></span></button></li>
+        <li><button class="step" type="button" aria-pressed="false"><span class="n">2</span><span><b>Under force</b><span class="d"><span>Squeezing, sticking and flow can all push a neutrophil to burst.</span></span></span></button></li>
+        <li><button class="step" type="button" aria-pressed="false"><span class="n">3</span><span><b>A net of DNA</b><span class="d"><span>It casts out its DNA as a sticky web, a NET, that traps bacteria. Few studies have modeled how force triggers this; I proposed one framework that ties the triggers together.</span></span></span></button></li>
+      </ol>
+      <dl class="facts">
+        <div><dt>Lab</dt><dd>Aranda‑Espinoza Lab, UMD, 2026–now</dd></div>
+        <div><dt>Role</dt><dd>Modeling and literature review</dd></div>
+        <div><dt>Status</dt><dd>Framework proposed; bench tests next</dd></div>
       </dl>
       <p class="next"><a href="#A">Next: NeKtar‑1</a></p>
     </div>
@@ -842,122 +915,172 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
     host.addEventListener('pointerenter', function () { el._dna.go(false, 0); });
   });
 
-  /* ---------- NeKtar-1 helical wheel: plain dots on the main screen, lettered in its own view ---------- */
+  /* ---------- Panel marks: one shape, one primary colour each ---------- */
   var SEQ = 'GRWGFGWARIRGSVGFGKK';
-  var NAME = { G: 'glycine', R: 'arginine', W: 'tryptophan', F: 'phenylalanine', A: 'alanine', I: 'isoleucine', S: 'serine', V: 'valine', K: 'lysine' };
   function kind(a) { return 'AIVFWLM'.indexOf(a) >= 0 ? 'h' : 'RK'.indexOf(a) >= 0 ? 'c' : 'o'; }
-  var KNAME = { h: 'hydrophobic', c: 'cationic', o: 'small, flexible' };
-  var SPIN = { a: 0 };
-  parts.push(function (dt) { if (!reduce) SPIN.a += 7 * dt; return false; });
-  function Wheel(slot, say, full) {
-    var svg = mk('svg', { viewBox: '0 0 300 300', role: 'img', 'aria-label': 'Helical wheel of NeKtar-1, GRWGFGWARIRGSVGFGKK.' }, slot);
-    var path = full ? mk('path', { class: 'w-line' }, svg) : null, B = [], R0 = full ? 15 : 10;
-    for (var i = 0; i < SEQ.length; i++) {
-      var k = kind(SEQ[i]), g = mk('g', {}, svg);
-      mk('circle', { r: R0, class: 'w-dot ' + k }, g);
-      if (full) { var tx = mk('text', { class: 'w-t ' + k }, g); tx.textContent = SEQ[i]; }
-      B.push({ g: g, ox: 0, oy: 0, vx: 0, vy: 0, s: 1, vs: 0, x: 0, y: 0, rad: i < 18 ? 100 : 128 });
-    }
-    var M = Mapper(svg), hovI = -2, defSay = say ? say.getAttribute('data-say') : '';
-    parts.push(function (dt, t) {
+  var uid = 0;
+  // NeKtar-1: a red helix, turning slowly; faster when you point at it
+  function Helix(slot) {
+    var svg = mk('svg', { viewBox: '0 0 300 300', role: 'img', 'aria-label': 'A helix' }, slot);
+    var back = mk('path', { class: 'hx-back' }, svg), front = mk('path', { class: 'hx-front' }, svg);
+    var M = Mapper(svg), st = { e: 0, ve: 0, ph: 0 };
+    parts.push(function (dt) {
       if (!M.vis) return false;
-      var nr = M.near(40), lx = M.lx(), ly = M.ly(), pts = '', best = -1, bd = 18;
-      for (var i = 0; i < B.length; i++) {
-        var b = B[i], ang = (-90 + i * 100 + SPIN.a) * Math.PI / 180;
-        var bx = 150 + b.rad * Math.cos(ang), by = 150 + b.rad * Math.sin(ang) + (reduce ? 0 : Math.sin(t * 1.2 + i * 0.8) * 1.6);
-        var ax = -150 * b.ox - 16 * b.vx, ay = -150 * b.oy - 16 * b.vy;
-        if (nr) {
-          var dx = bx + b.ox - lx, dy = by + b.oy - ly, d = Math.hypot(dx, dy);
-          if (d < bd) { bd = d; best = i; }
-          if (d < 54 && d > 0.01) { var f = (54 - d) / 54; f = f * f * 3600; ax += dx / d * f; ay += dy / d * f; }
-        }
-        b.vx += ax * dt; b.vy += ay * dt; b.ox += b.vx * dt; b.oy += b.vy * dt;
-        b.x = bx + b.ox; b.y = by + b.oy;
-        spring(b, 's', i === best ? 1.3 : 1, 'vs', 300, 18, dt);
-        b.g.setAttribute('transform', 'translate(' + b.x.toFixed(1) + ' ' + b.y.toFixed(1) + ') scale(' + b.s.toFixed(3) + ')');
-        pts += (i ? 'L' : 'M') + b.x.toFixed(1) + ' ' + b.y.toFixed(1);
+      spring(st, 'e', M.near(0) ? 1 : 0, 've', 50, 13, dt);
+      if (!reduce) st.ph += dt * (0.8 + 1.6 * st.e);
+      var amp = 54 + 6 * st.e, fd = '', bd = '', pf = false, pb = false;
+      for (var i = 0; i <= 110; i++) {
+        var x = 42 + i * (216 / 110), th = x * 0.07 + st.ph, y = 150 + amp * Math.sin(th), pt = x.toFixed(1) + ' ' + y.toFixed(1);
+        if (Math.cos(th) >= 0) { fd += (pf ? 'L' : 'M') + pt; pf = true; pb = false; } else { bd += (pb ? 'L' : 'M') + pt; pb = true; pf = false; }
       }
-      if (path) path.setAttribute('d', pts);
-      if (best !== hovI) {
-        hovI = best;
-        if (best >= 0) svg.appendChild(B[best].g);
-        if (say) { say.textContent = best >= 0 ? SEQ[best] + (best + 1) + ', ' + NAME[SEQ[best]] + ' (' + KNAME[kind(SEQ[best])] + ')' : defSay; say.classList.toggle('on', best >= 0); }
-      }
+      front.setAttribute('d', fd); back.setAttribute('d', bd);
       return !reduce;
     });
   }
-
-  /* ---------- Bone: the model's outline wobbles, then settles when you point at it ---------- */
-  function Bone(slot) {
-    var svg = mk('svg', { viewBox: '0 0 300 300', role: 'img', 'aria-label': 'A bone with the segmentation model’s outline over it' }, slot);
-    var gr = mk('g', { class: 'b-line' }, svg), gf = mk('g', { class: 'b-fill' }, svg);
-    [gr, gf].forEach(function (g) { mk('rect', { x: 62, y: 134, width: 176, height: 32 }, g); [[62, 126], [62, 174], [238, 126], [238, 174]].forEach(function (c) { mk('circle', { cx: c[0], cy: c[1], r: 24 }, g); }); });
-    var model = mk('path', { class: 'b-model' }, svg);
-    var M = Mapper(svg), st = { m: 0, vm: 0 }, N = 44, pts = [];
-    for (var z = 0; z < N; z++) pts.push([0, 0]);
+  // Bone viability: a blue segmentation mask over a bone; it fills the bone when you point at it
+  function boneShapes(g) { mk('rect', { x: 62, y: 134, width: 176, height: 32 }, g); [[62, 126], [62, 174], [238, 126], [238, 174]].forEach(function (c) { mk('circle', { cx: c[0], cy: c[1], r: 24 }, g); }); }
+  function BoneMask(slot) {
+    var svg = mk('svg', { viewBox: '0 0 300 300', role: 'img', 'aria-label': 'A bone with a segmentation mask' }, slot);
+    var id = 'bclip' + (uid++), cp = mk('clipPath', { id: id }, mk('defs', {}, svg));
+    boneShapes(cp); boneShapes(mk('g', { class: 'b-line' }, svg)); boneShapes(mk('g', { class: 'b-fill' }, svg));
+    var fill = mk('rect', { class: 'bm-fill', x: 38, y: 98, height: 104, width: 120 }, mk('g', { 'clip-path': 'url(#' + id + ')' }, svg));
+    var M = Mapper(svg), st = { w: 0.55, vw: 0 };
     parts.push(function (dt, t) {
       if (!M.vis) return false;
-      spring(st, 'm', M.near(0) ? 1 : 0, 'vm', 60, 12, dt);
-      var m = clamp(st.m, -0.2, 1.2), amp = 5 * (1 - m) + 0.6;
-      var cx = 104 + 5 * m, cy = 150, ax = 64 - 2 * m, by = 22 - 4 * m;
-      for (var i = 0; i < N; i++) {
-        var th = i / N * Math.PI * 2, c = Math.cos(th), s = Math.sin(th);
-        var x = cx + ax * Math.sign(c) * Math.pow(Math.abs(c), 0.42), y = cy + by * Math.sign(s) * Math.pow(Math.abs(s), 0.42);
-        var nz = Math.sin(3 * th + t * 1.5) * 0.6 + Math.sin(5 * th - t * 1.0 + 1.3) * 0.4 + Math.sin(2 * th + t * 0.6) * 0.3;
-        pts[i][0] = x + c * amp * nz; pts[i][1] = y + s * amp * nz;
-      }
-      var d = '';
-      for (var j = 0; j <= N; j++) {
-        var p = pts[j % N], q = pts[(j + 1) % N], mx = (p[0] + q[0]) / 2, my = (p[1] + q[1]) / 2;
-        d += j === 0 ? 'M' + mx.toFixed(1) + ' ' + my.toFixed(1) : 'Q' + p[0].toFixed(1) + ' ' + p[1].toFixed(1) + ' ' + mx.toFixed(1) + ' ' + my.toFixed(1);
-      }
-      model.setAttribute('d', d + 'Z');
+      spring(st, 'w', M.near(0) ? 1 : 0.55 + (reduce ? 0 : 0.05 * Math.sin(t * 0.9)), 'vw', 40, 12, dt);
+      fill.setAttribute('width', (224 * clamp(st.w, 0, 1.05)).toFixed(1));
       return !reduce;
     });
   }
-
-  /* ---------- NET: a neutrophil's DNA strands sway as if in flow; stir them ---------- */
-  var NETD = 'M150,150 L163,148 L175,145 L188,143 L200,141 L213,138 L226,137 L239,138 L251,136 L264,137 L277,137 M150,150 L159,158 L167,165 L175,174 L182,184 L190,192 L199,199 L205,209 L215,217 L226,222 L236,228 M150,150 L153,158 L156,166 L158,174 L159,182 L161,190 L165,198 L168,206 L173,213 L176,221 L180,228 M150,150 L147,160 L145,170 L142,179 L139,189 L138,199 L136,209 L131,218 L125,227 L126,238 L120,247 M150,150 L140,158 L130,165 L119,172 L110,181 L102,191 L94,201 L87,212 L82,225 L73,233 L67,245 M150,150 L138,154 L125,156 L113,161 L100,162 L88,164 L75,166 L63,171 L51,177 L40,184 L27,187 M150,150 L139,144 L128,138 L118,131 L107,125 L95,120 L85,112 L76,103 L65,97 L53,93 L41,88 M150,150 L143,140 L135,130 L127,120 L118,111 L110,101 L103,91 L97,80 L93,67 L86,57 L75,49 M150,150 L147,139 L143,127 L141,116 L137,105 L131,94 L130,82 L129,70 L130,58 L133,45 L133,33 M150,150 L155,138 L160,126 L163,114 L169,102 L172,89 L176,77 L185,66 L189,54 L196,43 L204,33 M150,150 L157,145 L163,139 L170,134 L177,129 L185,125 L190,118 L196,113 L202,106 L206,98 L209,88';
-  var STRANDS = NETD.split('M').filter(Boolean).map(function (s) { return s.trim().split(/\s*L\s*/).map(function (p) { return p.split(',').map(Number); }); });
-  function Net(slot) {
-    var svg = mk('svg', { viewBox: '0 0 300 300', role: 'img', 'aria-label': 'A neutrophil casting strands of DNA' }, slot);
-    var path = mk('path', { class: 'n-dna' }, svg);
-    var nuc = mk('circle', { cx: 150, cy: 150, r: 21, class: 'n-nuc' }, svg);
-    var pts = [];
-    STRANDS.forEach(function (s, si) {
-      var a = s[0], z = s[s.length - 1], L = Math.hypot(z[0] - a[0], z[1] - a[1]) || 1, nx = -(z[1] - a[1]) / L, ny = (z[0] - a[0]) / L;
-      s.forEach(function (p, j) { pts.push({ bx: p[0], by: p[1], j: j, k: j / (s.length - 1), si: si, nx: nx, ny: ny, ox: 0, oy: 0, vx: 0, vy: 0, x: p[0], y: p[1] }); });
-    });
+  // NET mechanics: a yellow cell with rays of DNA that reach out further when you point at it
+  function Burst(slot) {
+    var svg = mk('svg', { viewBox: '0 0 300 300', role: 'img', 'aria-label': 'A cell casting strands' }, slot);
+    var rays = []; for (var k = 0; k < 8; k++) rays.push(mk('path', { class: 'ry' }, svg));
+    mk('circle', { cx: 150, cy: 150, r: 26, class: 'n-nuc' }, svg);
     var M = Mapper(svg), st = { e: 0, ve: 0 };
     parts.push(function (dt, t) {
       if (!M.vis) return false;
-      var nr = M.near(10), lx = M.lx(), ly = M.ly(), pdx = P.dx / M.s, pdy = P.dy / M.s;
-      spring(st, 'e', nr ? 1 : 0, 've', 40, 10, dt);
-      var e = st.e, d = '';
-      for (var i = 0; i < pts.length; i++) {
-        var p = pts[i];
-        if (p.j === 0) { d += 'M150 150'; continue; }
-        var w = reduce ? 0 : Math.sin(t * 1.3 + p.j * 0.55 + p.si * 1.9) * (1.6 + 3.6 * e) * p.k;
-        var ax = -55 * p.ox - 9 * p.vx, ay = -55 * p.oy - 9 * p.vy;
-        if (nr) {
-          var dx = p.x - lx, dy = p.y - ly, dd = Math.hypot(dx, dy);
-          if (dd < 46 && dd > 0.01) { var f = (46 - dd) / 46; f = f * f * p.k; ax += (dx / dd * 2200 + pdx * 200) * f; ay += (dy / dd * 2200 + pdy * 200) * f; }
-        }
-        p.vx += ax * dt; p.vy += ay * dt; p.ox += p.vx * dt; p.oy += p.vy * dt;
-        p.x = p.bx + p.nx * w + p.ox; p.y = p.by + p.ny * w + p.oy;
-        d += 'L' + p.x.toFixed(1) + ' ' + p.y.toFixed(1);
+      spring(st, 'e', M.near(0) ? 1 : 0, 've', 45, 12, dt);
+      var e = st.e, tt = reduce ? 0 : t;
+      for (var k = 0; k < 8; k++) {
+        var a = (k * 45 + tt * 5) * Math.PI / 180, ca = Math.cos(a), sa = Math.sin(a), r0 = 38, r1 = r0 + 36 + 30 * e + 4 * Math.sin(tt * 1.3 + k), rm = (r0 + r1) / 2;
+        var sw = Math.sin(tt * 1.5 + k * 1.3) * (5 + 6 * e);
+        rays[k].setAttribute('d', 'M' + (150 + ca * r0).toFixed(1) + ' ' + (150 + sa * r0).toFixed(1) + 'Q' + (150 + ca * rm - sa * sw).toFixed(1) + ' ' + (150 + sa * rm + ca * sw).toFixed(1) + ' ' + (150 + ca * r1).toFixed(1) + ' ' + (150 + sa * r1).toFixed(1));
       }
-      path.setAttribute('d', d);
-      nuc.setAttribute('r', (21 + Math.sin(t * 1.8) * 1 + e * 2).toFixed(2));
       return !reduce;
     });
   }
-
   $$('[data-art]').forEach(function (slot) {
-    var k = slot.getAttribute('data-art'), host = slot.closest('.panel, .big');
-    if (k === 'A') Wheel(slot, host && $('[data-say]', host), slot.hasAttribute('data-full'));
-    else if (k === 'B') Bone(slot);
-    else if (k === 'C') Net(slot);
+    var k = slot.getAttribute('data-art');
+    if (k === 'A') Helix(slot); else if (k === 'B') BoneMask(slot); else if (k === 'C') Burst(slot);
+  });
+
+  /* ---------- Detail scenes: each project explained in three pictures ---------- */
+  function rrPath(x, y, w, h, r) { return 'M' + (x + r) + ' ' + y + 'H' + (x + w - r) + 'A' + r + ' ' + r + ' 0 0 1 ' + (x + w) + ' ' + (y + r) + 'V' + (y + h - r) + 'A' + r + ' ' + r + ' 0 0 1 ' + (x + w - r) + ' ' + (y + h) + 'H' + (x + r) + 'A' + r + ' ' + r + ' 0 0 1 ' + x + ' ' + (y + h - r) + 'V' + (y + r) + 'A' + r + ' ' + r + ' 0 0 1 ' + (x + r) + ' ' + y + 'Z'; }
+  function txt(parent, x, y, cls, s) { var e = mk('text', { x: x, y: y, class: cls }, parent); e.textContent = s; return e; }
+
+  // NeKtar-1: 1 the sequence as a chain, 2 charges reaching for a membrane, 3 curled up among bacteria that die off
+  function SceneA(slot) {
+    var svg = mk('svg', { viewBox: '0 0 400 300', class: 'scene sA', role: 'img', 'aria-label': 'NeKtar-1 drawn as a chain of 19 amino acids' }, slot);
+    var memb = mk('g', { class: 'memb' }, svg);
+    for (var x = 6; x <= 394; x += 14) { mk('circle', { cx: x, cy: 244, r: 5 }, memb); mk('circle', { cx: x + 7, cy: 264, r: 5 }, memb); }
+    txt(memb, 200, 290, 'lbl up', 'BACTERIAL MEMBRANE');
+    var bact = mk('g', { class: 'bact' }, svg);
+    [[64, 96, 20], [100, 216, -18], [50, 160, 78], [336, 96, -24], [304, 220, 32], [352, 160, 84]].forEach(function (b, i) {
+      var g = mk('g', { transform: 'translate(' + b[0] + ' ' + b[1] + ') rotate(' + b[2] + ')' }, bact);
+      mk('rect', { x: -16, y: -6.5, width: 32, height: 13, rx: 6.5 }, g).style.animationDelay = (0.3 + i * 0.13) + 's';
+    });
+    txt(bact, 72, 52, 'lbl', 'E. coli'); txt(bact, 328, 52, 'lbl', 'P. aeruginosa');
+    var beads = [];
+    for (var i = 0; i < SEQ.length; i++) {
+      var k = kind(SEQ[i]), g = mk('g', { class: 'bead' }, svg);
+      if (k === 'c') mk('circle', { r: 17, class: 'halo' }, g);
+      mk('circle', { r: 10, class: 'w-dot ' + k }, g);
+      txt(g, 0, 0, 'w-t ' + k, SEQ[i]);
+      g.style.transitionDelay = (i * 24) + 'ms';
+      beads.push(g);
+    }
+    function pos(s, i) {
+      var th = i * 100 * Math.PI / 180;
+      if (s === 0) return [20 + i * 20, 150 + 7 * Math.sin(i * 0.8)];
+      if (s === 1) return [30 + i * 18.9, 176 + (kind(SEQ[i]) === 'c' ? 30 : 0) + 7 * Math.sin(i * 0.9)];
+      var r = i < 18 ? 54 : 76; return [200 + r * Math.cos(th - Math.PI / 2), 150 + r * Math.sin(th - Math.PI / 2)];
+    }
+    return { svg: svg, set: function (s) { svg.setAttribute('data-step', s); beads.forEach(function (b, i) { var p = pos(s, i); b.style.transform = 'translate(' + p[0].toFixed(1) + 'px,' + p[1].toFixed(1) + 'px)'; }); } };
+  }
+
+  // Bone viability: 1 a bone, 2 its white-light and fluorescence images, 3 the model's outline and a flag
+  function SceneB(slot) {
+    var svg = mk('svg', { viewBox: '0 0 400 300', class: 'scene sB', role: 'img', 'aria-label': 'A bone, its white-light and fluorescence images, and the model’s outline with a flagged region' }, slot);
+    var rg = mk('radialGradient', { id: 'fluo', gradientUnits: 'userSpaceOnUse', cx: 165, cy: 150, r: 160 }, mk('defs', {}, svg));
+    mk('stop', { offset: '0', 'stop-color': '#7d95ff' }, rg); mk('stop', { offset: '.5', 'stop-color': '#2453ff', 'stop-opacity': '.75' }, rg); mk('stop', { offset: '1', 'stop-color': '#2453ff', 'stop-opacity': '.12' }, rg);
+    function bone2(parent, cls) { var a = mk('g', { class: cls }, parent); mk('rect', { x: 100, y: 133, width: 200, height: 34 }, a); [[100, 124], [100, 176], [300, 124], [300, 176]].forEach(function (c) { mk('circle', { cx: c[0], cy: c[1], r: 26 }, a); }); return a; }
+    var tl = mk('g', { class: 'tile tl' }, svg); mk('rect', { x: 50, y: 60, width: 300, height: 180, rx: 28, class: 'frame fl' }, tl); bone2(tl, 'b-line'); bone2(tl, 'b-fill'); bone2(tl, 'wl-line'); bone2(tl, 'wl-fill');
+    var tr = mk('g', { class: 'tile tr' }, svg); mk('rect', { x: 50, y: 60, width: 300, height: 180, rx: 28, class: 'frame fr' }, tr); bone2(tr, 'fb');
+    txt(svg, 100, 218, 'lbl up lab', 'WHITE LIGHT'); txt(svg, 300, 218, 'lbl up lab', 'FLUORESCENCE');
+    mk('path', { d: rrPath(70, 104, 172, 92, 38), pathLength: 1, class: 'seg' }, svg);
+    mk('circle', { cx: 300, cy: 150, r: 24, class: 'flag' }, svg);
+    txt(svg, 300, 202, 'lbl up flag-l', 'FLAGGED');
+    return { svg: svg, set: function (s) { svg.setAttribute('data-step', s); } };
+  }
+
+  // NET mechanics: 1 a neutrophil among bacteria, 2 squeezed in flow, 3 bursts into a net that catches them
+  function SceneC(slot) {
+    var svg = mk('svg', { viewBox: '0 0 400 300', class: 'scene sC', role: 'img', 'aria-label': 'A neutrophil under force casting a net of DNA that traps bacteria' }, slot);
+    var flow = mk('g', { class: 'flow' }, svg); [62, 104, 196, 238].forEach(function (y) { mk('line', { x1: 16, y1: y, x2: 384, y2: y }, flow); });
+    var press = mk('g', { class: 'press' }, svg);
+    mk('path', { d: 'M56 150H122M110 140l13 10-13 10' }, press); mk('path', { d: 'M344 150H278M290 140l-13 10 13 10' }, press);
+    var net = mk('g', {}, svg);
+    for (var k = 0; k < 12; k++) {
+      var a = (k * 30 + 8) * Math.PI / 180, ca = Math.cos(a), sa = Math.sin(a), R = [50, 78, 106, 134], off = [0, 9, -9, 7];
+      var d = 'M' + (200 + ca * R[0]).toFixed(1) + ' ' + (150 + sa * R[0]).toFixed(1);
+      for (var j = 1; j < 4; j++) { var rm = (R[j - 1] + R[j]) / 2; d += 'Q' + (200 + ca * rm - sa * off[j]).toFixed(1) + ' ' + (150 + sa * rm + ca * off[j]).toFixed(1) + ' ' + (200 + ca * R[j]).toFixed(1) + ' ' + (150 + sa * R[j]).toFixed(1); }
+      mk('path', { d: d, pathLength: 1, class: 'strand' }, net).style.transitionDelay = (k * 50) + 'ms';
+    }
+    var cell = mk('g', { class: 'cell' }, svg);
+    mk('circle', { cx: 200, cy: 150, r: 50, class: 'cm' }, cell);
+    [[188, 143], [210, 140], [199, 161]].forEach(function (c) { mk('circle', { cx: c[0], cy: c[1], r: 12.5, class: 'n-nuc' }, cell); });
+    var bugs = [];
+    for (var b = 0; b < 6; b++) { var g = mk('g', { class: 'bug' }, svg); mk('rect', { x: -12, y: -5, width: 24, height: 10, rx: 5 }, g).style.animationDelay = (-b * 0.7) + 's'; bugs.push(g); }
+    function bpos(s, i) { var deg = i * 60 + 38, a = (deg + (s === 2 ? 0 : 16)) * Math.PI / 180, r = s === 2 ? 114 : 132; return [200 + r * Math.cos(a), 150 + r * Math.sin(a), deg + 90]; }
+    return { svg: svg, set: function (s) { svg.setAttribute('data-step', s); bugs.forEach(function (g, i) { var p = bpos(s, i); g.style.transform = 'translate(' + p[0].toFixed(1) + 'px,' + p[1].toFixed(1) + 'px) rotate(' + p[2] + 'deg)'; }); } };
+  }
+
+  /* Steps: plays itself when a project opens; click a step, the picture, use ← →, or scroll to move through it */
+  var STORY = {};
+  $$('.detail').forEach(function (sec) {
+    var slot = $('[data-scene]', sec), k = slot.getAttribute('data-scene');
+    var sc = k === 'A' ? SceneA(slot) : k === 'B' ? SceneB(slot) : SceneC(slot);
+    var btns = $$('.step', sec), S = { i: 0, timer: 0, sc: sc, n: btns.length };
+    S.go = function (i, user) {
+      S.i = clamp(i, 0, btns.length - 1);
+      btns.forEach(function (b, j) { b.classList.toggle('on', j === S.i); b.setAttribute('aria-pressed', j === S.i ? 'true' : 'false'); });
+      sc.set(S.i);
+      if (user) S.stop();
+      soon(); setTimeout(soon, 800);
+    };
+    S.stop = function () { clearTimeout(S.timer); S.timer = 0; };
+    S.play = function () {
+      S.stop(); if (reduce) return;
+      (function tick() { S.timer = setTimeout(function () { if (S.i < btns.length - 1) { S.go(S.i + 1); tick(); } }, 4800); })();
+    };
+    S.reset = function () {
+      sc.svg.classList.add('still'); S.go(0);
+      requestAnimationFrame(function () { requestAnimationFrame(function () { sc.svg.classList.remove('still'); }); });
+    };
+    btns.forEach(function (b, j) { b.addEventListener('click', function () { S.go(j, true); }); });
+    sc.svg.addEventListener('click', function () { S.go(S.i < btns.length - 1 ? S.i + 1 : 0, true); });
+    var acc = 0, cool = 0;
+    sec.addEventListener('wheel', function (e) {
+      var inf = e.target.closest && e.target.closest('.info');
+      if (inf && inf.scrollHeight > inf.clientHeight + 2) return;
+      acc += e.deltaY;
+      if (now() < cool || Math.abs(acc) < 50) return;
+      var dir = acc > 0 ? 1 : -1; acc = 0; cool = now() + 700;
+      if (S.i + dir >= 0 && S.i + dir < btns.length) S.go(S.i + dir, true);
+    }, { passive: true });
+    STORY[sec.id] = S;
+    S.go(0);
   });
 
   /* ---------- Panel ⇄ detail: the drawing morphs, and the new view pours in from where you clicked ---------- */
@@ -978,7 +1101,8 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
   function opened(to) {
     measureAll();
     var sec = to && D.getElementById(to);
-    if (sec) { var big = $('.big', sec); if (big && !reduce) { big._lift = -4; big._lv = 0; } var h = $('[data-dna]', sec); if (h && h._dna) h._dna.go(true, 150); }
+    Object.keys(STORY).forEach(function (id) { if (id !== to) STORY[id].stop(); });
+    if (sec) { var big = $('.big', sec); if (big && !reduce) { big._lift = -4; big._lv = 0; } var h = $('[data-dna]', sec); if (h && h._dna) h._dna.go(true, 150); var S = STORY[to]; if (S) { S.reset(); S.play(); } }
   }
   function go(to, ox, oy) {
     var from = current();
@@ -1013,7 +1137,12 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
     if (!c) return;
     var cy = innerHeight / 2;
     if (e.key === 'Escape') { e.preventDefault(); go('', innerWidth / 2, cy); }
-    else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); go(LETTERS[(LETTERS.indexOf(c) + (e.key === 'ArrowRight' ? 1 : 2)) % 3], e.key === 'ArrowRight' ? innerWidth - 40 : 40, cy); }
+    else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+      e.preventDefault();
+      var S = STORY[c], fwd = e.key === 'ArrowRight';
+      if (S && (fwd ? S.i < S.n - 1 : S.i > 0)) S.go(S.i + (fwd ? 1 : -1), true);   // steps first, then the next project
+      else go(LETTERS[(LETTERS.indexOf(c) + (fwd ? 1 : 2)) % 3], fwd ? innerWidth - 40 : 40, cy);
+    }
   });
   $$('.info').forEach(function (el) { el.addEventListener('scroll', soon, { passive: true }); });
 
