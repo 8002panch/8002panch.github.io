@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -19,11 +19,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&family=Inter:wght@400;500;600;700&display=swap">
 <script>
-// Theme before first paint: a saved choice wins, otherwise follow the system
+// Theme before first paint: a saved choice wins, otherwise dark
 (function () {
   var d = document.documentElement, t = null;
   try { t = localStorage.getItem('theme'); } catch (e) {}
-  if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  if (t !== 'light' && t !== 'dark') t = 'dark';
   d.setAttribute('data-theme', t);
   d.classList.add('dna-pre');
   setTimeout(function () { d.classList.remove('dna-pre'); }, 1500);
@@ -154,70 +154,40 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
 /* Panel marks: one shape, one primary colour each */
 .hx-front { fill: none; stroke: var(--red); stroke-width: 12; stroke-linecap: round; }
 .hx-back { fill: none; stroke: var(--red); stroke-opacity: .32; stroke-width: 8; stroke-linecap: round; }
-.b-line { fill: none; stroke: var(--bone-line); stroke-width: 3; }
-.b-fill { fill: var(--bone-fill); }
-.bm-fill { fill: var(--blue); }
+.bn-o { fill: var(--bone-fill); stroke: var(--bone-line); stroke-width: 3; }
+.bn-i { fill: var(--bone-line); fill-opacity: .55; }
+.bm-fill { fill: var(--blue); fill-opacity: .9; }
 .ry { fill: none; stroke: var(--yellow); stroke-width: 5; stroke-linecap: round; }
 .n-nuc { fill: var(--yellow); }
 
-/* Detail scenes: the picture changes with each step */
+/* Detail scenes: drawn every frame by the script, so they keep moving */
 .scene { overflow: visible; cursor: pointer; }
-.scene.still * { transition: none !important; }
 .w-dot.h { fill: var(--yellow); }
 .w-dot.c { fill: var(--blue); }
 .w-dot.o { fill: var(--paper); stroke: var(--ink); stroke-width: 1.3; }
 .w-t { font: 600 10.5px var(--sans); fill: var(--ink); text-anchor: middle; dominant-baseline: central; pointer-events: none; }
 .w-t.c { fill: #fff; }
+.chain { fill: none; stroke: var(--muted); stroke-width: 1.5; stroke-opacity: .45; stroke-linejoin: round; }
+.lip { fill: var(--muted); opacity: .35; }
+.halo { fill: var(--blue); }
+.germ { fill: var(--ink); opacity: .75; }
 .lbl { font: italic 400 15px var(--serif); fill: var(--muted); text-anchor: middle; }
 .lbl.up { font: 600 11px var(--sans); font-style: normal; letter-spacing: .02em; }
-.sA .bead { transition: transform 1.05s var(--spring-soft); }
-.sA .memb { opacity: 0; transition: opacity .6s; }
-.sA .memb circle { fill: var(--muted); opacity: .35; }
-.sA[data-step="1"] .memb { opacity: 1; }
-.halo { fill: var(--blue); opacity: 0; transition: opacity .6s .5s; }
-.sA[data-step="1"] .halo { opacity: .25; }
-.sA .bact { opacity: 0; transition: opacity .4s; }
-.sA[data-step="2"] .bact { opacity: 1; }
-.sA .bact rect { fill: var(--ink); opacity: .75; transform-box: fill-box; transform-origin: center; }
-.sA[data-step="2"] .bact rect { animation: kill 2.8s var(--spring-soft) both; }
-@keyframes kill { 0% { opacity: 0; transform: scale(.5); } 22% { opacity: .75; transform: scale(1); } 62% { opacity: .75; transform: scale(1); } 100% { opacity: .12; transform: scale(.6) rotate(30deg); } }
-
-.sB .tile { transform-box: view-box; transform-origin: 200px 150px; transition: transform 1.05s var(--spring-soft), opacity .6s; }
-.sB .frame { opacity: 0; transition: opacity .5s; }
 .sB .fl { fill: #f3efe7; }
-.sB .wl-line { fill: none; stroke: #cbbfa9; stroke-width: 3; opacity: 0; transition: opacity .5s; }
-.sB .wl-fill { fill: #e9dfcd; opacity: 0; transition: opacity .5s; }
-.sB[data-step="1"] :is(.wl-line, .wl-fill) { opacity: 1; }
 .sB .fr { fill: #070c24; }
-.sB .tr { opacity: 0; }
-.sB[data-step="1"] .tl { transform: translate(-100px, 0) scale(.5); }
-.sB[data-step="1"] .tr { transform: translate(100px, 0) scale(.5); opacity: 1; }
-.sB[data-step="1"] .frame { opacity: 1; }
-.sB .fb { fill: url(#fluo); }
-.sB .lab { opacity: 0; transition: opacity .4s; }
-.sB[data-step="1"] .lab { opacity: 1; transition-delay: .45s; }
-.seg { fill: var(--blue); fill-opacity: 0; stroke: var(--blue); stroke-width: 3; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1.2s ease .25s, fill-opacity .6s 1s; }
-.sB[data-step="2"] .seg { stroke-dashoffset: 0; fill-opacity: .16; }
-.flag { fill: none; stroke: var(--red); stroke-width: 2.4; stroke-dasharray: 4 5; opacity: 0; transform-box: fill-box; transform-origin: center; transform: scale(.5); transition: opacity .4s 1.3s, transform .8s var(--spring) 1.3s; }
-.sB .flag-l { opacity: 0; transition: opacity .4s 1.6s; fill: var(--red); }
-.sB[data-step="2"] .flag { opacity: 1; transform: scale(1); }
-.sB[data-step="2"] .flag-l { opacity: 1; }
-
-.sC .press, .sC .flow { opacity: 0; transition: opacity .5s; }
-.sC[data-step="1"] .press, .sC[data-step="1"] .flow { opacity: 1; }
+.wl-o { fill: #e9dfcd; stroke: #cbbfa9; stroke-width: 3; }
+.wl-i { fill: #c9a77a; }
+.fb-o { fill: url(#fluo); }
+.fb-i { fill: #0b1a5e; fill-opacity: .75; }
+.seg { fill: var(--blue); fill-opacity: 0; stroke: var(--blue); stroke-width: 3; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.flag { fill: none; stroke: var(--red); stroke-width: 2.4; stroke-dasharray: 4 5; opacity: 0; }
+.sB .flag-l { fill: var(--red); opacity: 0; }
 .sC .press path { fill: none; stroke: var(--ink); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
 .sC .flow line { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 6 12; animation: flowmove 1.1s linear infinite; }
 @keyframes flowmove { to { stroke-dashoffset: -18; } }
-.sC .cell { transform-box: view-box; transform-origin: 200px 150px; transition: transform 1s var(--spring); }
-.sC[data-step="1"] .cell { transform: scale(1.26, .78); }
-.sC .cm { fill: var(--yellow); fill-opacity: .18; stroke: var(--yellow); stroke-width: 2.6; transform-box: fill-box; transform-origin: center; transition: opacity .6s, transform .9s var(--spring-soft); }
-.sC[data-step="2"] .cm { opacity: 0; transform: scale(1.5); }
-.strand { fill: none; stroke: var(--yellow); stroke-width: 2.4; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0; transition: stroke-dashoffset 1.1s ease, opacity .15s; }
-.sC[data-step="2"] .strand { stroke-dashoffset: 0; opacity: 1; }
-.bug { transition: transform 1.3s var(--spring-soft); }
-.bug rect { fill: var(--blue); transform-box: fill-box; transform-origin: center; animation: bob 3.2s ease-in-out infinite alternate; }
-@keyframes bob { to { transform: translateY(5px) rotate(14deg); } }
-.sC[data-step="2"] .bug rect { animation-play-state: paused; }
+.cm { fill: var(--yellow); fill-opacity: .18; stroke: var(--yellow); stroke-width: 2.6; }
+.strand { fill: none; stroke: var(--yellow); stroke-width: 2.4; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0; }
+.bugr { fill: var(--blue); }
 
 /* Footer */
 .supp { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 24px; padding: 7px 8px 7px 12px; border-radius: 20px; font-size: 12.5px; color: var(--muted); }
@@ -255,6 +225,9 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
 .step .d > span { overflow: hidden; display: block; padding-top: 4px; max-width: 44ch; font-size: clamp(14.5px, .85rem + .2vw, 16.5px); line-height: 1.55; color: var(--body); }
 .step.on { color: var(--ink); }
 .step.on .d { grid-template-rows: 1fr; opacity: 1; }
+.step.on::after { content: ""; grid-column: 2; height: 2px; border-radius: 2px; background: currentColor; opacity: .25; transform-origin: left; animation: prog 5.2s linear both; }
+.detail.paused .step.on::after { display: none; }
+@keyframes prog { from { transform: scaleX(0); } }
 #A .step.on .n { color: var(--red); }
 #B .step.on .n { color: var(--blue); }
 #C .step.on .n { color: var(--ochre); }
@@ -322,6 +295,7 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
 }
 @media (prefers-reduced-motion: reduce) {
   .frame, .detail:target .info > * { animation: none; }
+  .step.on::after { display: none; }
   .panel, .btn.solid, .frame img, .theme svg { transition: none; }
   ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
 }
@@ -369,12 +343,12 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
     <section class="acks" data-glass aria-labelledby="ack-h">
       <h2 id="ack-h" data-dna data-dna-load>Recognized by</h2>
       <ul style="display:contents">
-        <li data-lens><span class="lg"><img src="logos/regeneron.png" alt="Regeneron"></span><span><b data-gel><span class="full">Biomedical Science Award</span><span class="short">Regeneron Biomedical</span></b><span class="org">Regeneron</span></span></li>
-        <li data-lens><span class="lg"><img src="logos/astrazeneca.png" alt="AstraZeneca"></span><span><b data-gel><span class="full">Exceptional Project Award</span><span class="short">AstraZeneca Exceptional</span></b><span class="org">AstraZeneca</span></span></li>
-        <li data-lens><span class="lg"><img src="logos/mriglobal.png" alt="MRIGlobal"></span><span><b data-gel><span class="full">1st Place Project Award</span><span class="short">MRIGlobal, 1st</span></b><span class="org">MRIGlobal</span></span></li>
-        <li data-lens><span class="lg"><img src="logos/hosa.jpg" alt="HOSA-Future Health Professionals"></span><span><b data-gel><span class="full">2nd Place, State Biomedical Debate</span><span class="short">HOSA State, 2nd</span></b><span class="org">HOSA</span></span></li>
-        <li data-lens><span class="lg"><img src="logos/sciencemontgomery.jpg" alt="Science Montgomery"></span><span><b data-gel><span class="full">3rd Place</span><span class="short">Science Montgomery, 3rd</span></b><span class="org">Science Montgomery</span></span></li>
-        <li data-lens><span class="lg"><img src="logos/rotary.png" alt="Metro Bethesda Rotary"></span><span><b data-gel><span class="full">James Phang Aspiring Scientist Award</span><span class="short">Rotary Phang Award</span></b><span class="org">Metro Bethesda Rotary</span></span></li>
+        <li data-lens data-tint="red"><span class="lg"><img src="logos/regeneron.png" alt="Regeneron"></span><span><b data-gel><span class="full">Biomedical Science Award</span><span class="short">Regeneron Biomedical</span></b><span class="org">Regeneron</span></span></li>
+        <li data-lens data-tint="blue"><span class="lg"><img src="logos/astrazeneca.png" alt="AstraZeneca"></span><span><b data-gel><span class="full">Exceptional Project Award</span><span class="short">AstraZeneca Exceptional</span></b><span class="org">AstraZeneca</span></span></li>
+        <li data-lens data-tint="yellow"><span class="lg"><img src="logos/mriglobal.png" alt="MRIGlobal"></span><span><b data-gel><span class="full">1st Place Project Award</span><span class="short">MRIGlobal, 1st</span></b><span class="org">MRIGlobal</span></span></li>
+        <li data-lens data-tint="red"><span class="lg"><img src="logos/hosa.jpg" alt="HOSA-Future Health Professionals"></span><span><b data-gel><span class="full">2nd Place, State Biomedical Debate</span><span class="short">HOSA State, 2nd</span></b><span class="org">HOSA</span></span></li>
+        <li data-lens data-tint="blue"><span class="lg"><img src="logos/sciencemontgomery.jpg" alt="Science Montgomery"></span><span><b data-gel><span class="full">3rd Place</span><span class="short">Science Montgomery, 3rd</span></b><span class="org">Science Montgomery</span></span></li>
+        <li data-lens data-tint="yellow"><span class="lg"><img src="logos/rotary.png" alt="Metro Bethesda Rotary"></span><span><b data-gel><span class="full">James Phang Aspiring Scientist Award</span><span class="short">Rotary Phang Award</span></b><span class="org">Metro Bethesda Rotary</span></span></li>
       </ul>
     </section>
   </main>
@@ -572,7 +546,7 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
 
   /* ---------- The glass droplet: a soft ring of points, like a bead of hydrogel ---------- */
   var NR = 40;
-  var drop = { x: -300, y: -300, vx: 0, vy: 0, svx: 0, svy: 0, w: 2, h: 2, r: 2, vw: 0, vh: 0, vr: 0, a: 0, u: 1, k: 0, pts: [], mode: 0 };
+  var drop = { x: -300, y: -300, vx: 0, vy: 0, svx: 0, svy: 0, w: 2, h: 2, r: 2, vw: 0, vh: 0, vr: 0, a: 0, u: 1, k: 0, pts: [], mode: 0, rm: 0, vrm: 0, ta: 0, tcol: null };
   for (var di = 0; di < NR; di++) drop.pts.push({ x: -300, y: -300, vx: 0, vy: 0 });
   // point at fraction u along a rounded rectangle's outline (starting at the right, going round)
   function rrPoint(u, hw, hh, r) {
@@ -612,13 +586,13 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
       '#define NR 40',
       'uniform vec2 uRes,uPtr;uniform float uPx,uT,uDark;',
       'uniform vec4 uBox[MAXB];uniform vec2 uRL[MAXB];uniform int uN;',
-      'uniform vec2 uPoly[NR];uniform vec4 uBB;uniform vec2 uDC;uniform float uDK,uDA,uDE;',
+      'uniform vec2 uPoly[NR];uniform vec4 uBB;uniform vec2 uDC;uniform float uDK,uDA,uDE;uniform vec4 uRB,uTint;uniform float uRR,uRM;',
       'out vec4 o;',
       'float sdBox(vec2 p,vec2 b,float r){r=min(r,min(b.x,b.y));vec2 q=abs(p)-b+r;return length(max(q,0.))+min(max(q.x,q.y),0.)-r;}',
       'float scene(vec2 p,out float lift){float d=1e5;lift=0.;for(int i=0;i<MAXB;i++){if(i>=uN)break;vec4 b=uBox[i];float e=sdBox(p-b.xy,b.zw,uRL[i].x);if(e<d){d=e;lift=uRL[i].y;}}return d;}',
       'float sceneD(vec2 p){float l;return scene(p,l);}',
       'float sdPoly(vec2 p){vec2 v0=uPoly[0];float d=dot(p-v0,p-v0);float s=1.;for(int i=0,j=NR-1;i<NR;j=i,i++){vec2 vi=uPoly[i],vj=uPoly[j];vec2 e=vj-vi;vec2 w=p-vi;vec2 b=w-e*clamp(dot(w,e)/(dot(e,e)+1e-6),0.,1.);d=min(d,dot(b,b));bvec3 c=bvec3(p.y>=vi.y,p.y<vj.y,e.x*w.y>e.y*w.x);if(all(c)||all(not(c)))s*=-1.;}return s*sqrt(d);}',
-      'float drop(vec2 p){return sdPoly(p)-uDK;}',
+      'float drop(vec2 p){if(uRM>=.999)return sdBox(p-uRB.xy,uRB.zw,uRR);float a=sdPoly(p)-uDK;if(uRM<=.001)return a;return mix(a,sdBox(p-uRB.xy,uRB.zw,uRR),uRM);}',
       /* very faint, slow colour (the panels' hues), leaning a touch toward the pointer */
       'const vec3 RED=vec3(.05,1.55,2.17),BLU=vec3(1.96,1.12,.02),YEL=vec3(0.,.26,2.6);',
       'const vec3 RC=vec3(.95,.21,.11),BC=vec3(.25,.4,1.),YC=vec3(1.,.77,0.);',
@@ -653,7 +627,7 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
       ' vec2 e=vec2(px,0.);vec2 n=normalize(vec2(drop(p+e.xy)-drop(p-e.xy),drop(p+e.yx)-drop(p-e.yx))+1e-5);',
       ' float depth=-dd;float edge=max(uDE,4.*px);float t=clamp(1.-depth/edge,0.,1.);float bend=t*t;',
       ' vec2 off=-n*bend*12.*px+(uDC-p)*.16;',
-      ' vec3 c=base(p+off);c=mix(c,vec3(1.),mix(.10,.04,uDark));',
+      ' vec3 c=base(p+off);c=mix(c,vec3(1.),mix(.10,.04,uDark));c=mix(c,uTint.rgb,uTint.a);',
       ' float band=smoothstep(2.4*px,0.,depth);',
       ' c+=(pow(max(dot(n,LIT),0.),1.6)*band*.9+pow(max(dot(n,-LIT),0.),2.)*band*.3)*mix(1.,.6,uDark);',
       ' float a=smoothstep(.8*px,-.8*px,dd)*uDA;',
@@ -693,7 +667,10 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
       gl.uniform2f(u.uRes, CW, CH); gl.uniform1f(u.uPx, s); gl.uniform1f(u.uT, t); gl.uniform1f(u.uDark, api.dark);
       gl.uniform2f(u.uPtr, (P.inside ? P.x : W / 2) * s, (H - (P.inside ? P.y : H / 2)) * s);
       gl.uniform4fv(u.uBox, BOX); gl.uniform2fv(u.uRL, RL); gl.uniform1i(u.uN, n);
+      x0 = Math.min(x0, (drop.x - drop.w) * s); x1 = Math.max(x1, (drop.x + drop.w) * s); y0 = Math.min(y0, (H - drop.y - drop.h) * s); y1 = Math.max(y1, (H - drop.y + drop.h) * s);
       gl.uniform2fv(u.uPoly, POLY); gl.uniform4f(u.uBB, x0 - drop.k * s, y0 - drop.k * s, x1 + drop.k * s, y1 + drop.k * s);
+      gl.uniform4f(u.uRB, drop.x * s, (H - drop.y) * s, Math.max(drop.w, 0.5) * s, Math.max(drop.h, 0.5) * s); gl.uniform1f(u.uRR, Math.max(drop.r, 0) * s); gl.uniform1f(u.uRM, drop.rm);
+      var tc = drop.tcol ? drop.tcol.split(',') : [0, 0, 0]; gl.uniform4f(u.uTint, tc[0] / 255, tc[1] / 255, tc[2] / 255, drop.ta * (api.dark ? 0.3 : 0.22));
       gl.uniform2f(u.uDC, drop.x * s, (H - drop.y) * s); gl.uniform1f(u.uDK, drop.k * s); gl.uniform1f(u.uDA, drop.a * drop.u); gl.uniform1f(u.uDE, Math.min(drop.w, drop.h) * s);
       gl.viewport(0, 0, CW, CH);
       gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
@@ -710,7 +687,7 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
     return api;
   }
 
-  /* ---------- The ring: the droplet's outline drawn on top of everything, so the cursor never disappears ---------- */
+  /* ---------- The ring: the droplet's outline and a centre dot, drawn on top of everything ---------- */
   var ring = $('#ring'), rc = null, rdpr = 1, rbb = null;
   if (G && fine && !reduce) { rc = ring.getContext('2d'); root.classList.add('nocur'); }
   else ring.style.display = 'none';
@@ -720,17 +697,22 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
     ring.width = Math.round(innerWidth * rdpr); ring.height = Math.round(innerHeight * rdpr);
     rc.setTransform(rdpr, 0, 0, rdpr, 0, 0); rbb = null;
   });
+  function rrect(x, y, w, h, r) {
+    r = Math.max(0, Math.min(r, w / 2, h / 2));
+    rc.beginPath(); rc.moveTo(x + r, y); rc.arcTo(x + w, y, x + w, y + h, r); rc.arcTo(x + w, y + h, x, y + h, r); rc.arcTo(x, y + h, x, y, r); rc.arcTo(x, y, x + w, y, r); rc.closePath();
+  }
   function drawRing() {
     if (!rc) return;
     if (rbb) rc.clearRect(rbb[0], rbb[1], rbb[2], rbb[3]);
     rbb = null;
     if (drop.a < 0.02 || drop.w < 3) return;
-    var Q = [], x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9, i, k = drop.k;
+    var dark = isDark(), i, k = drop.k, rm = drop.rm;
+    var Q = [], x0 = Math.min(drop.x - drop.w, P.x) - 4, y0 = Math.min(drop.y - drop.h, P.y) - 4, x1 = Math.max(drop.x + drop.w, P.x) + 4, y1 = Math.max(drop.y + drop.h, P.y) + 4;
     for (i = 0; i < NR; i++) {
       var p = drop.pts[i], dx = p.x - drop.x, dy = p.y - drop.y, L = Math.hypot(dx, dy) || 1, qx = p.x + dx / L * k, qy = p.y + dy / L * k;
       Q.push([qx, qy]); if (qx < x0) x0 = qx; if (qx > x1) x1 = qx; if (qy < y0) y0 = qy; if (qy > y1) y1 = qy;
     }
-    function path(sc) {
+    function soft(sc) {
       rc.beginPath();
       for (var j = 0; j <= NR; j++) {
         var a = Q[j % NR], b = Q[(j + 1) % NR];
@@ -739,17 +721,29 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
       }
       rc.closePath();
     }
-    var dark = isDark(), size = Math.max(x1 - x0, y1 - y0, 6);
+    function pill(inset) { rrect(drop.x - drop.w + inset, drop.y - drop.h + inset, 2 * (drop.w - inset), 2 * (drop.h - inset), drop.r - inset); }
+    var tint = drop.ta > 0.02 && drop.tcol ? drop.tcol : null;
+    var line = dark ? 'rgba(255,255,255,.72)' : 'rgba(20,20,20,.55)';
+    var size = Math.max(drop.w, drop.h, 3) * 2;
+    function paint(shape, alpha) {
+      if (alpha < 0.01) return;
+      rc.globalAlpha = drop.a * alpha;
+      shape(0);
+      rc.fillStyle = tint ? 'rgba(' + tint + ',' + (0.10 * drop.ta).toFixed(3) + ')' : (dark ? 'rgba(255,255,255,.035)' : 'rgba(255,255,255,.08)'); rc.fill();
+      rc.lineWidth = 1.5; rc.strokeStyle = tint ? 'rgba(' + tint + ',' + (0.55 + 0.4 * drop.ta).toFixed(3) + ')' : line; rc.stroke();
+      shape(2);
+      var g = rc.createLinearGradient(x0, y0, x1, y1);
+      g.addColorStop(0, dark ? 'rgba(255,255,255,.5)' : 'rgba(255,255,255,.95)'); g.addColorStop(0.55, 'rgba(255,255,255,0)');
+      rc.lineWidth = 1.1; rc.strokeStyle = g; rc.stroke();
+    }
+    paint(function (inset) { soft(1 - inset * 1.5 / size); }, 1 - rm);
+    paint(pill, rm);
+    // the exact pointer: a small dot, so you always know where you are
     rc.globalAlpha = drop.a;
-    path(1);
-    rc.fillStyle = dark ? 'rgba(255,255,255,.035)' : 'rgba(255,255,255,.08)'; rc.fill();
-    rc.lineWidth = 1.2; rc.strokeStyle = dark ? 'rgba(255,255,255,.55)' : 'rgba(20,20,20,.42)'; rc.stroke();
-    path(1 - 3 / size);
-    var g = rc.createLinearGradient(x0, y0, x1, y1);
-    g.addColorStop(0, dark ? 'rgba(255,255,255,.55)' : 'rgba(255,255,255,.95)'); g.addColorStop(0.6, 'rgba(255,255,255,0)');
-    rc.lineWidth = 1.2; rc.strokeStyle = g; rc.stroke();
+    rc.beginPath(); rc.arc(P.x, P.y, 2.6, 0, Math.PI * 2);
+    rc.fillStyle = tint ? 'rgb(' + tint + ')' : (dark ? '#fff' : '#141414'); rc.fill();
     rc.globalAlpha = 1;
-    rbb = [x0 - 4, y0 - 4, x1 - x0 + 8, y1 - y0 + 8];
+    rbb = [x0 - 6, y0 - 6, x1 - x0 + 12, y1 - y0 + 12];
   }
 
   /* Gel words: drift aside around the droplet, then settle back */
@@ -777,6 +771,7 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
   });
 
   /* Droplet physics + glass render */
+  var TINTS = { red: [242, 54, 29], blue: [36, 83, 255], yellow: [255, 196, 0] };
   if (G) parts.push(function (dt, t) {
     var moving = false, i, s;
     for (i = 0; i < glass.length; i++) {
@@ -796,44 +791,50 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
     if (rect) {
       var pad = gb ? 5 : 0;
       tx = rect.left + rect.width / 2; ty = rect.top + rect.height / 2;
-      tw = rect.width / 2 + (rect.width > 60 ? 6 : 9) + pad; th = rect.height / 2 + 3 + pad; tr = th;
+      tw = rect.width / 2 + (rect.width > 60 ? 6 : 9) + pad; th = rect.height / 2 + 3 + pad; tr = th;   // a true pill: fully round ends
     } else {
-      tw = th = tr = hov && hov.classList.contains('panel') ? 17 : 13;
+      tw = th = tr = hov && hov.classList.contains('panel') ? 16 : 12;
     }
     if (!show) { tw = th = tr = 1.5; }
     if (drop.a < 0.02 && show) { drop.x = tx; drop.y = ty; drop.vx = drop.vy = drop.svx = drop.svy = 0; drop.pts.forEach(function (p) { p.x = tx; p.y = ty; p.vx = p.vy = 0; }); }
-    drop.a += ((show ? 1 : 0) - drop.a) * (1 - Math.exp(-dt * 12));
+    drop.a += ((show ? 1 : 0) - drop.a) * (1 - Math.exp(-dt * 14));
     drop.u += ((gb ? 0 : 1) - drop.u) * (1 - Math.exp(-dt * 12));   // over a glass button only the ring shows; the button itself lifts
-    // Fixed small sub-steps: the gel behaves the same at 30, 60 or 120 fps and can't go unstable
-    var steps = Math.max(1, Math.ceil(dt / 0.008)), h = dt / steps;
-    var Kc = rect ? 260 : 620, Cc = 2 * Math.sqrt(Kc);           // critically damped centre: tracks the pointer closely, never overshoots
+    var tint = hov && hov.getAttribute('data-tint');
+    if (tint && TINTS[tint]) drop.tcol = TINTS[tint].join(',');
+    drop.ta += ((tint ? 1 : 0) - drop.ta) * (1 - Math.exp(-dt * 10));
+    // Fixed small sub-steps: identical at 30, 60 or 120 fps, and can't go unstable
+    var steps = Math.max(1, Math.ceil(dt / 0.006)), h = dt / steps;
+    var Kc = rect ? 330 : 2400, Cc = 2 * Math.sqrt(Kc);          // critically damped: the bead is glued to the pointer, the lens glides onto links
     for (s = 0; s < steps; s++) {
       spring(drop, 'x', tx, 'vx', Kc, Cc, h); spring(drop, 'y', ty, 'vy', Kc, Cc, h);
-      spring(drop, 'w', tw, 'vw', 220, 25, h); spring(drop, 'h', th, 'vh', 220, 25, h); spring(drop, 'r', tr, 'vr', 220, 25, h);
+      spring(drop, 'w', tw, 'vw', 260, 32, h); spring(drop, 'h', th, 'vh', 260, 32, h); spring(drop, 'r', tr, 'vr', 260, 32, h);
+      spring(drop, 'rm', rect ? 1 : 0, 'vrm', 300, 34.6, h);
     }
-    var sm = 1 - Math.exp(-dt * 7);
+    drop.rm = clamp(drop.rm, 0, 1);
+    var sm = 1 - Math.exp(-dt * 9);
     drop.svx += (drop.vx - drop.svx) * sm; drop.svy += (drop.vy - drop.svy) * sm;
-    var sp = Math.hypot(drop.svx, drop.svy), st = rect ? 0 : Math.min(sp / 2600, 0.28), ux = sp > 1 ? drop.svx / sp : 1, uy = sp > 1 ? drop.svy / sp : 0;
+    var sp = Math.hypot(drop.svx, drop.svy), st = rect ? 0 : Math.min(sp / 2200, 0.32), ux = sp > 1 ? drop.svx / sp : 1, uy = sp > 1 ? drop.svy / sp : 0;
     var k = Math.min(5, Math.max(drop.r, 0) * 0.45), br = reduce || rect ? 0 : Math.sin(t * 2.1) * 0.4;
     var hw = Math.max(drop.w - k + br, 0.5), hh = Math.max(drop.h - k + br, 0.5), rr = Math.max(drop.r - k + br, 0.3);
     drop.k = k;
     var T = [];
     for (i = 0; i < NR; i++) {
       var q = rrPoint(i / NR, hw, hh, rr), al = q[0] * ux + q[1] * uy, pe = -q[0] * uy + q[1] * ux;
-      al *= 1 + st; pe *= 1 - st * 0.4;
+      al *= 1 + st; pe *= 1 - st * 0.45;
       T.push([drop.x + al * ux - pe * uy, drop.y + al * uy + pe * ux]);
     }
-    // the skin: each point springs to its place, smoothed by its neighbours, lagging the centre just enough to wobble once
+    // the skin: soft as a bead (one jelly wobble), stiff as a lens (a clean pill, no wobble)
+    var Ks = 340 + 1300 * drop.rm, Cr = 26 + 46 * drop.rm, Kl = 90 * (1 - drop.rm);
     for (s = 0; s < steps; s++) {
       for (i = 0; i < NR; i++) {
         var p = drop.pts[i], a = T[i], pa = drop.pts[(i + NR - 1) % NR], pb = drop.pts[(i + 1) % NR], ta = T[(i + NR - 1) % NR], tb = T[(i + 1) % NR];
         var lx = (pa.x + pb.x) / 2 - p.x - ((ta[0] + tb[0]) / 2 - a[0]), ly = (pa.y + pb.y) / 2 - p.y - ((ta[1] + tb[1]) / 2 - a[1]);
-        var ax = 340 * (a[0] - p.x) + 90 * lx - 26 * (p.vx - drop.vx) - 3 * p.vx;
-        var ay = 340 * (a[1] - p.y) + 90 * ly - 26 * (p.vy - drop.vy) - 3 * p.vy;
+        var ax = Ks * (a[0] - p.x) + Kl * lx - Cr * (p.vx - drop.vx) - 3 * p.vx;
+        var ay = Ks * (a[1] - p.y) + Kl * ly - Cr * (p.vy - drop.vy) - 3 * p.vy;
         p.vx += ax * h; p.vy += ay * h; p.x += p.vx * h; p.y += p.vy * h;
       }
     }
-    for (i = 0; i < NR; i++) { var pp = drop.pts[i]; if (Math.abs(pp.x - T[i][0]) > 120 || Math.abs(pp.y - T[i][1]) > 120) { pp.x = T[i][0]; pp.y = T[i][1]; pp.vx = drop.vx; pp.vy = drop.vy; } }
+    for (i = 0; i < NR; i++) { var pp = drop.pts[i]; if (Math.abs(pp.x - T[i][0]) > 40 || Math.abs(pp.y - T[i][1]) > 40) { pp.x += (T[i][0] - pp.x) * 0.5; pp.y += (T[i][1] - pp.y) * 0.5; } }
     G.render(t);
     drawRing();
     G.perf(dt);
@@ -937,18 +938,24 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
       return !reduce;
     });
   }
-  // Bone viability: a blue segmentation mask over a bone; it fills the bone when you point at it
-  function boneShapes(g) { mk('rect', { x: 62, y: 134, width: 176, height: 32 }, g); [[62, 126], [62, 174], [238, 126], [238, 174]].forEach(function (c) { mk('circle', { cx: c[0], cy: c[1], r: 24 }, g); }); }
-  function BoneMask(slot) {
-    var svg = mk('svg', { viewBox: '0 0 300 300', role: 'img', 'aria-label': 'A bone with a segmentation mask' }, slot);
+  // Bone viability: a bone cross-section; a blue segmentation sweep covers part of it, all of it when you point at it
+  function pie(cx, cy, r, f) {
+    if (f >= 0.999) return 'M' + (cx - r) + ' ' + cy + 'a' + r + ' ' + r + ' 0 1 0 ' + 2 * r + ' 0a' + r + ' ' + r + ' 0 1 0 ' + (-2 * r) + ' 0Z';
+    var a0 = -Math.PI / 2, a1 = a0 + f * Math.PI * 2;
+    return 'M' + cx + ' ' + cy + 'L' + (cx + r * Math.cos(a0)).toFixed(1) + ' ' + (cy + r * Math.sin(a0)).toFixed(1) + 'A' + r + ' ' + r + ' 0 ' + (f > 0.5 ? 1 : 0) + ' 1 ' + (cx + r * Math.cos(a1)).toFixed(1) + ' ' + (cy + r * Math.sin(a1)).toFixed(1) + 'Z';
+  }
+  function BoneDisc(slot) {
+    var svg = mk('svg', { viewBox: '0 0 300 300', role: 'img', 'aria-label': 'A bone cross-section with a segmentation mask' }, slot);
     var id = 'bclip' + (uid++), cp = mk('clipPath', { id: id }, mk('defs', {}, svg));
-    boneShapes(cp); boneShapes(mk('g', { class: 'b-line' }, svg)); boneShapes(mk('g', { class: 'b-fill' }, svg));
-    var fill = mk('rect', { class: 'bm-fill', x: 38, y: 98, height: 104, width: 120 }, mk('g', { 'clip-path': 'url(#' + id + ')' }, svg));
-    var M = Mapper(svg), st = { w: 0.55, vw: 0 };
+    mk('circle', { cx: 150, cy: 150, r: 72 }, cp);
+    mk('circle', { cx: 150, cy: 150, r: 72, class: 'bn-o' }, svg);
+    var sweep = mk('path', { class: 'bm-fill' }, mk('g', { 'clip-path': 'url(#' + id + ')' }, svg));
+    mk('circle', { cx: 150, cy: 150, r: 30, class: 'bn-i' }, svg);
+    var M = Mapper(svg), st = { f: 0.62, vf: 0 };
     parts.push(function (dt, t) {
       if (!M.vis) return false;
-      spring(st, 'w', M.near(0) ? 1 : 0.55 + (reduce ? 0 : 0.05 * Math.sin(t * 0.9)), 'vw', 40, 12, dt);
-      fill.setAttribute('width', (224 * clamp(st.w, 0, 1.05)).toFixed(1));
+      spring(st, 'f', M.near(0) ? 1 : 0.62 + (reduce ? 0 : 0.05 * Math.sin(t * 0.9)), 'vf', 40, 12.6, dt);
+      sweep.setAttribute('d', pie(150, 150, 80, clamp(st.f, 0.01, 1)));
       return !reduce;
     });
   }
@@ -972,115 +979,158 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
   }
   $$('[data-art]').forEach(function (slot) {
     var k = slot.getAttribute('data-art');
-    if (k === 'A') Helix(slot); else if (k === 'B') BoneMask(slot); else if (k === 'C') Burst(slot);
+    if (k === 'A') Helix(slot); else if (k === 'B') BoneDisc(slot); else if (k === 'C') Burst(slot);
   });
 
-  /* ---------- Detail scenes: each project explained in three pictures ---------- */
-  function rrPath(x, y, w, h, r) { return 'M' + (x + r) + ' ' + y + 'H' + (x + w - r) + 'A' + r + ' ' + r + ' 0 0 1 ' + (x + w) + ' ' + (y + r) + 'V' + (y + h - r) + 'A' + r + ' ' + r + ' 0 0 1 ' + (x + w - r) + ' ' + (y + h) + 'H' + (x + r) + 'A' + r + ' ' + r + ' 0 0 1 ' + x + ' ' + (y + h - r) + 'V' + (y + r) + 'A' + r + ' ' + r + ' 0 0 1 ' + (x + r) + ' ' + y + 'Z'; }
+  /* ---------- Detail scenes: one picture that keeps moving and flows between three moments, on a loop ---------- */
   function txt(parent, x, y, cls, s) { var e = mk('text', { x: x, y: y, class: cls }, parent); e.textContent = s; return e; }
+  function sstep(x) { x = clamp(x, 0, 1); return x * x * (3 - 2 * x); }
+  // how present moment k (0, 1, 2) is when the story sits at position p on a loop of three
+  function wk(p, k) { var d = (((p - k) % 3) + 3) % 3; d = Math.min(d, 3 - d); return sstep(1 - d); }
+  function op(el, v) { el.style.opacity = v.toFixed(3); }
 
-  // NeKtar-1: 1 the sequence as a chain, 2 charges reaching for a membrane, 3 curled up among bacteria that die off
+  // NeKtar-1: a chain of 19 residues → charges reaching for a membrane → a ring among bacteria that die off
   function SceneA(slot) {
     var svg = mk('svg', { viewBox: '0 0 400 300', class: 'scene sA', role: 'img', 'aria-label': 'NeKtar-1 drawn as a chain of 19 amino acids' }, slot);
-    var memb = mk('g', { class: 'memb' }, svg);
-    for (var x = 6; x <= 394; x += 14) { mk('circle', { cx: x, cy: 244, r: 5 }, memb); mk('circle', { cx: x + 7, cy: 264, r: 5 }, memb); }
-    txt(memb, 200, 290, 'lbl up', 'BACTERIAL MEMBRANE');
-    var bact = mk('g', { class: 'bact' }, svg);
+    var memb = mk('g', {}, svg), lips = [];
+    for (var x = 6; x <= 394; x += 14) { lips.push([mk('circle', { cx: x, cy: 244, r: 5, class: 'lip' }, memb), x, 244]); lips.push([mk('circle', { cx: x + 7, cy: 264, r: 5, class: 'lip' }, memb), x + 7, 264]); }
+    txt(memb, 200, 292, 'lbl up', 'BACTERIAL MEMBRANE');
+    var bact = mk('g', {}, svg), bugs = [];
     [[64, 96, 20], [100, 216, -18], [50, 160, 78], [336, 96, -24], [304, 220, 32], [352, 160, 84]].forEach(function (b, i) {
-      var g = mk('g', { transform: 'translate(' + b[0] + ' ' + b[1] + ') rotate(' + b[2] + ')' }, bact);
-      mk('rect', { x: -16, y: -6.5, width: 32, height: 13, rx: 6.5 }, g).style.animationDelay = (0.3 + i * 0.13) + 's';
+      var g = mk('g', {}, bact); mk('rect', { x: -16, y: -6.5, width: 32, height: 13, rx: 6.5, class: 'germ' }, g); bugs.push({ g: g, x: b[0], y: b[1], r: b[2], i: i });
     });
     txt(bact, 72, 52, 'lbl', 'E. coli'); txt(bact, 328, 52, 'lbl', 'P. aeruginosa');
-    var beads = [];
+    var chain = mk('path', { class: 'chain' }, svg), beads = [];
     for (var i = 0; i < SEQ.length; i++) {
-      var k = kind(SEQ[i]), g = mk('g', { class: 'bead' }, svg);
-      if (k === 'c') mk('circle', { r: 17, class: 'halo' }, g);
-      mk('circle', { r: 10, class: 'w-dot ' + k }, g);
-      txt(g, 0, 0, 'w-t ' + k, SEQ[i]);
-      g.style.transitionDelay = (i * 24) + 'ms';
-      beads.push(g);
+      var k = kind(SEQ[i]), g = mk('g', {}, svg), halo = k === 'c' ? mk('circle', { r: 17, class: 'halo' }, g) : null;
+      mk('circle', { r: 10, class: 'w-dot ' + k }, g); txt(g, 0, 0, 'w-t ' + k, SEQ[i]);
+      beads.push({ g: g, halo: halo });
     }
-    function pos(s, i) {
+    var kill = 0;
+    function pos(s, i, t) {
       var th = i * 100 * Math.PI / 180;
-      if (s === 0) return [20 + i * 20, 150 + 7 * Math.sin(i * 0.8)];
-      if (s === 1) return [30 + i * 18.9, 176 + (kind(SEQ[i]) === 'c' ? 30 : 0) + 7 * Math.sin(i * 0.9)];
-      var r = i < 18 ? 54 : 76; return [200 + r * Math.cos(th - Math.PI / 2), 150 + r * Math.sin(th - Math.PI / 2)];
+      if (s === 0) return [20 + i * 20, 150 + 9 * Math.sin(i * 0.8 + t * 0.9)];
+      if (s === 1) return [30 + i * 18.9, 176 + (kind(SEQ[i]) === 'c' ? 30 : 0) + 6 * Math.sin(i * 0.9 + t * 1.1)];
+      var r = i < 18 ? 54 : 76, a = th - Math.PI / 2 + t * 0.12; return [200 + r * Math.cos(a), 150 + r * Math.sin(a)];
     }
-    return { svg: svg, set: function (s) { svg.setAttribute('data-step', s); beads.forEach(function (b, i) { var p = pos(s, i); b.style.transform = 'translate(' + p[0].toFixed(1) + 'px,' + p[1].toFixed(1) + 'px)'; }); } };
+    return { svg: svg, frame: function (p, t, m, since) {
+      var w = [wk(p, 0), wk(p, 1), wk(p, 2)], sum = w[0] + w[1] + w[2] || 1, d = '';
+      for (var i = 0; i < beads.length; i++) {
+        var x = 0, y = 0;
+        for (var s = 0; s < 3; s++) if (w[s] > 0.001) { var q = pos(s, i, t); x += q[0] * w[s]; y += q[1] * w[s]; }
+        x = x / sum + 1.6 * Math.sin(t * 1.7 + i * 1.3); y = y / sum + 1.6 * Math.cos(t * 1.5 + i * 0.9);
+        beads[i].g.setAttribute('transform', 'translate(' + x.toFixed(1) + ' ' + y.toFixed(1) + ')');
+        if (beads[i].halo) op(beads[i].halo, w[1] * (0.18 + 0.1 * Math.sin(t * 2.6 + i)));
+        d += (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1);
+      }
+      chain.setAttribute('d', d);
+      op(memb, w[1]);
+      if (w[1] > 0.01) lips.forEach(function (l) { l[0].setAttribute('cy', (l[2] + 2.4 * Math.sin(t * 1.6 + l[1] * 0.05)).toFixed(1)); });
+      if (m === 2) kill = sstep((since - 1) / 2.4); else if (w[2] < 0.05) kill = 0;
+      op(bact, w[2]);
+      bugs.forEach(function (b) {
+        var k2 = sstep(kill * 1.3 - b.i * 0.06);
+        b.g.setAttribute('transform', 'translate(' + (b.x + 4 * Math.sin(t * 0.8 + b.i * 2)).toFixed(1) + ' ' + (b.y + 4 * Math.cos(t * 0.7 + b.i)).toFixed(1) + ') rotate(' + (b.r + 10 * Math.sin(t + b.i) + 40 * k2).toFixed(1) + ') scale(' + (1 - 0.4 * k2).toFixed(3) + ')');
+        op(b.g, 1 - 0.85 * k2);
+      });
+    } };
   }
 
-  // Bone viability: 1 a bone, 2 its white-light and fluorescence images, 3 the model's outline and a flag
+  // Bone viability: a cross-section → its white-light and fluorescence images → the model's outline and a flag
   function SceneB(slot) {
-    var svg = mk('svg', { viewBox: '0 0 400 300', class: 'scene sB', role: 'img', 'aria-label': 'A bone, its white-light and fluorescence images, and the model’s outline with a flagged region' }, slot);
-    var rg = mk('radialGradient', { id: 'fluo', gradientUnits: 'userSpaceOnUse', cx: 165, cy: 150, r: 160 }, mk('defs', {}, svg));
-    mk('stop', { offset: '0', 'stop-color': '#7d95ff' }, rg); mk('stop', { offset: '.5', 'stop-color': '#2453ff', 'stop-opacity': '.75' }, rg); mk('stop', { offset: '1', 'stop-color': '#2453ff', 'stop-opacity': '.12' }, rg);
-    function bone2(parent, cls) { var a = mk('g', { class: cls }, parent); mk('rect', { x: 100, y: 133, width: 200, height: 34 }, a); [[100, 124], [100, 176], [300, 124], [300, 176]].forEach(function (c) { mk('circle', { cx: c[0], cy: c[1], r: 26 }, a); }); return a; }
-    var tl = mk('g', { class: 'tile tl' }, svg); mk('rect', { x: 50, y: 60, width: 300, height: 180, rx: 28, class: 'frame fl' }, tl); bone2(tl, 'b-line'); bone2(tl, 'b-fill'); bone2(tl, 'wl-line'); bone2(tl, 'wl-fill');
-    var tr = mk('g', { class: 'tile tr' }, svg); mk('rect', { x: 50, y: 60, width: 300, height: 180, rx: 28, class: 'frame fr' }, tr); bone2(tr, 'fb');
-    txt(svg, 100, 218, 'lbl up lab', 'WHITE LIGHT'); txt(svg, 300, 218, 'lbl up lab', 'FLUORESCENCE');
-    mk('path', { d: rrPath(70, 104, 172, 92, 38), pathLength: 1, class: 'seg' }, svg);
-    mk('circle', { cx: 300, cy: 150, r: 24, class: 'flag' }, svg);
-    txt(svg, 300, 202, 'lbl up flag-l', 'FLAGGED');
-    return { svg: svg, set: function (s) { svg.setAttribute('data-step', s); } };
+    var svg = mk('svg', { viewBox: '0 0 400 300', class: 'scene sB', role: 'img', 'aria-label': 'A bone cross-section, its white-light and fluorescence images, and the model’s outline with a flagged region' }, slot);
+    var rg = mk('radialGradient', { id: 'fluo', gradientUnits: 'userSpaceOnUse', cx: 186, cy: 140, r: 92 }, mk('defs', {}, svg));
+    mk('stop', { offset: '0', 'stop-color': '#8aa0ff' }, rg); var mid = mk('stop', { offset: '.55', 'stop-color': '#2453ff', 'stop-opacity': '.8' }, rg); mk('stop', { offset: '1', 'stop-color': '#2453ff', 'stop-opacity': '.15' }, rg);
+    function disc(parent, o, i) { var g = mk('g', {}, parent); mk('circle', { cx: 200, cy: 150, r: 72, class: o }, g); mk('circle', { cx: 200, cy: 150, r: 30, class: i }, g); return g; }
+    var tl = mk('g', {}, svg), frL = mk('rect', { x: 86, y: 36, width: 228, height: 228, rx: 34, class: 'fl' }, tl), plain = disc(tl, 'bn-o', 'bn-i'), wl = disc(tl, 'wl-o', 'wl-i');
+    var tr = mk('g', {}, svg); mk('rect', { x: 86, y: 36, width: 228, height: 228, rx: 34, class: 'fr' }, tr); disc(tr, 'fb-o', 'fb-i');
+    var labs = mk('g', {}, svg); txt(labs, 100, 226, 'lbl up', 'WHITE LIGHT'); txt(labs, 300, 226, 'lbl up', 'FLUORESCENCE');
+    var seg = mk('circle', { cx: 200, cy: 150, r: 80, pathLength: 1, class: 'seg' }, svg);
+    var flag = mk('circle', { cx: 254, cy: 100, r: 18, class: 'flag' }, svg), flagL = txt(svg, 300, 66, 'lbl up flag-l', 'FLAGGED');
+    return { svg: svg, frame: function (p, t) {
+      var w1 = wk(p, 1), w2 = wk(p, 2), br = 1 + 0.012 * Math.sin(t * 1.3);
+      tl.setAttribute('transform', 'translate(' + (200 - 100 * w1) + ' 150) scale(' + ((1 - 0.5 * w1) * br).toFixed(4) + ') translate(-200 -150)');
+      op(frL, w1); op(wl, w1); op(plain, 1 - w1);
+      tr.setAttribute('transform', 'translate(' + (200 + 100 * w1) + ' 150) scale(' + (0.5 * br).toFixed(4) + ') translate(-200 -150)');
+      op(tr, w1); op(labs, w1);
+      mid.setAttribute('stop-opacity', (0.7 + 0.18 * Math.sin(t * 2.2)).toFixed(3));
+      seg.style.strokeDashoffset = (1 - w2).toFixed(3); seg.style.fillOpacity = (0.14 * w2).toFixed(3);
+      seg.setAttribute('r', (80 + 1.6 * Math.sin(t * 1.4)).toFixed(2));
+      seg.setAttribute('transform', 'rotate(' + (t * 8 % 360).toFixed(1) + ' 200 150)');
+      var fw = sstep((w2 - 0.5) * 2); op(flag, fw); op(flagL, fw);
+      flag.setAttribute('r', (18 + 1.6 * Math.sin(t * 3)).toFixed(2));
+    } };
   }
 
-  // NET mechanics: 1 a neutrophil among bacteria, 2 squeezed in flow, 3 bursts into a net that catches them
+  // NET mechanics: a neutrophil among bacteria → squeezed in flow → it bursts into a net that catches them
   function SceneC(slot) {
     var svg = mk('svg', { viewBox: '0 0 400 300', class: 'scene sC', role: 'img', 'aria-label': 'A neutrophil under force casting a net of DNA that traps bacteria' }, slot);
     var flow = mk('g', { class: 'flow' }, svg); [62, 104, 196, 238].forEach(function (y) { mk('line', { x1: 16, y1: y, x2: 384, y2: y }, flow); });
-    var press = mk('g', { class: 'press' }, svg);
-    mk('path', { d: 'M56 150H122M110 140l13 10-13 10' }, press); mk('path', { d: 'M344 150H278M290 140l-13 10 13 10' }, press);
-    var net = mk('g', {}, svg);
-    for (var k = 0; k < 12; k++) {
-      var a = (k * 30 + 8) * Math.PI / 180, ca = Math.cos(a), sa = Math.sin(a), R = [50, 78, 106, 134], off = [0, 9, -9, 7];
-      var d = 'M' + (200 + ca * R[0]).toFixed(1) + ' ' + (150 + sa * R[0]).toFixed(1);
-      for (var j = 1; j < 4; j++) { var rm = (R[j - 1] + R[j]) / 2; d += 'Q' + (200 + ca * rm - sa * off[j]).toFixed(1) + ' ' + (150 + sa * rm + ca * off[j]).toFixed(1) + ' ' + (200 + ca * R[j]).toFixed(1) + ' ' + (150 + sa * R[j]).toFixed(1); }
-      mk('path', { d: d, pathLength: 1, class: 'strand' }, net).style.transitionDelay = (k * 50) + 'ms';
-    }
-    var cell = mk('g', { class: 'cell' }, svg);
-    mk('circle', { cx: 200, cy: 150, r: 50, class: 'cm' }, cell);
-    [[188, 143], [210, 140], [199, 161]].forEach(function (c) { mk('circle', { cx: c[0], cy: c[1], r: 12.5, class: 'n-nuc' }, cell); });
-    var bugs = [];
-    for (var b = 0; b < 6; b++) { var g = mk('g', { class: 'bug' }, svg); mk('rect', { x: -12, y: -5, width: 24, height: 10, rx: 5 }, g).style.animationDelay = (-b * 0.7) + 's'; bugs.push(g); }
-    function bpos(s, i) { var deg = i * 60 + 38, a = (deg + (s === 2 ? 0 : 16)) * Math.PI / 180, r = s === 2 ? 114 : 132; return [200 + r * Math.cos(a), 150 + r * Math.sin(a), deg + 90]; }
-    return { svg: svg, set: function (s) { svg.setAttribute('data-step', s); bugs.forEach(function (g, i) { var p = bpos(s, i); g.style.transform = 'translate(' + p[0].toFixed(1) + 'px,' + p[1].toFixed(1) + 'px) rotate(' + p[2] + 'deg)'; }); } };
+    var press = mk('g', { class: 'press' }, svg), pl = mk('path', { d: 'M56 150H122M110 140l13 10-13 10' }, press), pr = mk('path', { d: 'M344 150H278M290 140l-13 10 13 10' }, press);
+    var strands = []; for (var k = 0; k < 12; k++) strands.push(mk('path', { pathLength: 1, class: 'strand' }, svg));
+    var cell = mk('g', {}, svg), cm = mk('circle', { cx: 200, cy: 150, r: 50, class: 'cm' }, cell), lobes = [];
+    [[-12, -7], [10, -10], [-1, 11]].forEach(function (c) { lobes.push([mk('circle', { cx: 200 + c[0], cy: 150 + c[1], r: 12.5, class: 'n-nuc' }, cell), c]); });
+    var bugs = []; for (var b = 0; b < 6; b++) { var g = mk('g', {}, svg); mk('rect', { x: -12, y: -5, width: 24, height: 10, rx: 5, class: 'bugr' }, g); bugs.push(g); }
+    return { svg: svg, frame: function (p, t) {
+      var w1 = wk(p, 1), w2 = wk(p, 2);
+      op(flow, w1); op(press, w1);
+      pl.setAttribute('transform', 'translate(' + (3 * Math.sin(t * 3)).toFixed(2) + ' 0)'); pr.setAttribute('transform', 'translate(' + (-3 * Math.sin(t * 3)).toFixed(2) + ' 0)');
+      for (var k = 0; k < 12; k++) {
+        var a = (k * 30 + 8) * Math.PI / 180, ca = Math.cos(a), sa = Math.sin(a), R = [50, 78, 106, 134], o = [0, 9, -9, 7], sw = 1 + 0.5 * Math.sin(t * 1.3 + k * 0.8);
+        var d = 'M' + (200 + ca * R[0]).toFixed(1) + ' ' + (150 + sa * R[0]).toFixed(1);
+        for (var j = 1; j < 4; j++) { var rm = (R[j - 1] + R[j]) / 2; d += 'Q' + (200 + ca * rm - sa * o[j] * sw).toFixed(1) + ' ' + (150 + sa * rm + ca * o[j] * sw).toFixed(1) + ' ' + (200 + ca * R[j]).toFixed(1) + ' ' + (150 + sa * R[j]).toFixed(1); }
+        var reveal = clamp(w2 * 1.5 - k * 0.04, 0, 1);
+        strands[k].setAttribute('d', d); strands[k].style.strokeDashoffset = (1 - reveal).toFixed(3); op(strands[k], reveal > 0.005 ? 1 : 0);
+      }
+      var sx = 1 + 0.26 * w1 + 0.02 * Math.sin(t * 1.8), sy = 1 - 0.22 * w1 + 0.02 * Math.cos(t * 1.8);
+      cell.setAttribute('transform', 'translate(200 150) scale(' + sx.toFixed(4) + ' ' + sy.toFixed(4) + ') translate(-200 -150)');
+      cm.setAttribute('r', (50 + 26 * w2).toFixed(2)); op(cm, 1 - w2);
+      lobes.forEach(function (l) { l[0].setAttribute('cx', (200 + l[1][0] * (1 + 0.35 * w2)).toFixed(1)); l[0].setAttribute('cy', (150 + l[1][1] * (1 + 0.35 * w2)).toFixed(1)); });
+      bugs.forEach(function (g, i) {
+        var a0 = (i * 60 + 54) * Math.PI / 180 + t * 0.14, r0 = 132 + 6 * Math.sin(t * 0.9 + i);
+        var a1 = (i * 60 + 38) * Math.PI / 180, r1 = 114 + 2 * Math.sin(t * 1.3 + i);
+        var x = (200 + r0 * Math.cos(a0)) * (1 - w2) + (200 + r1 * Math.cos(a1)) * w2, y = (150 + r0 * Math.sin(a0)) * (1 - w2) + (150 + r1 * Math.sin(a1)) * w2;
+        var rot = (a0 * 180 / Math.PI + 90) * (1 - w2) + (i * 60 + 38 + 90) * w2 + 10 * Math.sin(t * 1.2 + i) * (1 - w2);
+        g.setAttribute('transform', 'translate(' + x.toFixed(1) + ' ' + y.toFixed(1) + ') rotate(' + rot.toFixed(1) + ')');
+      });
+    } };
   }
 
-  /* Steps: plays itself when a project opens; click a step, the picture, use ← →, or scroll to move through it */
+  /* Each project's story loops by itself; click a step or the picture, use ← →, or scroll to steer it */
   var STORY = {};
   $$('.detail').forEach(function (sec) {
     var slot = $('[data-scene]', sec), k = slot.getAttribute('data-scene');
     var sc = k === 'A' ? SceneA(slot) : k === 'B' ? SceneB(slot) : SceneC(slot);
-    var btns = $$('.step', sec), S = { i: 0, timer: 0, sc: sc, n: btns.length };
-    S.go = function (i, user) {
-      S.i = clamp(i, 0, btns.length - 1);
-      btns.forEach(function (b, j) { b.classList.toggle('on', j === S.i); b.setAttribute('aria-pressed', j === S.i ? 'true' : 'false'); });
-      sc.set(S.i);
-      if (user) S.stop();
-      soon(); setTimeout(soon, 800);
-    };
-    S.stop = function () { clearTimeout(S.timer); S.timer = 0; };
+    var btns = $$('.step', sec), n = btns.length, S = { p: 0, vp: 0, target: 0, mt: now(), timer: 0, auto: false, n: n };
+    function m() { return ((Math.round(S.target) % n) + n) % n; }
+    function mark() { var j = m(); btns.forEach(function (b, i) { b.classList.toggle('on', i === j); b.setAttribute('aria-pressed', i === j ? 'true' : 'false'); }); S.mt = now(); soon(); setTimeout(soon, 800); }
+    S.stop = function () { S.auto = false; clearTimeout(S.timer); sec.classList.add('paused'); };
     S.play = function () {
-      S.stop(); if (reduce) return;
-      (function tick() { S.timer = setTimeout(function () { if (S.i < btns.length - 1) { S.go(S.i + 1); tick(); } }, 4800); })();
+      S.stop(); if (reduce) return; S.auto = true; sec.classList.remove('paused');
+      (function tick() { S.timer = setTimeout(function () { if (!S.auto) return; S.target += 1; mark(); tick(); }, 5200); })();
     };
-    S.reset = function () {
-      sc.svg.classList.add('still'); S.go(0);
-      requestAnimationFrame(function () { requestAnimationFrame(function () { sc.svg.classList.remove('still'); }); });
-    };
-    btns.forEach(function (b, j) { b.addEventListener('click', function () { S.go(j, true); }); });
-    sc.svg.addEventListener('click', function () { S.go(S.i < btns.length - 1 ? S.i + 1 : 0, true); });
+    S.step = function (dir) { S.target += dir; mark(); S.stop(); };
+    S.to = function (j) { var d = ((j - m()) % n + n) % n; if (d > n / 2) d -= n; S.target += d; mark(); S.stop(); };
+    S.reset = function () { S.target = 0; S.p = 0; S.vp = 0; mark(); };
+    btns.forEach(function (b, j) { b.addEventListener('click', function () { S.to(j); }); });
+    sc.svg.addEventListener('click', function () { S.step(1); });
     var acc = 0, cool = 0;
     sec.addEventListener('wheel', function (e) {
       var inf = e.target.closest && e.target.closest('.info');
       if (inf && inf.scrollHeight > inf.clientHeight + 2) return;
       acc += e.deltaY;
       if (now() < cool || Math.abs(acc) < 50) return;
-      var dir = acc > 0 ? 1 : -1; acc = 0; cool = now() + 700;
-      if (S.i + dir >= 0 && S.i + dir < btns.length) S.go(S.i + dir, true);
+      S.step(acc > 0 ? 1 : -1); acc = 0; cool = now() + 800;
     }, { passive: true });
+    var M = Mapper(sc.svg);
+    parts.push(function (dt, t) {
+      if (!M.vis) return false;
+      if (reduce) S.p = S.target; else spring(S, 'p', S.target, 'vp', 7, 5.3, dt);   // critically damped glide between moments
+      sc.frame(S.p, reduce ? 0 : t, m(), (now() - S.mt) / 1000);
+      return !reduce;
+    });
     STORY[sec.id] = S;
-    S.go(0);
+    mark();
   });
 
   /* ---------- Panel ⇄ detail: the drawing morphs, and the new view pours in from where you clicked ---------- */
@@ -1139,14 +1189,13 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
     if (e.key === 'Escape') { e.preventDefault(); go('', innerWidth / 2, cy); }
     else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
       e.preventDefault();
-      var S = STORY[c], fwd = e.key === 'ArrowRight';
-      if (S && (fwd ? S.i < S.n - 1 : S.i > 0)) S.go(S.i + (fwd ? 1 : -1), true);   // steps first, then the next project
-      else go(LETTERS[(LETTERS.indexOf(c) + (fwd ? 1 : 2)) % 3], fwd ? innerWidth - 40 : 40, cy);
+      var S = STORY[c];
+      if (S) S.step(e.key === 'ArrowRight' ? 1 : -1);
     }
   });
   $$('.info').forEach(function (el) { el.addEventListener('scroll', soon, { passive: true }); });
 
-  /* ---------- Light / dark: follows the system until you choose; the new theme pours out from the button ---------- */
+  /* ---------- Light / dark: dark until you choose; the new theme pours out from the button ---------- */
   var themeBtn = $('#theme'), themeLabel = $('#theme-label'), tc = $('#tc'), saved = null;
   try { saved = localStorage.getItem('theme'); } catch (e) {}
   function applyTheme(t) {
@@ -1158,9 +1207,6 @@ html.dna-pre [data-dna-load] { visibility: hidden; }
     drawRing(); wake();
   }
   applyTheme(root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
-  var mqd = matchMedia('(prefers-color-scheme: dark)');
-  function sysChange(e) { if (saved !== 'light' && saved !== 'dark') applyTheme(e.matches ? 'dark' : 'light'); }
-  if (mqd.addEventListener) mqd.addEventListener('change', sysChange); else if (mqd.addListener) mqd.addListener(sysChange);
   themeBtn.addEventListener('click', function (e) {
     var next = isDark() ? 'light' : 'dark';
     saved = next; try { localStorage.setItem('theme', next); } catch (x) {}
