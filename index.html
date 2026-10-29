@@ -108,8 +108,9 @@ html:not(.gl) [data-glass] { background: rgba(127, 127, 127, .08); box-shadow: i
 .acks { display: grid; grid-template-rows: auto repeat(6, minmax(0, 1fr)); gap: 4px; padding: 16px; border-radius: 16px; min-height: 0; }
 .acks > .lab { margin-bottom: 4px; }
 .acks li { display: grid; grid-template-columns: 72px minmax(0, 1fr); align-items: center; gap: 12px; padding: 4px 8px; margin: 0 -8px; border-radius: 12px; min-height: 0; overflow: hidden; }
-.lg { height: clamp(26px, 4vh, 32px); display: grid; place-items: center; padding: 4px 6px; border-radius: 8px; background: #fff; }
-.lg img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
+.lg { --pv: 4px; --ph: 6px; position: relative; display: block; height: clamp(26px, 4vh, 32px); border-radius: 8px; background: #fff; overflow: hidden; }
+/* the logo always fits inside its chip, whatever its proportions */
+.lg img { position: absolute; top: var(--pv); left: var(--ph); width: calc(100% - 2 * var(--ph)); height: calc(100% - 2 * var(--pv)); object-fit: contain; }
 .acks b { display: block; font-size: 14px; font-weight: 500; color: var(--ink); line-height: 1.3; }
 .acks em { display: block; font: 400 12px var(--mono); font-style: normal; color: var(--muted); }
 .acks .short { display: none; }
@@ -212,7 +213,7 @@ html:not(.gl) [data-glass] { background: rgba(127, 127, 127, .08); box-shadow: i
   .pt em { display: none; }
   .acks { grid-template-columns: 1fr 1fr; grid-template-rows: auto repeat(3, auto); gap: 8px 12px; padding: 12px; border-radius: 14px; }
   .acks li { grid-template-columns: 44px minmax(0, 1fr); gap: 8px; padding: 2px 6px; margin: 0 -6px; border-radius: 10px; }
-  .lg { height: 22px; padding: 2px 4px; border-radius: 6px; }
+  .lg { --pv: 3px; --ph: 4px; height: 24px; border-radius: 6px; }
   .acks b { font-size: 12px; line-height: 1.25; }
   .acks em, .acks .full { display: none; }
   .acks .short { display: block; }
