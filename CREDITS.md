@@ -12,3 +12,16 @@ The award logos in `logos/` belong to their organizations and are used only to i
 | `logos/rotary.png` | [Rotary International Logo.svg, Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Rotary_International_Logo.svg) | Public domain |
 
 The photo `me.jpg` is Neil Panchal's own.
+
+# Intro footage
+
+`intro.mp4` is edited (trimmed, joined, converted to black and white) from two clips on Mixkit, used under the [Mixkit Stock Video Free License](https://mixkit.co/license/#videoFree):
+
+- [Dropping liquid into a lab tube, close-up](https://mixkit.co/free-stock-video/dropping-liquid-into-a-lab-tube-close-up-17589/)
+- [Single drops of water create ripples](https://mixkit.co/free-stock-video/single-drops-of-water-create-ripples-110/)
+
+`intro-poster.jpg` is the first frame of `intro.mp4`.
+
+# Fonts
+
+Source Serif 4 and Libre Franklin, from Google Fonts (SIL Open Font License).
