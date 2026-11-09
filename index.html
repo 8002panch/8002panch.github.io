@@ -3,22 +3,24 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Neil Panchal · Bioengineering, UMD</title>
-<meta name="description" content="Neil Panchal, bioengineering at the University of Maryland. I model biology in code, then test it at the bench: a designed antimicrobial peptide, surgical bone imaging, and the mechanics of NET formation.">
+<title>Neil Panchal, Bioengineering, UMD</title>
+<meta name="description" content="Neil Panchal, bioengineering at the University of Maryland. Peptides, bone and neutrophils: a designed antimicrobial peptide, surgical bone imaging, and the mechanics of NET formation.">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Neil Panchal · Bioengineering, UMD">
-<meta property="og:description" content="I model biology in code, then test it at the bench.">
+<meta property="og:title" content="Neil Panchal, Bioengineering, UMD">
+<meta property="og:description" content="Peptides. Bone. Neutrophils.">
 <meta property="og:image" content="https://8002panch.github.io/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Neil Panchal: I model biology in code, then test it at the bench.">
+<meta property="og:image:alt" content="Neil Panchal: peptides, bone, neutrophils.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#000000" id="tc">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23000'/%3E%3Ctext x='5' y='24' font-family='Arial' font-weight='700' font-size='22' fill='%23f3f3f1'%3EN%3C/text%3E%3Ccircle cx='25' cy='9' r='4' fill='%23f2361d'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23000'/%3E%3Ctext x='5' y='24' font-family='Georgia' font-weight='700' font-size='22' fill='%23f2f0eb'%3EN%3C/text%3E%3Ccircle cx='25' cy='9' r='4' fill='%23ffc400'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="preload" href="intro-poster.jpg" as="image" fetchpriority="high">
 <link rel="preload" href="intro.mp4" as="video" type="video/mp4">
+<script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/model-viewer/4.4.0/model-viewer.min.js"></script>
 <script>
 // Before first paint: theme (a saved choice wins, otherwise dark) and whether the intro plays
 (function () {
@@ -29,216 +31,171 @@
 })();
 </script>
 <style>
-/* Design system
-   Type: Source Serif 4 for the name and headings, Libre Franklin for everything else. Sizes: 13 / 14 / 16 / 19 / display.
-   Space: multiples of 4 (8, 12, 16, 24, 32, 48). Radius: 16 for surfaces, 8 for chips.
-   Colour: ink on paper; red, blue and yellow only inside the research marks and the award highlights.
-   Glass is used for two things only: the research cards and the recognition card. */
+/* Design system (see the frontend-design skill)
+   Palette: Black #000, Bone #F2F0EB, Ash #8B8A85, and three model colours used only inside the 3D figures:
+   Residue yellow #FFC400, Cationic blue #2453FF, Backbone red #F2361D.
+   Type: Source Serif 4 for the name and the three subject words, Libre Franklin for everything else.
+   Boldness lives in one place: the three subject words, each led by its rotating 3D figure. The rest stays quiet. */
 :root {
-  --paper: #000000; --ink: #f2f2f0; --body: #c4c3be; --muted: #8b8a85; --hair: rgba(255, 255, 255, .1);
-  --red: #f2361d; --blue: #5b7cff; --yellow: #ffc400; --ochre: #d9a72e;
-  --bone-line: #4b4b4e; --bone-fill: #1d1d20;
+  --paper: #000000; --ink: #f2f0eb; --body: #c9c7c1; --muted: #8b8a85; --hair: rgba(242, 240, 235, .12);
+  --blue: #5b7cff;
   --sans: "Libre Franklin", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
   --serif: "Source Serif 4", "Iowan Old Style", Georgia, serif;
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-  --gx: max(16px, env(safe-area-inset-left, 0px), 4vw);
-  --ease: cubic-bezier(.2, .8, .2, 1);
+  --gx: max(18px, env(safe-area-inset-left, 0px), 4vw);
+  --ease: cubic-bezier(.16, 1, .3, 1);
   color-scheme: dark;
 }
 :root[data-theme="light"] {
-  --paper: #ffffff; --ink: #141414; --body: #3a3935; --muted: #6b6a66; --hair: rgba(20, 20, 20, .1);
-  --red: #f2361d; --blue: #2453ff; --yellow: #ffc400; --ochre: #8a6900;
-  --bone-line: #c4c3bf; --bone-fill: #f2f2ef;
+  --paper: #ffffff; --ink: #121212; --body: #3a3935; --muted: #6b6a66; --hair: rgba(18, 18, 18, .12);
+  --blue: #2453ff;
   color-scheme: light;
 }
 * { box-sizing: border-box; }
 html, body { height: 100%; }
-body { margin: 0; background: var(--paper); color: var(--body); font: 400 15px/1.55 var(--sans); -webkit-font-smoothing: antialiased; overflow: hidden; }
+body { margin: 0; background: var(--paper); color: var(--body); font: 400 15px/1.5 var(--sans); -webkit-font-smoothing: antialiased; overflow: hidden; }
 a { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
 button { font: inherit; color: inherit; -webkit-tap-highlight-color: transparent; }
-:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 4px; }
 h1, h2, p, ul, dl, dd { margin: 0; }
 ul { padding: 0; list-style: none; }
 .sr { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-.lab, .meta { font-family: var(--sans); font-size: 13px; font-weight: 400; color: var(--muted); }
 
 html.nocur, html.nocur * { cursor: none !important; }
 #glass { position: fixed; inset: 0; width: 100%; height: 100%; display: block; z-index: 0; pointer-events: none; opacity: 0; transition: opacity .6s ease; }
 #ring { position: fixed; inset: 0; width: 100%; height: 100%; display: block; z-index: 50; pointer-events: none; }
 html.ready #glass { opacity: 1; }
+.page { position: relative; z-index: 1; }
+html:not(.gl) [data-glass] { background: rgba(127, 127, 127, .08); box-shadow: inset 0 0 0 1px var(--hair); }
+
+/* Intro: real footage; the page opens out of the ripple, then the headline lines rise into place */
 #intro { display: none; }
 html.intro-on #intro { --ix: 50%; --iy: 59%; --ir: -4px; display: block; position: fixed; inset: 0; z-index: 100; background: #000;
   -webkit-mask-image: radial-gradient(circle at var(--ix) var(--iy), transparent var(--ir), #000 calc(var(--ir) + 1px));
   mask-image: radial-gradient(circle at var(--ix) var(--iy), transparent var(--ir), #000 calc(var(--ir) + 1px)); }
 #intro video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 #intro::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(circle at var(--ix) var(--iy), transparent var(--ir), rgba(255, 255, 255, .7) calc(var(--ir) + 1px), transparent calc(var(--ir) + 4px)); }
-html.dropping .page { animation: settle 1s var(--ease) both; }
-@keyframes settle { from { transform: scale(1.03); filter: blur(4px); opacity: .5; } 60% { filter: blur(0); opacity: 1; } }
-.page { position: relative; z-index: 1; }
-html:not(.gl) [data-glass] { background: rgba(127, 127, 127, .08); box-shadow: inset 0 0 0 1px var(--hair); }
+.rise { display: block; overflow: hidden; padding-bottom: .08em; margin-bottom: -.08em; }
+.rise > span { display: inline-block; }
+html.intro-on .rise > span { transform: translateY(110%); }
+html.go .rise > span { animation: up 1s var(--ease) both; animation-delay: calc(var(--i, 0) * 70ms + 120ms); }
+@keyframes up { from { transform: translateY(110%); } to { transform: none; } }
 
-/* ---------- Layout: one screen ---------- */
+/* ---------- One screen ---------- */
 .page {
   height: 100vh; height: 100dvh;
-  display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto;
-  row-gap: clamp(16px, 3vh, 32px);
-  padding: max(clamp(16px, 3.4vh, 40px), env(safe-area-inset-top, 0px)) var(--gx) max(clamp(12px, 2vh, 20px), env(safe-area-inset-bottom, 0px));
+  display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto auto;
+  row-gap: clamp(12px, 2.2vh, 24px);
+  padding: max(clamp(16px, 3vh, 36px), env(safe-area-inset-top, 0px)) var(--gx) max(clamp(12px, 2vh, 20px), env(safe-area-inset-bottom, 0px));
 }
 
-/* Hero */
-.hero { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: end; gap: 24px 32px; }
-.me { display: block; width: clamp(80px, 13vh, 128px); height: auto; aspect-ratio: 1; object-fit: cover; border-radius: 4px; filter: grayscale(1) contrast(.95); }
-.name { font: 600 clamp(42px, 1rem + 4.6vw, 88px)/.95 var(--serif); font-optical-sizing: auto; letter-spacing: -0.02em; color: var(--ink); }
-.ch { display: inline-block; }
-.wd { display: inline-block; white-space: nowrap; }
-.nt { text-align: center; opacity: .35; }
-.tag { margin-top: 12px; max-width: 52ch; font-size: clamp(15px, .8rem + .35vw, 18px); line-height: 1.45; color: var(--body); }
-.tag b { font-weight: 500; color: var(--ink); }
-.hero .meta { margin-top: 8px; }
-.contact { display: grid; justify-items: end; gap: 2px; font-size: 14px; }
-.contact a { color: var(--ink); padding: 4px 8px; margin-right: -8px; border-radius: 8px; }
+/* Header: name and contact, quiet */
+.top { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 0 18px; }
+.me { width: 52px; height: 52px; object-fit: cover; border-radius: 4px; filter: grayscale(1) contrast(.95); }
+.name { font: 600 clamp(26px, 1rem + 1.2vw, 34px)/1 var(--serif); letter-spacing: -0.015em; color: var(--ink); }
+.role { margin-top: 4px; font-size: 14px; color: var(--muted); }
+.contact { display: flex; gap: 4px 22px; font-size: 14px; }
+.contact a { color: var(--ink); padding: 4px 0; }
 .contact a:first-child { font-weight: 500; }
 
-/* Research + recognition */
-.main { display: grid; grid-template-columns: minmax(0, 3fr) minmax(260px, 1.2fr); gap: 16px; min-height: 0; }
-.fig { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: minmax(0, 1fr); gap: 12px 16px; min-height: 0; }
-.fig > .lab, .acks > .lab { grid-column: 1 / -1; }
-.panel { display: grid; grid-template-rows: minmax(0, 1fr) auto; min-height: 0; padding: 18px; border-radius: 18px; -webkit-user-drag: none; user-select: none; -webkit-user-select: none; }
-.art { position: relative; min-height: 0; min-width: 0; }
-.art > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; overflow: visible; }
-.pt b { display: block; font-size: 16px; font-weight: 500; color: var(--ink); line-height: 1.3; }
-.pt span { display: block; margin-top: 4px; font-size: 14px; line-height: 1.4; color: var(--body); }
-.pt em { display: block; margin-top: 8px; font-size: 13px; font-style: normal; color: var(--muted); }
+/* The statement: three subject words, each led by its figure */
+.subjects { display: grid; grid-template-rows: repeat(3, minmax(0, 1fr)); min-height: 0; }
+.row { display: grid; grid-template-columns: var(--fig) minmax(0, 1fr) minmax(220px, 34ch); align-items: center; gap: clamp(12px, 2.4vw, 40px); min-height: 0; --fig: clamp(96px, 22vh, 250px); transition: opacity .35s ease; }
+.row + .row { border-top: 1px solid var(--hair); }
+.fig { width: var(--fig); height: 100%; max-height: calc(var(--fig) * 1.05); min-height: 0; display: block; position: relative; }
+.fig model-viewer { position: absolute; inset: 0; width: 100%; height: 100%; --poster-color: transparent; --progress-bar-height: 0px; pointer-events: none; background: transparent; }
+.word { font: 600 clamp(44px, min(14vh, 11vw), 168px)/.9 var(--serif); letter-spacing: -0.035em; color: var(--ink); white-space: nowrap; }
+.cap { font-size: 15px; line-height: 1.45; color: var(--body); max-width: 34ch; }
+.cap small { display: block; margin-top: 6px; font-size: 13px; color: var(--muted); }
+@media (hover: hover) { .subjects:has(.row:hover) .row:not(:hover) { opacity: .35; } }
 
-.acks { display: grid; grid-template-rows: auto repeat(6, minmax(0, 1fr)); gap: 4px; padding: 18px; border-radius: 18px; min-height: 0; }
-.acks > .lab { margin-bottom: 4px; }
-.acks li { display: grid; grid-template-columns: 72px minmax(0, 1fr); align-items: center; gap: 12px; padding: 4px 8px; margin: 0 -8px; border-radius: 12px; min-height: 0; overflow: hidden; }
-.lg { --pv: 4px; --ph: 6px; position: relative; display: block; height: clamp(26px, 4vh, 32px); border-radius: 6px; background: #fff; overflow: hidden; }
-/* the logo always fits inside its chip, whatever its proportions */
+/* Recognition: every award links to where it's recorded */
+.acks { display: grid; grid-template-columns: auto repeat(3, minmax(0, 1fr)); grid-template-rows: auto auto; gap: 6px 22px; align-items: center; padding: 14px 18px; border-radius: 18px; }
+.acks h2 { grid-row: 1 / span 2; align-self: start; padding-top: 6px; font: 400 13px var(--sans); color: var(--muted); width: 8ch; }
+.acks a { display: grid; grid-template-columns: 64px minmax(0, 1fr); align-items: center; gap: 12px; padding: 5px 8px; margin: 0 -8px; border-radius: 12px; min-width: 0; }
+.acks b { display: block; font-size: 14px; font-weight: 500; color: var(--ink); line-height: 1.25; }
+.acks em { display: block; font-size: 12.5px; font-style: normal; color: var(--muted); }
+.lg { --pv: 4px; --ph: 6px; position: relative; display: block; height: 30px; border-radius: 6px; background: #fff; overflow: hidden; }
 .lg img { position: absolute; top: var(--pv); left: var(--ph); width: calc(100% - 2 * var(--ph)); height: calc(100% - 2 * var(--pv)); object-fit: contain; }
-.acks b { display: block; font-size: 14px; font-weight: 500; color: var(--ink); line-height: 1.3; }
-.acks em { display: block; font-size: 13px; font-style: normal; color: var(--muted); }
 .acks .short { display: none; }
 
 /* Footer */
-.foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 12px; border-top: 1px solid var(--hair); font-size: 13px; }
+.foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; font-size: 13px; color: var(--muted); }
 .foot .list { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; }
-.foot .list > span:not(.lab) { color: var(--muted); }
 .foot a { color: var(--ink); }
 .foot .sl { display: none; }
 .theme { display: inline-flex; align-items: center; gap: 8px; padding: 4px 8px; margin-right: -8px; border: 0; border-radius: 8px; background: none; font-size: 13px; color: var(--ink); cursor: pointer; }
 .theme svg { width: 14px; height: 14px; }
 
-/* Marks: one shape, one primary colour each */
-.hx-front { fill: none; stroke: var(--red); stroke-width: 11; stroke-linecap: round; }
-.hx-back { fill: none; stroke: var(--red); stroke-opacity: .3; stroke-width: 7; stroke-linecap: round; }
-.bn-o { fill: var(--bone-fill); stroke: var(--bone-line); stroke-width: 3; }
-.bn-i { fill: var(--bone-line); fill-opacity: .55; }
-.bm-fill { fill: var(--blue); fill-opacity: .9; }
-.ry { fill: none; stroke: var(--yellow); stroke-width: 5; stroke-linecap: round; }
-.n-nuc { fill: var(--yellow); }
-
-/* Project scenes (drawn every frame by the script) */
-.scene { overflow: visible; cursor: pointer; }
-.w-dot.h { fill: var(--yellow); }
-.w-dot.c { fill: var(--blue); }
-.w-dot.o { fill: var(--paper); stroke: var(--ink); stroke-width: 1.3; }
-.w-t { font: 600 10.5px var(--sans); fill: var(--ink); text-anchor: middle; dominant-baseline: central; pointer-events: none; }
-.w-t.c { fill: #fff; }
-.chain { fill: none; stroke: var(--muted); stroke-width: 1.5; stroke-opacity: .45; stroke-linejoin: round; }
-.lip { fill: var(--muted); opacity: .35; }
-.halo { fill: var(--blue); }
-.germ { fill: var(--ink); opacity: .75; }
-.lbl { font: 400 12px var(--sans); fill: var(--muted); text-anchor: middle; }
-.sB .fl { fill: #f3efe7; }
-.sB .fr { fill: #070c24; }
-.wl-o { fill: #e9dfcd; stroke: #cbbfa9; stroke-width: 3; }
-.wl-i { fill: #c9a77a; }
-.fb-o { fill: url(#fluo); }
-.fb-i { fill: #0b1a5e; fill-opacity: .75; }
-.seg { fill: var(--blue); fill-opacity: 0; stroke: var(--blue); stroke-width: 3; stroke-dasharray: 1; stroke-dashoffset: 1; }
-.flag { fill: none; stroke: var(--red); stroke-width: 2.4; stroke-dasharray: 4 5; opacity: 0; }
-.sB .flag-l { fill: var(--red); opacity: 0; }
-.sC .press path { fill: none; stroke: var(--ink); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
-.sC .flow line { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 6 12; animation: flowmove 1.1s linear infinite; }
-@keyframes flowmove { to { stroke-dashoffset: -18; } }
-.cm { fill: var(--yellow); fill-opacity: .18; stroke: var(--yellow); stroke-width: 2.6; }
-.strand { fill: none; stroke: var(--yellow); stroke-width: 2.4; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0; }
-.bugr { fill: var(--blue); }
-
-/* ---------- Project view: the picture, one sentence, two facts (works without JavaScript) ---------- */
-.detail { display: none; grid-row: 1 / -1; grid-column: 1; min-height: 0; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 64px); }
+/* ---------- Project view: the figure you can turn, one sentence, a few facts ---------- */
+.detail { display: none; grid-row: 1 / -1; grid-column: 1; min-height: 0; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 64px); }
 .detail:target { display: grid; }
-.page:has(.detail:target) :is(.hero, .main, .foot) { display: none; }
-.big { display: grid; min-height: 0; padding: clamp(16px, 2.4vw, 32px); border-radius: 16px; }
-.big .art { min-height: 0; }
+.page:has(.detail:target) :is(.top, .subjects, .acks, .foot) { display: none; }
+.stage { position: relative; min-height: 0; border-radius: 18px; }
+.stage model-viewer { position: absolute; inset: 0; width: 100%; height: 100%; --poster-color: transparent; --progress-bar-height: 0px; background: transparent; }
+.stage .hint { position: absolute; left: 18px; bottom: 14px; font-size: 13px; color: var(--muted); pointer-events: none; }
 .info { min-height: 0; overflow: auto; overscroll-behavior: contain; display: flex; flex-direction: column; padding: 4px 4px 4px 0; }
-.detail:target .info > * { animation: rise .7s var(--ease) backwards; }
-.detail:target .info > :nth-child(2) { animation-delay: .04s; }
-.detail:target .info > :nth-child(3) { animation-delay: .08s; }
-.detail:target .info > :nth-child(n+4) { animation-delay: .12s; }
-@keyframes rise { from { opacity: 0; transform: translateY(12px); } }
-.back { align-self: flex-start; font-size: 13px; color: var(--ink); padding: 4px 8px; margin: -4px -8px 32px; border-radius: 8px; }
-.detail h2 { margin-top: 8px; font: 600 clamp(38px, 1rem + 3.2vw, 68px)/1 var(--serif); letter-spacing: -0.02em; color: var(--ink); }
-.lead { margin-top: 16px; max-width: 42ch; font-size: clamp(16px, .9rem + .3vw, 19px); line-height: 1.5; color: var(--body); }
-.facts { margin-top: 32px; display: grid; gap: 8px; }
-.facts div { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 12px; padding-top: 8px; border-top: 1px solid var(--hair); font-size: 14px; }
-.facts dt { font-size: 13px; line-height: 1.7; color: var(--muted); }
+.back { align-self: flex-start; font-size: 14px; color: var(--ink); padding: 4px 0; margin-bottom: clamp(20px, 5vh, 48px); }
+.detail .meta { font-size: 14px; color: var(--muted); }
+.detail h2 { margin-top: 8px; font: 600 clamp(48px, 1rem + 5vw, 104px)/.92 var(--serif); letter-spacing: -0.035em; color: var(--ink); }
+.lead { margin-top: 20px; max-width: 42ch; font-size: clamp(16px, .9rem + .3vw, 19px); line-height: 1.5; color: var(--body); }
+.facts { margin-top: 32px; display: grid; gap: 10px; }
+.facts div { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 12px; padding-top: 10px; border-top: 1px solid var(--hair); font-size: 14px; }
+.facts dt { color: var(--muted); }
 .facts dd { color: var(--ink); min-width: 0; overflow-wrap: anywhere; }
-.facts .seq { font: 500 13px/1.75 var(--mono); }
+.facts .seq { font: 500 13px/1.7 var(--mono); letter-spacing: .02em; }
 .facts a { text-decoration: underline; text-decoration-color: var(--hair); text-underline-offset: 3px; }
-.next { margin-top: auto; padding-top: 24px; }
-.next a { font-size: 13px; color: var(--ink); padding: 4px 8px; margin-left: -8px; border-radius: 8px; }
+.next { margin-top: auto; padding-top: 24px; font-size: 14px; }
+.next a { color: var(--ink); }
 
-::view-transition-group(art) { animation-duration: .6s; animation-timing-function: var(--ease); }
+::view-transition-group(fig) { animation-duration: .6s; animation-timing-function: var(--ease); }
 ::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
 
 /* ---------- Narrower windows ---------- */
-@media (max-width: 1100px), (max-height: 800px) { .acks em { display: none; } }
-@media (max-width: 1100px) {
-  .hero { grid-template-columns: auto minmax(0, 1fr); }
-  .contact { grid-column: 1 / -1; display: flex; flex-wrap: wrap; justify-items: start; gap: 4px 16px; }
-  .contact a { margin: 0 0 0 -8px; }
-  .main { grid-template-columns: minmax(0, 2.2fr) minmax(240px, 1.3fr); }
-  .pt span { display: none; }
+@media (max-width: 1180px) {
+  .acks { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .acks h2 { grid-row: auto; grid-column: 1 / -1; width: auto; padding-top: 0; }
+  .acks em { display: none; }
+}
+@media (max-width: 980px) {
+  .row { grid-template-columns: var(--fig) minmax(0, 1fr); grid-template-rows: auto auto; row-gap: 4px; align-content: center; }
+  .fig { grid-row: 1 / span 2; }
+  .word { align-self: end; font-size: clamp(40px, min(9vh, 11vw), 110px); }
+  .cap { align-self: start; font-size: 14px; }
+  .cap small { display: none; }
 }
 /* ---------- Phones ---------- */
-@media (max-width: 760px) {
-  .page { row-gap: 16px; }
-  .hero { gap: 12px 16px; align-items: start; }
-  .me { width: 64px; border-radius: 4px; }
-  .name { font-size: 34px; }
-  .tag { margin-top: 8px; font-size: 14px; }
-  .hero .meta { display: none; }
-  .contact { font-size: 12px; gap: 4px 12px; }
-  .main { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; gap: 16px; }
-  .fig { gap: 8px; }
-  .panel { padding: 12px; border-radius: 14px; }
-  .pt b { font-size: 13px; }
-  .pt em { display: none; }
-  .acks { grid-template-columns: 1fr 1fr; grid-template-rows: auto repeat(3, auto); gap: 8px 12px; padding: 12px; border-radius: 14px; }
-  .acks li { grid-template-columns: 44px minmax(0, 1fr); gap: 8px; padding: 2px 6px; margin: 0 -6px; border-radius: 10px; }
-  .lg { --pv: 3px; --ph: 4px; height: 24px; border-radius: 6px; }
-  .acks b { font-size: 12px; line-height: 1.25; }
-  .acks em, .acks .full { display: none; }
+@media (max-width: 640px) {
+  .page { row-gap: 12px; }
+  .top { grid-template-columns: auto minmax(0, 1fr); gap: 10px 12px; }
+  .me { width: 44px; height: 44px; }
+  .name { font-size: 24px; }
+  .role { font-size: 12.5px; }
+  .contact { grid-column: 1 / -1; font-size: 13px; gap: 4px 16px; }
+  .row { --fig: 76px; column-gap: 12px; }
+  .word { font-size: clamp(36px, 11.5vw, 56px); }
+  .cap { font-size: 12.5px; line-height: 1.35; }
+  .acks { grid-template-columns: 1fr 1fr; gap: 6px 10px; padding: 10px 12px; border-radius: 14px; }
+  .acks a { grid-template-columns: 44px minmax(0, 1fr); gap: 8px; padding: 2px 6px; margin: 0 -6px; border-radius: 10px; }
+  .lg { --pv: 3px; --ph: 4px; height: 24px; }
+  .acks b { font-size: 12px; }
+  .acks .full { display: none; }
   .acks .short { display: block; }
   .foot .s12, .foot .lab, .foot .fl { display: none; }
   .foot .sl { display: inline; }
   .theme span { display: none; }
-  .detail { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(160px, 36vh) minmax(0, 1fr); gap: 16px; }
-  .big { padding: 12px; border-radius: 14px; }
+  .detail { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(200px, 40vh) minmax(0, 1fr); gap: 16px; }
   .back { margin-bottom: 16px; }
   .facts { margin-top: 20px; }
-  .fig, .hero, .big { touch-action: pinch-zoom; }
 }
-@media (max-height: 560px), (max-width: 760px) and (max-height: 540px) {
+@media (max-height: 560px), (max-width: 640px) and (max-height: 560px) {
   body { overflow: auto; }
   .page { height: auto; min-height: 100vh; }
-  .main { min-height: 520px; }
+  .subjects { min-height: 420px; }
   .detail { height: 92vh; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .detail:target .info > *, .sC .flow line { animation: none; }
+  .row { transition: none; }
   ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
 }
 </style>
@@ -249,12 +206,11 @@ html:not(.gl) [data-glass] { background: rgba(127, 127, 127, .08); box-shadow: i
 <canvas id="ring" aria-hidden="true"></canvas>
 
 <div class="page">
-  <header class="hero">
+  <header class="top">
     <img class="me" src="me.jpg" width="350" height="350" alt="Neil Panchal" decoding="async" draggable="false">
     <div>
-      <h1 class="name" data-dna>Neil Panchal</h1>
-      <p class="tag"><b>Bioengineering, University of Maryland.</b> I model biology in code, then test it at the bench.</p>
-      <p class="meta">Research at UMD, Johns Hopkins and George Mason.</p>
+      <h1 class="name"><span class="rise" style="--i:0"><span>Neil Panchal</span></span></h1>
+      <p class="role">Bioengineering at the University of Maryland. Research at UMD, Johns Hopkins and George Mason.</p>
     </div>
     <nav class="contact" aria-label="Contact">
       <a href="mailto:neilpanchal08@gmail.com">neilpanchal08@gmail.com</a>
@@ -263,78 +219,79 @@ html:not(.gl) [data-glass] { background: rgba(127, 127, 127, .08); box-shadow: i
     </nav>
   </header>
 
-  <main class="main">
-    <section class="fig" aria-labelledby="fig-h">
-      <h2 class="sr" id="fig-h">Research</h2>
-      <a class="panel" data-p="A" href="#A" draggable="false" data-glass>
-        <span class="art" data-art="A"></span>
-        <span class="pt"><b>NeKtar‑1</b><span>A peptide designed in code, tested at the bench</span><em>IBBR, UMD, 2025–26</em></span>
-      </a>
-      <a class="panel" data-p="B" href="#B" draggable="false" data-glass>
-        <span class="art" data-art="B"></span>
-        <span class="pt"><b>Bone viability</b><span>Reading surgical images, and knowing when not to trust the model</span><em>Gan Lab, UMD, since 2026</em></span>
-      </a>
-      <a class="panel" data-p="C" href="#C" draggable="false" data-glass>
-        <span class="art" data-art="C"></span>
-        <span class="pt"><b>NET mechanics</b><span>How force makes neutrophils cast DNA nets</span><em>Aranda‑Espinoza Lab, UMD, since 2026</em></span>
-      </a>
-    </section>
-
-    <section class="acks" data-glass aria-labelledby="ack-h">
-      <h2 class="lab" id="ack-h">Recognized by</h2>
-      <ul style="display:contents">
-        <li data-lens data-tint="red"><span class="lg"><img src="logos/regeneron.png" alt="Regeneron"></span><span><b><span class="full">Biomedical Science Award</span><span class="short">Regeneron Biomedical</span></b><em>Regeneron</em></span></li>
-        <li data-lens data-tint="blue"><span class="lg"><img src="logos/astrazeneca.png" alt="AstraZeneca"></span><span><b><span class="full">Exceptional Project Award</span><span class="short">AstraZeneca Exceptional</span></b><em>AstraZeneca</em></span></li>
-        <li data-lens data-tint="yellow"><span class="lg"><img src="logos/mriglobal.png" alt="MRIGlobal"></span><span><b><span class="full">1st Place Project Award</span><span class="short">MRIGlobal, 1st</span></b><em>MRIGlobal</em></span></li>
-        <li data-lens data-tint="red"><span class="lg"><img src="logos/hosa.jpg" alt="HOSA-Future Health Professionals"></span><span><b><span class="full">2nd Place, State Biomedical Debate</span><span class="short">HOSA State, 2nd</span></b><em>HOSA</em></span></li>
-        <li data-lens data-tint="blue"><span class="lg"><img src="logos/sciencemontgomery.jpg" alt="Science Montgomery"></span><span><b><span class="full">3rd Place</span><span class="short">Science Montgomery, 3rd</span></b><em>Science Montgomery</em></span></li>
-        <li data-lens data-tint="yellow"><span class="lg"><img src="logos/rotary.png" alt="Metro Bethesda Rotary"></span><span><b><span class="full">James Phang Aspiring Scientist Award</span><span class="short">Rotary Phang Award</span></b><em>Metro Bethesda Rotary</em></span></li>
-      </ul>
-    </section>
+  <main class="subjects" aria-label="Research">
+    <a class="row" href="#A" draggable="false">
+      <span class="fig" data-fig="A"><model-viewer src="models/nektar1.glb" alt="NeKtar-1 as a ball-and-stick helix, residues coloured by type" auto-rotate auto-rotate-delay="0" rotation-per-second="22deg" interaction-prompt="none" disable-zoom disable-pan environment-image="neutral" exposure="1.1" camera-orbit="0deg 78deg 105%" field-of-view="26deg"></model-viewer></span>
+      <span class="word"><span class="rise" style="--i:1"><span>Peptides.</span></span></span>
+      <span class="cap">NeKtar‑1, a peptide I designed with a protein language model, killed over 99.9% of drug‑resistant <i>E. coli</i> in BSL‑2 tests.<small>IBBR, University of Maryland. Published in NHSJS.</small></span>
+    </a>
+    <a class="row" href="#B" draggable="false">
+      <span class="fig" data-fig="B"><model-viewer src="models/femur.glb" alt="A human femur with its upper half marked as viable bone" auto-rotate auto-rotate-delay="0" rotation-per-second="18deg" interaction-prompt="none" disable-zoom disable-pan environment-image="neutral" exposure="1.05" camera-orbit="0deg 82deg 105%" field-of-view="26deg"></model-viewer></span>
+      <span class="word"><span class="rise" style="--i:2"><span>Bone.</span></span></span>
+      <span class="cap">Models that tell living bone from dead in surgical fluorescence images, trained on 270 cases with Dartmouth.<small>Gan Lab, University of Maryland.</small></span>
+    </a>
+    <a class="row" href="#C" draggable="false">
+      <span class="fig" data-fig="C"><model-viewer src="models/neutrophil.glb" alt="A neutrophil casting strands of DNA that catch bacteria" auto-rotate auto-rotate-delay="0" rotation-per-second="14deg" interaction-prompt="none" disable-zoom disable-pan environment-image="neutral" exposure="1.1" camera-orbit="0deg 75deg 105%" field-of-view="26deg"></model-viewer></span>
+      <span class="word"><span class="rise" style="--i:3"><span>Neutrophils.</span></span></span>
+      <span class="cap">How squeezing, sticking and flow make immune cells cast nets of DNA. Of about 9,700 papers on these nets, 2.5% study the mechanics.<small>Aranda‑Espinoza Lab, University of Maryland.</small></span>
+    </a>
   </main>
 
+  <section class="acks" data-glass aria-labelledby="ack-h">
+    <h2 id="ack-h">Recognized by</h2>
+    <a href="https://www.montgomeryschoolsmd.org/schools/poolesvillehs/student-success/accolades2025_2026/#:~:text=Neil%20Panchal" target="_blank" rel="noopener" data-tint="red"><span class="lg"><img src="logos/regeneron.png" alt="Regeneron"></span><span><b><span class="full">Biomedical Science Award</span><span class="short">Regeneron Biomedical</span></b><em>Regeneron, 2026</em></span></a>
+    <a href="https://www.montgomeryschoolsmd.org/schools/poolesvillehs/student-success/accolades2025_2026/#:~:text=Neil%20Panchal" target="_blank" rel="noopener" data-tint="blue"><span class="lg"><img src="logos/astrazeneca.png" alt="AstraZeneca"></span><span><b><span class="full">Exceptional Project Award</span><span class="short">AstraZeneca Exceptional</span></b><em>AstraZeneca, 2026</em></span></a>
+    <a href="https://www.montgomeryschoolsmd.org/schools/poolesvillehs/student-success/accolades2025_2026/#:~:text=Neil%20Panchal" target="_blank" rel="noopener" data-tint="yellow"><span class="lg"><img src="logos/mriglobal.png" alt="MRIGlobal"></span><span><b><span class="full">Outstanding Achievement in Life Science</span><span class="short">MRIGlobal Life Science</span></b><em>MRIGlobal, 2026</em></span></a>
+    <a href="https://marylandhosa.org/state-leadership-conference/" target="_blank" rel="noopener" data-tint="red"><span class="lg"><img src="logos/hosa.jpg" alt="HOSA-Future Health Professionals"></span><span><b><span class="full">2nd Place, State Biomedical Debate</span><span class="short">HOSA State, 2nd</span></b><em>Maryland HOSA</em></span></a>
+    <a href="https://www.montgomeryschoolsmd.org/schools/poolesvillehs/student-success/accolades2025_2026/#:~:text=Neil%20Panchal" target="_blank" rel="noopener" data-tint="blue"><span class="lg"><img src="logos/sciencemontgomery.jpg" alt="Science Montgomery"></span><span><b><span class="full">3rd Place, Biology</span><span class="short">Science Montgomery, 3rd</span></b><em>Science Montgomery, 2026</em></span></a>
+    <a href="https://www.montgomeryschoolsmd.org/schools/poolesvillehs/student-success/accolades2025_2026/#:~:text=Neil%20Panchal" target="_blank" rel="noopener" data-tint="yellow"><span class="lg"><img src="logos/rotary.png" alt="Metro Bethesda Rotary"></span><span><b><span class="full">James Phang Aspiring Scientist Award</span><span class="short">Rotary Phang Award</span></b><em>Metro Bethesda Rotary, 2026</em></span></a>
+  </section>
+
   <section class="detail" id="A" aria-labelledby="A-h">
-    <div class="big" data-glass><span class="art" data-scene="A"></span></div>
+    <div class="stage" data-glass><model-viewer src="models/nektar1.glb" alt="NeKtar-1 as a ball-and-stick helix, residues coloured by type; drag to turn it" camera-controls auto-rotate auto-rotate-delay="2500" rotation-per-second="18deg" interaction-prompt="none" disable-pan environment-image="neutral" exposure="1.1" camera-orbit="0deg 78deg 105%" field-of-view="24deg"></model-viewer><p class="hint">Drag to turn it</p></div>
     <div class="info">
       <a class="back" href="#">Back to overview</a>
       <p class="meta">Protein design at IBBR, University of Maryland, 2025–26</p>
       <h2 id="A-h">NeKtar‑1</h2>
-      <p class="lead">An antimicrobial peptide proposed by a protein language model. I tested it in a BSL‑2 lab, where it killed drug‑resistant <i>E. coli</i> and <i>P. aeruginosa</i>.</p>
+      <p class="lead">An antimicrobial peptide proposed by a protein language model. I tested it under BSL‑2, where it killed 99.9 to 99.999% of drug‑resistant <i>E. coli</i> and <i>P. aeruginosa</i>.</p>
       <dl class="facts">
         <div><dt>Sequence</dt><dd class="seq">GRWGFGWARIRGSVGFGKK</dd></div>
         <div><dt>Published</dt><dd><a href="https://nhsjs.com/2026/nektar-1-amp_031-a-computationally-designed-antimicrobial-peptide-with-selective-bactericidal-activity-against-gram-negative-bacterial-pathogens/" target="_blank" rel="noopener">National High School Journal of Science</a></dd></div>
+        <div><dt>Figure</dt><dd>An idealized helix built from the sequence. Yellow residues are hydrophobic, blue are positively charged.</dd></div>
       </dl>
-      <p class="next"><a href="#B">Next: Bone viability</a></p>
+      <p class="next"><a href="#B">Next: Bone</a></p>
     </div>
   </section>
 
   <section class="detail" id="B" aria-labelledby="B-h">
-    <div class="big" data-glass><span class="art" data-scene="B"></span></div>
+    <div class="stage" data-glass><model-viewer src="models/femur.glb" alt="A human femur with its upper half marked as viable bone; drag to turn it" camera-controls auto-rotate auto-rotate-delay="2500" rotation-per-second="16deg" interaction-prompt="none" disable-pan environment-image="neutral" exposure="1.05" camera-orbit="0deg 82deg 105%" field-of-view="24deg"></model-viewer><p class="hint">Drag to turn it</p></div>
     <div class="info">
       <a class="back" href="#">Back to overview</a>
-      <p class="meta">Surgical imaging in the Gan Lab, UMD, with Dartmouth, since 2026</p>
+      <p class="meta">Surgical imaging in the Gan Lab, University of Maryland, with Dartmouth, since 2026</p>
       <h2 id="B-h">Bone viability</h2>
-      <p class="lead">Models that read white‑light and fluorescence images during surgery to judge whether bone is still alive, and flag the cases they shouldn’t be trusted on.</p>
+      <p class="lead">Surgeons often judge by eye whether bone still has blood flow. My models read white‑light and fluorescence images instead, and flag the cases they shouldn’t be trusted on.</p>
       <dl class="facts">
-        <div><dt>Role</dt><dd>Segmentation and calibration models</dd></div>
+        <div><dt>Data</dt><dd>270 surgical cases from 207 patients</dd></div>
         <div><dt>Presented</dt><dd>Mickey Dale Organ Transplantation Symposium, Oct 2026. ISBI 2027 paper in preparation.</dd></div>
+        <div><dt>Figure</dt><dd>A human femur from NIH 3D (public domain). Blue marks the part a model would call viable.</dd></div>
       </dl>
-      <p class="next"><a href="#C">Next: NET mechanics</a></p>
+      <p class="next"><a href="#C">Next: Neutrophils</a></p>
     </div>
   </section>
 
   <section class="detail" id="C" aria-labelledby="C-h">
-    <div class="big" data-glass><span class="art" data-scene="C"></span></div>
+    <div class="stage" data-glass><model-viewer src="models/neutrophil.glb" alt="A neutrophil casting strands of DNA that catch bacteria; drag to turn it" camera-controls auto-rotate auto-rotate-delay="2500" rotation-per-second="12deg" interaction-prompt="none" disable-pan environment-image="neutral" exposure="1.1" camera-orbit="0deg 75deg 105%" field-of-view="24deg"></model-viewer><p class="hint">Drag to turn it</p></div>
     <div class="info">
       <a class="back" href="#">Back to overview</a>
-      <p class="meta">Cell mechanics in the Aranda‑Espinoza Lab, UMD, since 2026</p>
+      <p class="meta">Cell mechanics in the Aranda‑Espinoza Lab, University of Maryland, since 2026</p>
       <h2 id="C-h">NET mechanics</h2>
-      <p class="lead">Squeezing, sticking and flow can all push neutrophils to cast webs of DNA that trap bacteria. I proposed one framework that ties those triggers together.</p>
+      <p class="lead">Adhesion, confinement and shear can each push a neutrophil to burst into a web of DNA. I’m building one model that links all three, then testing it at the bench.</p>
       <dl class="facts">
-        <div><dt>Role</dt><dd>Modeling and literature review</dd></div>
-        <div><dt>Status</dt><dd>Framework proposed; bench tests next</dd></div>
+        <div><dt>Literature</dt><dd>About 9,700 papers reviewed; 2.5% address mechanics</dd></div>
+        <div><dt>Next</dt><dd>Substrate stiffness experiments no published study has fit</dd></div>
+        <div><dt>Figure</dt><dd>A neutrophil (yellow nucleus) casting DNA strands that hold bacteria (blue).</dd></div>
       </dl>
-      <p class="next"><a href="#A">Next: NeKtar‑1</a></p>
+      <p class="next"><a href="#A">Next: Peptides</a></p>
     </div>
   </section>
 
@@ -354,13 +311,11 @@ html:not(.gl) [data-glass] { background: rgba(127, 127, 127, .08); box-shadow: i
   function $$(s, el) { return Array.prototype.slice.call((el || D).querySelectorAll(s)); }
   function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
   function now() { return performance.now(); }
-  function sstep(x) { x = clamp(x, 0, 1); return x * x * (3 - 2 * x); }
-  var NS = 'http://www.w3.org/2000/svg';
-  function mk(tag, at, parent) { var e = D.createElementNS(NS, tag); for (var k in at) e.setAttribute(k, at[k]); if (parent) parent.appendChild(e); return e; }
-  function txt(parent, x, y, cls, s) { var e = mk('text', { x: x, y: y, class: cls }, parent); e.textContent = s; return e; }
   // Damped spring on o[k] toward tgt; velocity lives in o[vk]
   function spring(o, k, tgt, vk, K, C, dt) { var a = -K * (o[k] - tgt) - C * o[vk]; o[vk] += a * dt; o[k] += o[vk] * dt; }
   function isDark() { return root.getAttribute('data-theme') !== 'light'; }
+
+  if (reduce) $$('model-viewer').forEach(function (m) { m.removeAttribute('auto-rotate'); });
 
   /* ---------- Pointer ---------- */
   var P = { x: -999, y: -999, inside: false, down: false, touchUp: -1e9 };
@@ -382,21 +337,14 @@ html:not(.gl) [data-glass] { background: rgba(127, 127, 127, .08); box-shadow: i
     if (busy) requestAnimationFrame(frame); else running = false;
   }
 
-  /* ---------- Layout cache: rects are read when layout changes, not every frame ---------- */
+  /* ---------- Layout cache ---------- */
   var measurers = [], rq = 0;
   function measureAll() { for (var i = 0; i < measurers.length; i++) measurers[i](); wake(); }
   function soon() { cancelAnimationFrame(rq); rq = requestAnimationFrame(measureAll); }
   addEventListener('resize', soon);
   addEventListener('scroll', soon, { passive: true });
-  function Mapper(svg) {
-    var m = { vis: false, r: null };
-    m.read = function () { var r = svg.getBoundingClientRect(); m.r = r; m.vis = r.width > 2 && r.height > 2; };
-    m.near = function () { var r = m.r; return P.inside && r && P.x > r.left && P.x < r.right && P.y > r.top && P.y < r.bottom; };
-    measurers.push(m.read);
-    return m;
-  }
 
-  /* ---------- Glass shapes ---------- */
+  /* ---------- Glass shapes (the recognition card and the project stage) ---------- */
   var glass = [], glassEls = $$('[data-glass]');
   glassEls.forEach(function (el) { el._lift = 0; el._lv = 0; });
   measurers.push(function () {
@@ -409,11 +357,11 @@ html:not(.gl) [data-glass] { background: rgba(127, 127, 127, .08); box-shadow: i
     });
   });
 
-  /* What the cursor is over: links and award rows get a pill lens; glass cards lift */
+  /* What the cursor is over: links and award rows get a pill lens; the big subject rows keep the bead */
   var hov = null, hovRects = null;
-  function rectsOf(el) { return el && !el.hasAttribute('data-glass') ? Array.prototype.slice.call(el.getClientRects()) : null; }
+  function rectsOf(el) { return el && !el.hasAttribute('data-glass') && !el.classList.contains('row') ? Array.prototype.slice.call(el.getClientRects()) : null; }
   D.addEventListener('pointerover', function (e) {
-    var el = e.target.closest ? e.target.closest('a[href], button, [data-lens]') : null;
+    var el = e.target.closest ? e.target.closest('a[href], button') : null;
     if (el !== hov) { hov = el; hovRects = rectsOf(el); }
   });
   measurers.push(function () { hovRects = rectsOf(hov); });
@@ -422,7 +370,6 @@ html:not(.gl) [data-glass] { background: rgba(127, 127, 127, .08); box-shadow: i
   var NR = 40;
   var drop = { x: -300, y: -300, vx: 0, vy: 0, svx: 0, svy: 0, w: 2, h: 2, r: 2, vw: 0, vh: 0, vr: 0, a: 0, k: 0, pts: [], rm: 0, vrm: 0, ta: 0, tcol: null };
   for (var di = 0; di < NR; di++) drop.pts.push({ x: -300, y: -300, vx: 0, vy: 0 });
-  // point at fraction u along a rounded rectangle's outline
   function rrPoint(u, hw, hh, r) {
     r = clamp(r, 0.01, Math.min(hw, hh));
     var sx = 2 * (hw - r), sy = 2 * (hh - r), qa = Math.PI * r / 2;
@@ -444,7 +391,7 @@ html:not(.gl) [data-glass] { background: rgba(127, 127, 127, .08); box-shadow: i
     }
   }
 
-  /* ---------- WebGL: paper, faint grid, glass cards, and the droplet ---------- */
+  /* ---------- WebGL: paper, faint grid, glass surfaces, and the droplet ---------- */
   var G = null;
   try { G = Glass($('#glass')); } catch (e) { G = null; if (window.console) console.warn('Glass off:', e && e.message); }
   if (G) root.classList.add('gl');
@@ -454,7 +401,7 @@ html:not(.gl) [data-glass] { background: rgba(127, 127, 127, .08); box-shadow: i
     if (!gl) return null;
     var VS = '#version 300 es\nin vec2 aPos;void main(){gl_Position=vec4(aPos,0.,1.);}';
     var FS = [
-      '#version 300 es', 'precision highp float;', '#define MAXB 8', '#define NR 40',
+      '#version 300 es', 'precision highp float;', '#define MAXB 4', '#define NR 40',
       'uniform vec2 uRes;uniform float uPx,uDark;',
       'uniform vec4 uBox[MAXB];uniform vec2 uRL[MAXB];uniform int uN;',
       'uniform vec2 uPoly[NR];uniform vec4 uBB;uniform vec2 uDC;uniform float uDK,uDA,uDE;uniform vec4 uRB,uTint;uniform float uRR,uRM;',
@@ -464,7 +411,7 @@ html:not(.gl) [data-glass] { background: rgba(127, 127, 127, .08); box-shadow: i
       'float sceneD(vec2 p){float l;return scene(p,l);}',
       'float sdPoly(vec2 p){vec2 v0=uPoly[0];float d=dot(p-v0,p-v0);float s=1.;for(int i=0,j=NR-1;i<NR;j=i,i++){vec2 vi=uPoly[i],vj=uPoly[j];vec2 e=vj-vi;vec2 w=p-vi;vec2 b=w-e*clamp(dot(w,e)/(dot(e,e)+1e-6),0.,1.);d=min(d,dot(b,b));bvec3 c=bvec3(p.y>=vi.y,p.y<vj.y,e.x*w.y>e.y*w.x);if(all(c)||all(not(c)))s*=-1.;}return s*sqrt(d);}',
       'float drop(vec2 p){if(uRM>=.999)return sdBox(p-uRB.xy,uRB.zw,uRR);float a=sdPoly(p)-uDK;if(uRM<=.001)return a;return mix(a,sdBox(p-uRB.xy,uRB.zw,uRR),uRM);}',
-      'vec3 paper(vec2 p,float w){vec3 f=mix(vec3(1.),vec3(0.),uDark);float s=32.*uPx;vec2 g=abs(fract(p/s+.5)-.5)*s;float L=(1.-smoothstep(0.,w,min(g.x,g.y)))*.035;return mix(f*(1.-L),f+vec3(L*.6),uDark);}',
+      'vec3 paper(vec2 p,float w){vec3 f=mix(vec3(1.),vec3(0.),uDark);float s=32.*uPx;vec2 g=abs(fract(p/s+.5)-.5)*s;float L=(1.-smoothstep(0.,w,min(g.x,g.y)))*.03;return mix(f*(1.-L),f+vec3(L*.6),uDark);}',
       'const vec2 LIT=vec2(-.5547,.8321);',
       'vec3 base(vec2 p){float px=uPx;float lift;float d=scene(p,lift);',
       ' vec3 outC=paper(p,px);',
@@ -499,7 +446,6 @@ html:not(.gl) [data-glass] { background: rgba(127, 127, 127, .08); box-shadow: i
     gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer()); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, -1, 1, 1, 1, 1, -1]), gl.STATIC_DRAW);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl.createBuffer()); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array([0, 1, 2, 0, 2, 3]), gl.STATIC_DRAW);
     gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0); gl.enableVertexAttribArray(0);
-
     var dpr = Math.min(devicePixelRatio || 1, 2), Q = { scale: dpr }, W = 1, H = 1, CW = 1, CH = 1;
     function size() {
       var r = canvas.getBoundingClientRect(); W = Math.max(1, r.width); H = Math.max(1, r.height);
@@ -507,10 +453,10 @@ html:not(.gl) [data-glass] { background: rgba(127, 127, 127, .08); box-shadow: i
       if (canvas.width !== CW || canvas.height !== CH) { canvas.width = CW; canvas.height = CH; }
     }
     size(); measurers.unshift(size);
-    var BOX = new Float32Array(32), RL = new Float32Array(16), POLY = new Float32Array(NR * 2);
+    var BOX = new Float32Array(16), RL = new Float32Array(8), POLY = new Float32Array(NR * 2);
     var api = { dark: isDark() ? 1 : 0 };
     api.render = function () {
-      var s = Q.scale, n = Math.min(glass.length, 8), i;
+      var s = Q.scale, n = Math.min(glass.length, 4), i;
       for (i = 0; i < n; i++) {
         var g = glass[i], L = g.el._lift, grow = L * 3;
         BOX[i * 4] = g.x * s; BOX[i * 4 + 1] = (H - g.y) * s; BOX[i * 4 + 2] = Math.max(1, g.w + grow) * s; BOX[i * 4 + 3] = Math.max(1, g.h + grow) * s;
@@ -531,7 +477,6 @@ html:not(.gl) [data-glass] { background: rgba(127, 127, 127, .08); box-shadow: i
       gl.viewport(0, 0, CW, CH);
       gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
     };
-    // If frames slip, lower resolution a notch (a phone held at 30 fps is steady, not struggling)
     var fr = { n: 0, sum: 0, min: 1, level: 0 };
     api.perf = function (dt) {
       fr.n++; if (fr.n < 40) return; fr.sum += dt; fr.min = Math.min(fr.min, dt);
@@ -616,14 +561,13 @@ html:not(.gl) [data-glass] { background: rgba(127, 127, 127, .08); box-shadow: i
       if (hovRects.length > 1) { var best = 1e9; hovRects.forEach(function (r) { var dd = Math.abs(P.y - (r.top + r.bottom) / 2); if (dd < best) { best = dd; rect = r; } }); }
     }
     if (rect) { tx = rect.left + rect.width / 2; ty = rect.top + rect.height / 2; tw = rect.width / 2 + 6; th = rect.height / 2 + 3; tr = th; }
-    else tw = th = tr = hov && hov.classList.contains('panel') ? 16 : 12;
+    else tw = th = tr = hov && hov.classList.contains('row') ? 16 : 12;
     if (!show) tw = th = tr = 1.5;
     if (drop.a < 0.02 && show) { drop.x = tx; drop.y = ty; drop.vx = drop.vy = drop.svx = drop.svy = 0; drop.pts.forEach(function (p) { p.x = tx; p.y = ty; p.vx = p.vy = 0; }); }
     drop.a += ((show ? 1 : 0) - drop.a) * (1 - Math.exp(-dt * 14));
     var tint = hov && hov.getAttribute('data-tint');
     if (tint && TINTS[tint]) drop.tcol = TINTS[tint].join(',');
     drop.ta += ((tint ? 1 : 0) - drop.ta) * (1 - Math.exp(-dt * 10));
-    // Fixed small sub-steps: identical at any frame rate, and can't go unstable
     var steps = Math.max(1, Math.ceil(dt / 0.006)), h = dt / steps;
     var Kc = rect ? 330 : 2400, Cc = 2 * Math.sqrt(Kc);
     for (s = 0; s < steps; s++) {
@@ -644,7 +588,6 @@ html:not(.gl) [data-glass] { background: rgba(127, 127, 127, .08); box-shadow: i
       al *= 1 + st; pe *= 1 - st * 0.45;
       T.push([drop.x + al * ux - pe * uy, drop.y + al * uy + pe * ux]);
     }
-    // the skin: soft as a bead, stiff as a lens
     var Ks = 340 + 1300 * drop.rm, Cr = 26 + 46 * drop.rm, Kl = 90 * (1 - drop.rm);
     for (s = 0; s < steps; s++) {
       for (i = 0; i < NR; i++) {
@@ -663,260 +606,25 @@ html:not(.gl) [data-glass] { background: rgba(127, 127, 127, .08); box-shadow: i
     return moving || drop.a > 0.01 || show;
   });
 
-  /* ---------- The name decodes once from A C G U ---------- */
-  function decodeName() {
-    var el = $('[data-dna]');
-    if (!el || reduce) return;
-    var sr = D.createElement('span'); sr.className = 'sr'; sr.textContent = el.textContent;
-    var vis = D.createElement('span'); vis.setAttribute('aria-hidden', 'true');
-    var L = [];
-    el.textContent.split(/(\s+)/).forEach(function (part) {
-      if (!part) return;
-      if (/^\s+$/.test(part)) { vis.appendChild(D.createTextNode(' ')); return; }
-      var w = D.createElement('span'); w.className = 'wd';
-      Array.from(part).forEach(function (c) { var s = D.createElement('span'); s.className = 'ch'; s.textContent = c; w.appendChild(s); L.push({ el: s, c: c }); });
-      vis.appendChild(w);
-    });
-    el.textContent = ''; el.appendChild(sr); el.appendChild(vis);
-    var t0 = now();
-    L.forEach(function (x, i) { x.el.style.width = x.el.getBoundingClientRect().width + 'px'; x.s = 60 + i * 26 + Math.random() * 50; x.e = x.s + 260 + Math.random() * 140; x.last = 0; });
-    parts.push(function () {
-      var tn = now(), e = tn - t0, done = true;
-      L.forEach(function (x) {
-        if (e < x.e) { done = false; if (tn - x.last > 60) { x.last = tn; var n = 'ACGU'[(Math.random() * 4) | 0]; x.el.textContent = x.c === x.c.toLowerCase() ? n.toLowerCase() : n; x.el.className = 'ch nt'; } }
-        else if (x.el.className !== 'ch') { x.el.textContent = x.c; x.el.className = 'ch'; x.el.style.width = ''; }
-      });
-      return !done;
-    });
-    wake();
-  }
-
-  /* ---------- Research marks: one shape, one primary colour each ---------- */
-  var SEQ = 'GRWGFGWARIRGSVGFGKK';
-  function kind(a) { return 'AIVFWLM'.indexOf(a) >= 0 ? 'h' : 'RK'.indexOf(a) >= 0 ? 'c' : 'o'; }
-  var uid = 0;
-  function Helix(slot) {
-    var svg = mk('svg', { viewBox: '0 0 300 300', 'aria-hidden': 'true' }, slot);
-    var back = mk('path', { class: 'hx-back' }, svg), front = mk('path', { class: 'hx-front' }, svg);
-    var M = Mapper(svg), st = { e: 0, ve: 0, ph: 0 };
-    parts.push(function (dt) {
-      if (!M.vis) return false;
-      spring(st, 'e', M.near() ? 1 : 0, 've', 50, 14, dt);
-      if (!reduce) st.ph += dt * (0.7 + 1.4 * st.e);
-      var amp = 52 + 6 * st.e, fd = '', bd = '', pf = false, pb = false;
-      for (var i = 0; i <= 110; i++) {
-        var x = 46 + i * (208 / 110), th = x * 0.07 + st.ph, y = 150 + amp * Math.sin(th), pt = x.toFixed(1) + ' ' + y.toFixed(1);
-        if (Math.cos(th) >= 0) { fd += (pf ? 'L' : 'M') + pt; pf = true; pb = false; } else { bd += (pb ? 'L' : 'M') + pt; pb = true; pf = false; }
-      }
-      front.setAttribute('d', fd); back.setAttribute('d', bd);
-      return !reduce;
-    });
-  }
-  function pie(cx, cy, r, f) {
-    if (f >= 0.999) return 'M' + (cx - r) + ' ' + cy + 'a' + r + ' ' + r + ' 0 1 0 ' + 2 * r + ' 0a' + r + ' ' + r + ' 0 1 0 ' + (-2 * r) + ' 0Z';
-    var a0 = -Math.PI / 2, a1 = a0 + f * Math.PI * 2;
-    return 'M' + cx + ' ' + cy + 'L' + (cx + r * Math.cos(a0)).toFixed(1) + ' ' + (cy + r * Math.sin(a0)).toFixed(1) + 'A' + r + ' ' + r + ' 0 ' + (f > 0.5 ? 1 : 0) + ' 1 ' + (cx + r * Math.cos(a1)).toFixed(1) + ' ' + (cy + r * Math.sin(a1)).toFixed(1) + 'Z';
-  }
-  function BoneDisc(slot) {
-    var svg = mk('svg', { viewBox: '0 0 300 300', 'aria-hidden': 'true' }, slot);
-    var id = 'bclip' + (uid++), cp = mk('clipPath', { id: id }, mk('defs', {}, svg));
-    mk('circle', { cx: 150, cy: 150, r: 72 }, cp);
-    mk('circle', { cx: 150, cy: 150, r: 72, class: 'bn-o' }, svg);
-    var sweep = mk('path', { class: 'bm-fill' }, mk('g', { 'clip-path': 'url(#' + id + ')' }, svg));
-    mk('circle', { cx: 150, cy: 150, r: 30, class: 'bn-i' }, svg);
-    var M = Mapper(svg), st = { f: 0.62, vf: 0 };
-    parts.push(function (dt, t) {
-      if (!M.vis) return false;
-      spring(st, 'f', M.near() ? 1 : 0.62 + (reduce ? 0 : 0.04 * Math.sin(t * 0.8)), 'vf', 40, 12.6, dt);
-      sweep.setAttribute('d', pie(150, 150, 80, clamp(st.f, 0.01, 1)));
-      return !reduce;
-    });
-  }
-  function Burst(slot) {
-    var svg = mk('svg', { viewBox: '0 0 300 300', 'aria-hidden': 'true' }, slot);
-    var rays = []; for (var k = 0; k < 8; k++) rays.push(mk('path', { class: 'ry' }, svg));
-    mk('circle', { cx: 150, cy: 150, r: 26, class: 'n-nuc' }, svg);
-    var M = Mapper(svg), st = { e: 0, ve: 0 };
-    parts.push(function (dt, t) {
-      if (!M.vis) return false;
-      spring(st, 'e', M.near() ? 1 : 0, 've', 45, 13.4, dt);
-      var e = st.e, tt = reduce ? 0 : t;
-      for (var k = 0; k < 8; k++) {
-        var a = (k * 45 + tt * 4) * Math.PI / 180, ca = Math.cos(a), sa = Math.sin(a), r0 = 38, r1 = r0 + 36 + 28 * e + 3 * Math.sin(tt * 1.2 + k), rm = (r0 + r1) / 2;
-        var sw = Math.sin(tt * 1.4 + k * 1.3) * (4 + 6 * e);
-        rays[k].setAttribute('d', 'M' + (150 + ca * r0).toFixed(1) + ' ' + (150 + sa * r0).toFixed(1) + 'Q' + (150 + ca * rm - sa * sw).toFixed(1) + ' ' + (150 + sa * rm + ca * sw).toFixed(1) + ' ' + (150 + ca * r1).toFixed(1) + ' ' + (150 + sa * r1).toFixed(1));
-      }
-      return !reduce;
-    });
-  }
-  $$('[data-art]').forEach(function (slot) { var k = slot.getAttribute('data-art'); if (k === 'A') Helix(slot); else if (k === 'B') BoneDisc(slot); else Burst(slot); });
-
-  /* ---------- Project pictures: each one keeps moving and drifts through three moments on a loop ---------- */
-  function wk(p, k) { var d = (((p - k) % 3) + 3) % 3; d = Math.min(d, 3 - d); return sstep(1 - d); }
-  function op(el, v) { el.style.opacity = v.toFixed(3); }
-
-  // NeKtar-1: the sequence as a chain → charges reaching for a membrane → a ring among bacteria that die off
-  function SceneA(slot) {
-    var svg = mk('svg', { viewBox: '0 0 400 300', class: 'scene', role: 'img', 'aria-label': 'NeKtar-1 drawn as a chain of 19 amino acids that reaches a bacterial membrane and kills bacteria' }, slot);
-    var memb = mk('g', {}, svg), lips = [];
-    for (var x = 6; x <= 394; x += 14) { lips.push([mk('circle', { cx: x, cy: 244, r: 5, class: 'lip' }, memb), x, 244]); lips.push([mk('circle', { cx: x + 7, cy: 264, r: 5, class: 'lip' }, memb), x + 7, 264]); }
-    txt(memb, 200, 292, 'lbl', 'bacterial membrane');
-    var bact = mk('g', {}, svg), bugs = [];
-    [[64, 96, 20], [100, 216, -18], [50, 160, 78], [336, 96, -24], [304, 220, 32], [352, 160, 84]].forEach(function (b, i) {
-      var g = mk('g', {}, bact); mk('rect', { x: -16, y: -6.5, width: 32, height: 13, rx: 6.5, class: 'germ' }, g); bugs.push({ g: g, x: b[0], y: b[1], r: b[2], i: i });
-    });
-    txt(bact, 72, 52, 'lbl', 'E. coli'); txt(bact, 328, 52, 'lbl', 'P. aeruginosa');
-    var chain = mk('path', { class: 'chain' }, svg), beads = [];
-    for (var i = 0; i < SEQ.length; i++) {
-      var k = kind(SEQ[i]), g = mk('g', {}, svg), halo = k === 'c' ? mk('circle', { r: 17, class: 'halo' }, g) : null;
-      mk('circle', { r: 10, class: 'w-dot ' + k }, g); txt(g, 0, 0, 'w-t ' + k, SEQ[i]);
-      beads.push({ g: g, halo: halo });
-    }
-    var kill = 0;
-    function pos(s, i, t) {
-      var th = i * 100 * Math.PI / 180;
-      if (s === 0) return [20 + i * 20, 150 + 9 * Math.sin(i * 0.8 + t * 0.9)];
-      if (s === 1) return [30 + i * 18.9, 176 + (kind(SEQ[i]) === 'c' ? 30 : 0) + 6 * Math.sin(i * 0.9 + t * 1.1)];
-      var r = i < 18 ? 54 : 76, a = th - Math.PI / 2 + t * 0.12; return [200 + r * Math.cos(a), 150 + r * Math.sin(a)];
-    }
-    return { svg: svg, frame: function (p, t, m, since) {
-      var w = [wk(p, 0), wk(p, 1), wk(p, 2)], sum = w[0] + w[1] + w[2] || 1, d = '';
-      for (var i = 0; i < beads.length; i++) {
-        var x = 0, y = 0;
-        for (var s = 0; s < 3; s++) if (w[s] > 0.001) { var q = pos(s, i, t); x += q[0] * w[s]; y += q[1] * w[s]; }
-        x = x / sum + 1.6 * Math.sin(t * 1.7 + i * 1.3); y = y / sum + 1.6 * Math.cos(t * 1.5 + i * 0.9);
-        beads[i].g.setAttribute('transform', 'translate(' + x.toFixed(1) + ' ' + y.toFixed(1) + ')');
-        if (beads[i].halo) op(beads[i].halo, w[1] * (0.18 + 0.1 * Math.sin(t * 2.6 + i)));
-        d += (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1);
-      }
-      chain.setAttribute('d', d);
-      op(memb, w[1]);
-      if (w[1] > 0.01) lips.forEach(function (l) { l[0].setAttribute('cy', (l[2] + 2.4 * Math.sin(t * 1.6 + l[1] * 0.05)).toFixed(1)); });
-      if (m === 2) kill = sstep((since - 1) / 2.4); else if (w[2] < 0.05) kill = 0;
-      op(bact, w[2]);
-      bugs.forEach(function (b) {
-        var k2 = sstep(kill * 1.3 - b.i * 0.06);
-        b.g.setAttribute('transform', 'translate(' + (b.x + 4 * Math.sin(t * 0.8 + b.i * 2)).toFixed(1) + ' ' + (b.y + 4 * Math.cos(t * 0.7 + b.i)).toFixed(1) + ') rotate(' + (b.r + 10 * Math.sin(t + b.i) + 40 * k2).toFixed(1) + ') scale(' + (1 - 0.4 * k2).toFixed(3) + ')');
-        op(b.g, 1 - 0.85 * k2);
-      });
-    } };
-  }
-
-  // Bone viability: a cross-section → its white-light and fluorescence images → the model's outline and a flag
-  function SceneB(slot) {
-    var svg = mk('svg', { viewBox: '0 0 400 300', class: 'scene sB', role: 'img', 'aria-label': 'A bone cross-section, its white-light and fluorescence images, and the model’s outline with a flagged region' }, slot);
-    var rg = mk('radialGradient', { id: 'fluo', gradientUnits: 'userSpaceOnUse', cx: 186, cy: 140, r: 92 }, mk('defs', {}, svg));
-    mk('stop', { offset: '0', 'stop-color': '#8aa0ff' }, rg); var mid = mk('stop', { offset: '.55', 'stop-color': '#2453ff', 'stop-opacity': '.8' }, rg); mk('stop', { offset: '1', 'stop-color': '#2453ff', 'stop-opacity': '.15' }, rg);
-    function disc(parent, o, i) { var g = mk('g', {}, parent); mk('circle', { cx: 200, cy: 150, r: 72, class: o }, g); mk('circle', { cx: 200, cy: 150, r: 30, class: i }, g); return g; }
-    var tl = mk('g', {}, svg), frL = mk('rect', { x: 86, y: 36, width: 228, height: 228, rx: 30, class: 'fl' }, tl), plain = disc(tl, 'bn-o', 'bn-i'), wl = disc(tl, 'wl-o', 'wl-i');
-    var tr = mk('g', {}, svg); mk('rect', { x: 86, y: 36, width: 228, height: 228, rx: 30, class: 'fr' }, tr); disc(tr, 'fb-o', 'fb-i');
-    var labs = mk('g', {}, svg); txt(labs, 100, 226, 'lbl', 'white light'); txt(labs, 300, 226, 'lbl', 'fluorescence');
-    var seg = mk('circle', { cx: 200, cy: 150, r: 80, pathLength: 1, class: 'seg' }, svg);
-    var flag = mk('circle', { cx: 254, cy: 100, r: 18, class: 'flag' }, svg), flagL = txt(svg, 300, 66, 'lbl flag-l', 'flagged');
-    return { svg: svg, frame: function (p, t) {
-      var w1 = wk(p, 1), w2 = wk(p, 2), br = 1 + 0.012 * Math.sin(t * 1.3);
-      tl.setAttribute('transform', 'translate(' + (200 - 100 * w1) + ' 150) scale(' + ((1 - 0.5 * w1) * br).toFixed(4) + ') translate(-200 -150)');
-      op(frL, w1); op(wl, w1); op(plain, 1 - w1);
-      tr.setAttribute('transform', 'translate(' + (200 + 100 * w1) + ' 150) scale(' + (0.5 * br).toFixed(4) + ') translate(-200 -150)');
-      op(tr, w1); op(labs, w1);
-      mid.setAttribute('stop-opacity', (0.7 + 0.18 * Math.sin(t * 2.2)).toFixed(3));
-      seg.style.strokeDashoffset = (1 - w2).toFixed(3); seg.style.fillOpacity = (0.14 * w2).toFixed(3);
-      seg.setAttribute('r', (80 + 1.6 * Math.sin(t * 1.4)).toFixed(2));
-      seg.setAttribute('transform', 'rotate(' + (t * 8 % 360).toFixed(1) + ' 200 150)');
-      var fw = sstep((w2 - 0.5) * 2); op(flag, fw); op(flagL, fw);
-      flag.setAttribute('r', (18 + 1.6 * Math.sin(t * 3)).toFixed(2));
-    } };
-  }
-
-  // NET mechanics: a neutrophil among bacteria → squeezed in flow → it bursts into a net that catches them
-  function SceneC(slot) {
-    var svg = mk('svg', { viewBox: '0 0 400 300', class: 'scene sC', role: 'img', 'aria-label': 'A neutrophil under force casting a net of DNA that traps bacteria' }, slot);
-    var flow = mk('g', { class: 'flow' }, svg); [62, 104, 196, 238].forEach(function (y) { mk('line', { x1: 16, y1: y, x2: 384, y2: y }, flow); });
-    var press = mk('g', { class: 'press' }, svg), pl = mk('path', { d: 'M56 150H122M110 140l13 10-13 10' }, press), pr = mk('path', { d: 'M344 150H278M290 140l-13 10 13 10' }, press);
-    var strands = []; for (var k = 0; k < 12; k++) strands.push(mk('path', { pathLength: 1, class: 'strand' }, svg));
-    var cell = mk('g', {}, svg), cm = mk('circle', { cx: 200, cy: 150, r: 50, class: 'cm' }, cell), lobes = [];
-    [[-12, -7], [10, -10], [-1, 11]].forEach(function (c) { lobes.push([mk('circle', { cx: 200 + c[0], cy: 150 + c[1], r: 12.5, class: 'n-nuc' }, cell), c]); });
-    var bugs = []; for (var b = 0; b < 6; b++) { var g = mk('g', {}, svg); mk('rect', { x: -12, y: -5, width: 24, height: 10, rx: 5, class: 'bugr' }, g); bugs.push(g); }
-    return { svg: svg, frame: function (p, t) {
-      var w1 = wk(p, 1), w2 = wk(p, 2);
-      op(flow, w1); op(press, w1);
-      pl.setAttribute('transform', 'translate(' + (3 * Math.sin(t * 3)).toFixed(2) + ' 0)'); pr.setAttribute('transform', 'translate(' + (-3 * Math.sin(t * 3)).toFixed(2) + ' 0)');
-      for (var k = 0; k < 12; k++) {
-        var a = (k * 30 + 8) * Math.PI / 180, ca = Math.cos(a), sa = Math.sin(a), R = [50, 78, 106, 134], o = [0, 9, -9, 7], sw = 1 + 0.5 * Math.sin(t * 1.3 + k * 0.8);
-        var d = 'M' + (200 + ca * R[0]).toFixed(1) + ' ' + (150 + sa * R[0]).toFixed(1);
-        for (var j = 1; j < 4; j++) { var rm = (R[j - 1] + R[j]) / 2; d += 'Q' + (200 + ca * rm - sa * o[j] * sw).toFixed(1) + ' ' + (150 + sa * rm + ca * o[j] * sw).toFixed(1) + ' ' + (200 + ca * R[j]).toFixed(1) + ' ' + (150 + sa * R[j]).toFixed(1); }
-        var reveal = clamp(w2 * 1.5 - k * 0.04, 0, 1);
-        strands[k].setAttribute('d', d); strands[k].style.strokeDashoffset = (1 - reveal).toFixed(3); op(strands[k], reveal > 0.005 ? 1 : 0);
-      }
-      var sx = 1 + 0.26 * w1 + 0.02 * Math.sin(t * 1.8), sy = 1 - 0.22 * w1 + 0.02 * Math.cos(t * 1.8);
-      cell.setAttribute('transform', 'translate(200 150) scale(' + sx.toFixed(4) + ' ' + sy.toFixed(4) + ') translate(-200 -150)');
-      cm.setAttribute('r', (50 + 26 * w2).toFixed(2)); op(cm, 1 - w2);
-      lobes.forEach(function (l) { l[0].setAttribute('cx', (200 + l[1][0] * (1 + 0.35 * w2)).toFixed(1)); l[0].setAttribute('cy', (150 + l[1][1] * (1 + 0.35 * w2)).toFixed(1)); });
-      bugs.forEach(function (g, i) {
-        var a0 = (i * 60 + 54) * Math.PI / 180 + t * 0.14, r0 = 132 + 6 * Math.sin(t * 0.9 + i), a1 = (i * 60 + 38) * Math.PI / 180, r1 = 114 + 2 * Math.sin(t * 1.3 + i);
-        var x = (200 + r0 * Math.cos(a0)) * (1 - w2) + (200 + r1 * Math.cos(a1)) * w2, y = (150 + r0 * Math.sin(a0)) * (1 - w2) + (150 + r1 * Math.sin(a1)) * w2;
-        var rot = (a0 * 180 / Math.PI + 90) * (1 - w2) + (i * 60 + 128) * w2 + 10 * Math.sin(t * 1.2 + i) * (1 - w2);
-        g.setAttribute('transform', 'translate(' + x.toFixed(1) + ' ' + y.toFixed(1) + ') rotate(' + rot.toFixed(1) + ')');
-      });
-    } };
-  }
-
-  // Each picture plays on its own; a click on it moves to the next moment
-  var STORY = {};
-  $$('.detail').forEach(function (sec) {
-    var slot = $('[data-scene]', sec), k = slot.getAttribute('data-scene');
-    var sc = k === 'A' ? SceneA(slot) : k === 'B' ? SceneB(slot) : SceneC(slot);
-    var S = { p: 0, vp: 0, target: 0, mt: now(), timer: 0 };
-    function m() { return ((Math.round(S.target) % 3) + 3) % 3; }
-    S.stop = function () { clearTimeout(S.timer); };
-    S.play = function () { S.stop(); if (reduce) return; (function tick() { S.timer = setTimeout(function () { S.target += 1; S.mt = now(); tick(); }, 4200); })(); };
-    S.reset = function () { S.target = 0; S.p = 0; S.vp = 0; S.mt = now(); };
-    sc.svg.addEventListener('click', function () { S.target += 1; S.mt = now(); S.play(); });
-    var M = Mapper(sc.svg);
-    parts.push(function (dt, t) {
-      if (!M.vis) return false;
-      if (reduce) S.p = S.target; else spring(S, 'p', S.target, 'vp', 7, 5.3, dt);
-      sc.frame(S.p, reduce ? 0 : t, m(), (now() - S.mt) / 1000);
-      return !reduce;
-    });
-    STORY[sec.id] = S;
-  });
-
-  /* ---------- Card ⇄ project view: the drawing morphs and the view opens from where you clicked ---------- */
+  /* ---------- Subject row ⇄ project view: the view opens from where you clicked ---------- */
   var LETTERS = ['A', 'B', 'C'];
   var canVT = !!D.startViewTransition && !reduce;
   function reveal(ox, oy, ms) {
     var R = Math.hypot(Math.max(ox, innerWidth - ox), Math.max(oy, innerHeight - oy));
-    try { root.animate({ clipPath: ['circle(0px at ' + ox + 'px ' + oy + 'px)', 'circle(' + R + 'px at ' + ox + 'px ' + oy + 'px)'] }, { duration: ms, easing: 'cubic-bezier(.2,.8,.2,1)', pseudoElement: '::view-transition-new(root)' }); } catch (e) {}
+    try { root.animate({ clipPath: ['circle(0px at ' + ox + 'px ' + oy + 'px)', 'circle(' + R + 'px at ' + ox + 'px ' + oy + 'px)'] }, { duration: ms, easing: 'cubic-bezier(.16,1,.3,1)', pseudoElement: '::view-transition-new(root)' }); } catch (e) {}
   }
   function current() { var h = location.hash.slice(1); return LETTERS.indexOf(h) >= 0 ? h : ''; }
-  function artOf(letter, inDetail) { var scope = inDetail ? D.getElementById(letter) : $('.panel[data-p="' + letter + '"]'); return scope && $('.art', scope); }
   function setHash(to) {
     if (to) { location.hash = to; return; }
     location.hash = '';
     try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
   }
-  function opened(to) {
-    measureAll();
-    Object.keys(STORY).forEach(function (id) { if (id !== to) STORY[id].stop(); });
-    var S = to && STORY[to]; if (S) { S.reset(); S.play(); }
-  }
   function go(to, ox, oy) {
-    var from = current();
-    if (to === from) return;
-    if (!canVT) { setHash(to); opened(to); return; }
-    var src = from ? artOf(from, true) : artOf(to, false), dst = null;
-    if (src) src.style.viewTransitionName = 'art';
-    var tr = D.startViewTransition(function () {
-      if (src) src.style.viewTransitionName = '';
-      setHash(to);
-      dst = to ? artOf(to, true) : artOf(from, false);
-      if (dst) dst.style.viewTransitionName = 'art';
-      opened(to);
-    });
-    tr.ready.then(function () { reveal(ox, oy, 650); }, function () {});
-    function clear() { if (dst) dst.style.viewTransitionName = ''; measureAll(); }
-    tr.finished.then(clear, clear);
+    if (to === current()) return;
+    if (!canVT) { setHash(to); measureAll(); return; }
+    var tr = D.startViewTransition(function () { setHash(to); measureAll(); });
+    tr.ready.then(function () { reveal(ox, oy, 700); }, function () {});
+    tr.finished.then(measureAll, measureAll);
   }
   D.addEventListener('click', function (e) {
     var a = e.target.closest && e.target.closest('a[href^="#"]');
@@ -958,15 +666,13 @@ html:not(.gl) [data-glass] { background: rgba(127, 127, 127, .08); box-shadow: i
   });
 
   /* ---------- Intro: real footage of a glass pipette releasing a drop, cut to the drop landing in still water.
-     The page opens out of the ripple, from the exact point where the drop lands. Plays on every load (not for
-     reduced motion); any click, key or scroll opens straight away; if the video can't play it just opens.
-     Footage: Mixkit free licence (see CREDITS.md). ---------- */
-  var intro = { on: root.classList.contains('intro-on'), done: null };
+     Played at 1.5x so it's short. The page opens out of the ripple from the exact impact point, and the
+     headline lines rise as it opens. Any click, key or scroll opens straight away; if the video can't play,
+     the page just opens. Footage: Mixkit free licence (see CREDITS.md). ---------- */
   (function () {
     var box = $('#intro'), v = $('#introv');
-    if (!intro.on || !box || !v) { if (box) box.remove(); intro.on = false; return; }
-    var T_OPEN = 1.95, opening = false, ended = false;
-    // where the drop lands in the frame (48% across, 59% down), mapped through object-fit: cover
+    if (!root.classList.contains('intro-on') || !box || !v) { if (box) box.remove(); root.classList.remove('intro-on'); return; }
+    var T_OPEN = 1.9, opening = false, ended = false;
     function impact() {
       var vw = v.videoWidth || 1280, vh = v.videoHeight || 720, W = innerWidth, H = innerHeight, s = Math.max(W / vw, H / vh);
       return [(W - vw * s) / 2 + 0.478 * vw * s, (H - vh * s) / 2 + 0.589 * vh * s];
@@ -975,31 +681,30 @@ html:not(.gl) [data-glass] { background: rgba(127, 127, 127, .08); box-shadow: i
       if (opening) return; opening = true;
       var c = impact(), R = Math.hypot(Math.max(c[0], innerWidth - c[0]), Math.max(c[1], innerHeight - c[1])) + 12, t0 = now();
       box.style.setProperty('--ix', c[0].toFixed(1) + 'px'); box.style.setProperty('--iy', c[1].toFixed(1) + 'px');
-      root.classList.add('dropping'); setTimeout(function () { root.classList.remove('dropping'); }, 1000);
+      root.classList.add('go');
       (function grow() {
-        var p = clamp((now() - t0) / 1300, 0, 1), e = 1 - Math.pow(1 - p, 3);
+        var p = clamp((now() - t0) / 850, 0, 1), e = 1 - Math.pow(2, -10 * p);   // expo-out
         box.style.setProperty('--ir', (e * R).toFixed(1) + 'px');
         if (p < 1) requestAnimationFrame(grow); else finish();
       })();
     }
     function finish() {
       if (ended) return; ended = true;
-      box.remove(); root.classList.remove('intro-on'); intro.on = false;
+      box.remove(); root.classList.remove('intro-on');
       ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(function (ev) { removeEventListener(ev, open); });
-      soon(); if (intro.done) intro.done();
+      soon();
     }
+    try { v.playbackRate = 1.5; } catch (e) {}
     (function watch() { if (opening) return; if (v.currentTime >= T_OPEN) open(); else requestAnimationFrame(watch); })();
     v.addEventListener('ended', open);
     v.addEventListener('error', open, true);
-    var pr = v.play(); if (pr && pr.catch) pr.catch(open);                     // autoplay refused (e.g. Low Power Mode): open
-    setTimeout(function () { if (v.currentTime < 0.05) open(); }, 1600);       // slow connection: don't hold the page
+    var pr = v.play(); if (pr && pr.catch) pr.catch(open);
+    setTimeout(function () { if (v.currentTime < 0.05) open(); }, 1400);
     ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(function (ev) { addEventListener(ev, open, { passive: true }); });
   })();
 
   measureAll();
-  var started = false;
-  function start() { if (started) return; started = true; measureAll(); if (intro.on) intro.done = decodeName; else decodeName(); var c = current(); if (c) opened(c); }
-  if (D.fonts && D.fonts.ready) { D.fonts.ready.then(start); setTimeout(start, 900); } else start();
+  if (D.fonts && D.fonts.ready) D.fonts.ready.then(measureAll);
   addEventListener('load', measureAll);
   wake();
 })();

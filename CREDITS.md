@@ -25,3 +25,11 @@ The photo `me.jpg` is Neil Panchal's own.
 # Fonts
 
 Source Serif 4 and Libre Franklin, from Google Fonts (SIL Open Font License).
+
+# 3D figures (models/)
+
+- `femur.glb`: from [Human femur](https://3d.nih.gov/entries/3DPX-000168) by SquareL on NIH 3D, public domain (CC0 1.0). Simplified and recoloured (blue marks the part a segmentation model would call viable).
+- `nektar1.glb`: generated for this site from the NeKtar-1 sequence (GRWGFGWARIRGSVGFGKK) as an idealized alpha helix; residues coloured by type. Illustrative, not a predicted structure.
+- `neutrophil.glb`: generated for this site (a neutrophil casting DNA strands that hold bacteria). Illustrative.
+
+Shown with Google's [model-viewer](https://modelviewer.dev/) (Apache 2.0).
