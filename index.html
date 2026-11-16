@@ -161,6 +161,8 @@ html.go .rise > span { animation: up 1s var(--ease) both; animation-delay: calc(
   .acks { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .acks h2 { grid-row: auto; grid-column: 1 / -1; width: auto; padding-top: 0; }
   .acks em { display: none; }
+  .foot .fl { display: none; }
+  .foot .sl { display: inline; }
 }
 @media (max-width: 980px) {
   .row { grid-template-columns: var(--fig) minmax(0, 1fr); grid-template-rows: auto auto; row-gap: 4px; align-content: center; }
@@ -168,6 +170,7 @@ html.go .rise > span { animation: up 1s var(--ease) both; animation-delay: calc(
   .word { align-self: end; font-size: clamp(40px, min(9vh, 11vw), 110px); }
   .cap { align-self: start; font-size: 14px; }
   .cap small { display: none; }
+  .foot .s12 { display: none; }
 }
 /* ---------- Phones ---------- */
 @media (max-width: 640px) {
@@ -215,7 +218,7 @@ html.go .rise > span { animation: up 1s var(--ease) both; animation-delay: calc(
     <img class="me" src="me.jpg" width="350" height="350" alt="Neil Panchal" decoding="async" draggable="false">
     <div>
       <h1 class="name"><span class="rise" style="--i:0"><span>Neil Panchal</span></span></h1>
-      <p class="role">Bioengineering at the University of Maryland. Currently drafting an ISBI 2027 paper on surgical bone imaging.</p>
+      <p class="role">Bioengineering at the University of Maryland. Paper on surgical bone imaging submitted to ISBI 2027.</p>
     </div>
     <nav class="contact" aria-label="Contact">
       <a href="mailto:neilpanchal08@gmail.com">neilpanchal08@gmail.com</a>
@@ -249,7 +252,7 @@ html.go .rise > span { animation: up 1s var(--ease) both; animation-delay: calc(
     <a href="https://www.montgomeryschoolsmd.org/schools/poolesvillehs/student-success/accolades2025_2026/#:~:text=Neil%20Panchal" target="_blank" rel="noopener" data-tint="yellow"><span class="lg"><img src="logos/mriglobal.png" alt="MRIGlobal"></span><span><b><span class="full">Outstanding Achievement in Life Science</span><span class="short">MRIGlobal Life Science</span></b><em>MRIGlobal, 2026</em></span></a>
     <a href="https://marylandhosa.org/wp-content/uploads/2024/04/2024-SLC-Maryland-HOSA-Winnerson-letterheadF.pdf" target="_blank" rel="noopener" data-tint="red"><span class="lg"><img src="logos/hosa.jpg" alt="HOSA-Future Health Professionals"></span><span><b><span class="full">2nd Place, State Biomedical Debate</span><span class="short">HOSA State, 2nd</span></b><em>Maryland HOSA, 2024</em></span></a>
     <a href="https://www.montgomeryschoolsmd.org/schools/poolesvillehs/student-success/accolades2025_2026/#:~:text=Neil%20Panchal" target="_blank" rel="noopener" data-tint="blue"><span class="lg"><img src="logos/sciencemontgomery.jpg" alt="Science Montgomery"></span><span><b><span class="full">3rd Place, Biology</span><span class="short">Science Montgomery, 3rd</span></b><em>Science Montgomery, 2026</em></span></a>
-    <a href="https://www.montgomeryschoolsmd.org/schools/poolesvillehs/student-success/accolades2025_2026/#:~:text=Neil%20Panchal" target="_blank" rel="noopener" data-tint="yellow"><span class="lg"><img src="logos/rotary.png" alt="Metro Bethesda Rotary"></span><span><b><span class="full">James Phang Aspiring Scientist Award</span><span class="short">Rotary Phang Award</span></b><em>Metro Bethesda Rotary, 2026</em></span></a>
+    <a href="https://www.montgomeryschoolsmd.org/schools/poolesvillehs/student-success/accolades2025_2026/#:~:text=Neil%20Panchal" target="_blank" rel="noopener" data-tint="yellow"><span class="lg"><img src="logos/rotary.png" alt="Metro Bethesda Rotary"></span><span><b><span class="full">Metro Bethesda Rotary Club Award</span><span class="short">Rotary Club, 1st</span></b><em>1st Place, 2026</em></span></a>
   </section>
 
   <section class="detail" id="A" aria-labelledby="A-h">
@@ -277,7 +280,7 @@ html.go .rise > span { animation: up 1s var(--ease) both; animation-delay: calc(
       <p class="lead">Surgeons often judge by eye whether bone still has blood flow. My models read white‑light and fluorescence images instead, and flag the cases they shouldn’t be trusted on.</p>
       <dl class="facts">
         <div><dt>Data</dt><dd>270 surgical cases from 207 patients</dd></div>
-        <div><dt>Presented</dt><dd>Mickey Dale Organ Transplantation Symposium, Oct 2026. ISBI 2027 paper in preparation.</dd></div>
+        <div><dt>Presented</dt><dd>Mickey Dale Organ Transplantation Symposium, Oct 2026. Paper submitted to ISBI 2027.</dd></div>
         <div><dt>Figure</dt><dd>A human femur from NIH 3D (public domain). Blue marks the part a model would call viable.</dd></div>
       </dl>
       <p class="next"><a href="#C">Next: Neutrophils</a></p>
@@ -708,8 +711,28 @@ html.go .rise > span { animation: up 1s var(--ease) both; animation-delay: calc(
     ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(function (ev) { addEventListener(ev, open, { passive: true }); });
   })();
 
-  measureAll();
-  if (D.fonts && D.fonts.ready) D.fonts.ready.then(measureAll);
+  /* Keep the three big words inside their column: if the longest one
+     does not fit, shrink all three together by the same factor. */
+  var words = [].slice.call(D.querySelectorAll('.row .word'));
+  function fitWords() {
+    words.forEach(function (w) { w.style.fontSize = ''; });
+    var k = 1;
+    words.forEach(function (w) {
+      var t = w.querySelector('.rise > span'), avail = w.clientWidth;
+      if (!t || !avail) return;
+      var need = t.getBoundingClientRect().width;
+      if (need > avail) k = Math.min(k, avail / need);
+    });
+    if (k < 1) {
+      var fs = parseFloat(getComputedStyle(words[0]).fontSize) * k * 0.98;
+      words.forEach(function (w) { w.style.fontSize = fs + 'px'; });
+    }
+  }
+  if (words.length && 'ResizeObserver' in window) new ResizeObserver(fitWords).observe(D.querySelector('.subjects'));
+  addEventListener('resize', fitWords);
+
+  measureAll(); fitWords();
+  if (D.fonts && D.fonts.ready) D.fonts.ready.then(function () { fitWords(); measureAll(); });
   addEventListener('load', measureAll);
   wake();
 })();
